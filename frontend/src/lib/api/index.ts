@@ -1,17 +1,17 @@
 import { mockApi } from "@/mocks/mock-api";
 import { invalidateQueries } from "../use-query";
 import type { AdvisorApi } from "./types";
+import { withValidation } from "./validate";
 
-export type { AdvisorApi, SafetyCheckInput, StartAnalysisOptions } from "./types";
+export type { AdvisorApi, SafetyCheckInput } from "./types";
+export { ContractError } from "./validate";
 
 const MUTATIONS: ReadonlySet<keyof AdvisorApi> = new Set([
   "createCase",
   "deleteCase",
   "uploadDocument",
-  "attachSampleRecords",
   "removeDocument",
   "startAnalysis",
-  "skipToResults",
   "updateQuestion",
   "submitSecondOpinion",
 ]);
@@ -36,6 +36,9 @@ function withInvalidation(base: AdvisorApi): AdvisorApi {
  * The single place that decides which implementation the UI talks to.
  * Phase 1 uses the in-browser mock. When the FastAPI backend exists, an
  * `httpApi` implementing the same `AdvisorApi` interface replaces `mockApi`
- * here (for example behind a NEXT_PUBLIC_API_BASE_URL switch). No screen changes.
+ * here (for example when NEXT_PUBLIC_API_MODE=http). No screen changes.
+ *
+ * Whichever implementation is used, every response is validated against the
+ * contract schemas before it reaches the UI.
  */
-export const api: AdvisorApi = withInvalidation(mockApi);
+export const api: AdvisorApi = withInvalidation(withValidation(mockApi));

@@ -10,9 +10,11 @@ import type {
   ScenarioId,
   SecondOpinionState,
 } from "@/domain/types";
+import { SCHEMA_VERSIONS } from "@/domain/schemas";
 import type { AdvisorApi, SafetyCheckInput } from "@/lib/api/types";
+import type { PrototypeControls, SampleCase } from "@/lib/prototype-types";
 import { buildCrossReview, buildEvidence, buildPerspectives, buildReport, buildTrace } from "./builders";
-import { scenarios, seededCaseIds } from "./scenarios";
+import { scenarioBlurbs, scenarioList, scenarios, seededCaseIds } from "./scenarios";
 import type { ScenarioData } from "./scenarios/types";
 
 /**
@@ -41,10 +43,12 @@ interface Store {
   questionState: Record<string, Record<string, { status: Question["status"]; note?: string }>>;
   secondOpinion: Record<string, { startedAt: number; documentName: string }>;
   deleted: string[];
+  /** Prototype only: how the next analysis of a case should end. */
+  pendingOutcome: Record<string, RunOutcome | undefined>;
 }
 
 const emptyStore = (): Store => ({
-  createdCases: [], caseOverrides: {}, documents: {}, runs: {}, questionState: {}, secondOpinion: {}, deleted: [],
+  createdCases: [], caseOverrides: {}, documents: {}, runs: {}, questionState: {}, secondOpinion: {}, deleted: [], pendingOutcome: {},
 });
 
 let memory: Store | null = null;
@@ -93,7 +97,7 @@ function findCase(caseId: string): CaseSummary | null {
 }
 
 function scenarioFor(c: CaseSummary): ScenarioData {
-  return scenarios[c.scenario];
+  return scenarios[c.scenario ?? "cardiology"];
 }
 
 function patchCase(caseId: string, patch: Partial<CaseSummary>) {
@@ -118,6 +122,7 @@ function seededRun(c: CaseSummary): AnalysisRun {
     note: sc.stepNotes[i + 1],
   }));
   return {
+    schema_version: SCHEMA_VERSIONS.run,
     id: c.runId ?? "r_seed", caseId: c.id, status: sc.finalStatus, progress: 1, steps,
     startedAt: new Date(Date.parse(c.updatedAt) - 4 * 60_000).toISOString(), finishedAt: c.updatedAt, warnings: sc.runWarnings,
   };
@@ -155,6 +160,7 @@ function computeRun(rec: RunRecord): AnalysisRun {
   const progress = failed ? (failAt - 1) / TOTAL_STEPS : Math.min(1, current / TOTAL_STEPS);
 
   return {
+    schema_version: SCHEMA_VERSIONS.run,
     id: rec.id, caseId: rec.caseId, status, progress, steps,
     startedAt: new Date(rec.startedAt).toISOString(),
     finishedAt: finished ? new Date().toISOString() : undefined,
@@ -296,18 +302,6 @@ export const mockApi: AdvisorApi = {
     return doc;
   },
 
-  async attachSampleRecords(caseId, scenario) {
-    await delay(500);
-    const sc = scenarios[scenario];
-    const s = store();
-    s.documents[caseId] = sc.documents.map((d) => ({ ...d }));
-    patchCase(caseId, {
-      scenario, title: sc.seedCase.title, ageYears: sc.seedCase.ageYears, sex: sc.seedCase.sex, specialtyLabel: sc.seedCase.specialtyLabel,
-      documentCount: sc.documents.length,
-    });
-    return findCase(caseId)!;
-  },
-
   async removeDocument(caseId, docId) {
     await delay(200);
     const s = store();
@@ -315,13 +309,14 @@ export const mockApi: AdvisorApi = {
     patchCase(caseId, { documentCount: s.documents[caseId].length });
   },
 
-  async startAnalysis(caseId, options) {
+  async startAnalysis(caseId) {
     await delay(300);
     const c = findCase(caseId);
     if (!c) throw new Error("Case not found");
     const sc = scenarioFor(c);
     const runId = `r_${Math.random().toString(16).slice(2, 6)}`;
-    store().runs[runId] = { id: runId, caseId, startedAt: Date.now(), outcome: options?.simulate ?? sc.finalStatus };
+    store().runs[runId] = { id: runId, caseId, startedAt: Date.now(), outcome: store().pendingOutcome[caseId] ?? sc.finalStatus };
+    delete store().pendingOutcome[caseId];
     patchCase(caseId, { status: "processing", runId, updatedAt: new Date().toISOString() });
     return { runId };
   },
@@ -338,14 +333,6 @@ export const mockApi: AdvisorApi = {
     return seeded ? seededRun(seeded) : null;
   },
 
-  async skipToResults(runId) {
-    const rec = store().runs[runId];
-    if (rec) {
-      rec.skipped = true;
-      save();
-    }
-  },
-
   async getTimeline(caseId) {
     await delay();
     const r = requireResults(caseId);
@@ -355,7 +342,7 @@ export const mockApi: AdvisorApi = {
   async getPerspectives(caseId) {
     await delay();
     const r = requireResults(caseId);
-    return r ? buildPerspectives(r.sc) : null;
+    return r ? buildPerspectives(r.sc, r.c.id, r.c.runId ?? "r_demo") : null;
   },
 
   async getEvidence(caseId) {
@@ -430,5 +417,51 @@ export const mockApi: AdvisorApi = {
     const r = requireResults(caseId);
     if (!r) return null;
     return secondOpinionState(r.c).status === "ready" ? r.sc.comparison : null;
+  },
+};
+
+/**
+ * Prototype-only controls. These exist so people can explore the demo (pick a
+ * sample case, force a partial or failed run, skip the wait). They are NOT part
+ * of the production-facing `AdvisorApi`; the UI reaches them only through
+ * `src/lib/prototype.ts`, which is empty when a real backend is configured.
+ */
+export const prototypeControls: PrototypeControls = {
+  listSampleCases(): SampleCase[] {
+    return scenarioList.map((sc) => ({
+      id: sc.id,
+      title: scenarioBlurbs[sc.id].title,
+      blurb: scenarioBlurbs[sc.id].blurb,
+      ageYears: sc.seedCase.ageYears,
+      sex: sc.seedCase.sex,
+      documentCount: sc.documents.length,
+    }));
+  },
+
+  async attachSampleRecords(caseId, scenario) {
+    await delay(500);
+    const sc = scenarios[scenario];
+    const s = store();
+    s.documents[caseId] = sc.documents.map((d) => ({ ...d }));
+    patchCase(caseId, {
+      scenario, title: sc.seedCase.title, ageYears: sc.seedCase.ageYears, sex: sc.seedCase.sex, specialtyLabel: sc.seedCase.specialtyLabel,
+      documentCount: sc.documents.length,
+    });
+    return findCase(caseId)!;
+  },
+
+  setNextRunOutcome(caseId, outcome) {
+    const s = store();
+    if (outcome) s.pendingOutcome[caseId] = outcome;
+    else delete s.pendingOutcome[caseId];
+    save();
+  },
+
+  async skipToResults(runId) {
+    const rec = store().runs[runId];
+    if (rec) {
+      rec.skipped = true;
+      save();
+    }
   },
 };

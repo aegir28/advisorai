@@ -3,11 +3,58 @@
 The frontend talks to "the backend" only through the `AdvisorApi` interface in
 [`frontend/src/lib/api/types.ts`](../frontend/src/lib/api/types.ts). Phase 1 implements it with an
 in-browser mock ([`frontend/src/mocks/mock-api.ts`](../frontend/src/mocks/mock-api.ts)). The future
-FastAPI backend must return the same shapes (typed in
-[`frontend/src/domain/types.ts`](../frontend/src/domain/types.ts)) so no screen has to change.
+FastAPI backend must return the same shapes so no screen has to change.
 
 To swap in the real backend, write an `httpApi` that implements `AdvisorApi` and select it in
-`frontend/src/lib/api/index.ts`.
+`frontend/src/lib/api/index.ts` (for example when `NEXT_PUBLIC_API_MODE=http`).
+
+## One source of truth: the schemas
+
+Every shape is declared **once**, as a Zod schema, in
+[`frontend/src/domain/schemas.ts`](../frontend/src/domain/schemas.ts). The TypeScript types in
+`frontend/src/domain/types.ts` are **inferred** from those schemas, so a type and its runtime
+validator cannot drift apart.
+
+Every `AdvisorApi` response is parsed against its schema by
+[`frontend/src/lib/api/validate.ts`](../frontend/src/lib/api/validate.ts) before it reaches a
+screen. Malformed data (from the mock or from the backend) throws a `ContractError`, which the data
+hooks surface as the normal error state. One table (`RESPONSE_SCHEMAS`) maps each method to its
+schema; a test fails if a method is missing from it.
+
+## Versioned contracts
+
+| Contract | `schema_version` | Where |
+| --- | --- | --- |
+| Canonical structured case | `case.v1` | `CaseV1Schema` (the backend stores it; agents read pseudonymous slices of it) |
+| Specialist report | `specialist_report.v1` | each item of `getPerspectives().reports` |
+| Patient report | `report.v1` | `getReport()` |
+| Trace | `trace.v1` | `getTrace()` |
+| Analysis run | `run.v1` | `getRun()` |
+
+There is no `v2`. A change that is not backward compatible needs an ADR first.
+
+### Casing
+
+The versioned envelope fields use the blueprint's snake_case wire names (`schema_version`,
+`run_id`, `case_id`, `missing_info`, `evidence_refs`). Fields that already existed in the Phase 1
+UI contract keep their camelCase names (`factRefs`, `routingReason`, `evidenceIds`, ...) so the UI
+did not have to change. A Pydantic alias generator can serialise either form. This is a known,
+deliberate inconsistency.
+
+### `specialist_report.v1`
+
+`schema_version`, `run_id`, `case_id`, specialty identity (`specialist`, `name`, `version`,
+`tier`, `priority`), `findings`, `uncertainties`, `missing_info`, `contradictions`,
+`considerations`, `questions`, `evidence_refs`, `confidence`, `limitations`, optional
+`extensions`, plus the Phase 1 fields `routingReason`, `status`, `statusNote`.
+
+### Contract rules enforced by the schemas
+
+- A report has exactly the 19 blueprint sections, numbered 1..19 in order.
+- Every non-template report sentence has an `id` and at least one `evidenceIds` entry. Only fixed
+  template text (disclaimers, "nothing found" notes) may be untraced.
+- A run has exactly the 14 workflow steps, numbered 1..14. A `failed` run must carry `failure`.
+- `case.v1` contains no identity fields: names, phone and email never appear in it.
 
 ## Endpoint mapping (`/api/v1`)
 
@@ -26,29 +73,32 @@ To swap in the real backend, write an `httpApi` that implements `AdvisorApi` and
 | `getTrace` | `GET /runs/{run_id}/trace/{item_id}` |
 | `submitSecondOpinion`, `getSecondOpinion`, `getComparison` | `POST /cases/{id}/second-opinions`, `GET /cases/{id}/comparison` |
 
-`skipToResults` and the `simulate` option are prototype-only and are ignored by the real backend.
+`AdvisorApi` is the **production** contract: it contains nothing that is specific to the mock.
+
+## Prototype-only controls
+
+Picking a fictional sample case, forcing a partial or failed run, and skipping the simulated wait
+are demo features. They are **not** part of `AdvisorApi`. They live in a separate
+`PrototypeControls` object (`frontend/src/lib/prototype.ts`) that is `null` when
+`NEXT_PUBLIC_API_MODE=http`, so these affordances vanish in production without screen changes.
+`CaseSummary.scenario` is likewise optional and prototype-only.
 
 ## Data the UI needs
 
-- **Case**: pseudonymous `code`, optional short `title` ("Knee pain"), age, sex, concern, proposed
-  treatment, status. Names never appear on case screens. New-case input may carry an optional
-  `intent` ("Understanding my treatment"). Both are additive and optional.
+- **Case**: pseudonymous `code`, optional short `title`, age, sex, concern, proposed treatment,
+  status. Names never appear on case screens.
 - **Run**: `status` (`running | complete | partial | failed`) and 14 steps, each
   `pending | running | done | warning | failed | skipped` with an optional plain-language note.
-  A critical failure must come with `failure.title/body`; gaps with `warnings[]`. The UI groups the
-  14 steps into five patient-facing stages (`frontend/src/lib/analysis-groups.ts`); the step list
-  itself must stay stable.
+  The UI groups the 14 steps into five patient-facing stages
+  (`frontend/src/lib/analysis-groups.ts`); the step list itself must stay stable.
 - **Facts** carry provenance: `source = { docId, page, section, snippet }`.
-- **Report**: 19 fixed sections; each non-template item has a stable `id` and `evidenceIds`.
-  `kind` is `patient_fact | interpretation | external_evidence | template`.
 - **Trace**: for any item ID (report sentence, finding, claim, fact, timeline event, question,
   comparison row) a tree from the statement down to the document page and reference source.
 - **Verification**: `supported | partially_supported | unclear | contradicted | insufficient_evidence`,
   plus removed claims (kept visible, with a reason).
-- **Cross-review**: matrix rows with a stance per specialist and a relationship.
-  No scores, no winner.
-- **Questions**: priority 1-3, audience, trigger text, linked item IDs and tracking
-  status (`not_asked | partially_answered | answered`) with an optional note.
+- **Cross-review**: matrix rows with a stance per specialist and a relationship. No scores, no winner.
+- **Questions**: priority 1-3, audience, trigger text, linked item IDs and tracking status
+  (`not_asked | partially_answered | answered`) with an optional note.
 - **Comparison**: rows with both opinions, evidence for each and a relationship
   (`agreement | differs | new_info | changed | unresolved`). Never a verdict.
 
@@ -58,3 +108,9 @@ To swap in the real backend, write an `httpApi` that implements `AdvisorApi` and
 2. Uncertainty, missing information and disagreement are returned, not dropped.
 3. Failed or incomplete agents are reported (`status`, `statusNote`), never silently omitted.
 4. No directive or verdict language in any returned text (see the blueprint's safety lint).
+
+## Tests
+
+`npm test` (Vitest) proves the three synthetic scenarios conform to every contract, that every ID
+resolves, that malformed data is rejected, and that `AdvisorApi` has no mock-only members. See
+`frontend/src/__tests__/contracts/`.

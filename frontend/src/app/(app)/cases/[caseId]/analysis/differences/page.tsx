@@ -9,11 +9,10 @@ import { EvidenceChip } from "@/components/medical/evidence-chip";
 import { FlagMarker, flagSurface } from "@/components/medical/markers";
 import { useCrossReview } from "@/features/case/hooks";
 import type { Flag, MatrixRow } from "@/domain/types";
-import { specialistNames } from "@/mocks/scenarios";
 import { cn } from "@/lib/utils";
 
 /** One topic. The "See what differs" disclosure reveals each view's reasoning. */
-function DifferenceCard({ row, flag }: { row: MatrixRow; flag?: Flag }) {
+function DifferenceCard({ row, flag, nameOf }: { row: MatrixRow; flag?: Flag; nameOf: (id: string) => string }) {
   return (
     <li className={cn("space-y-3 rounded-3xl border p-5", flag ? flagSurface[flag] : "bg-card")}>
       {flag && <FlagMarker flag={flag} />}
@@ -27,7 +26,7 @@ function DifferenceCard({ row, flag }: { row: MatrixRow; flag?: Flag }) {
         <ul className="mt-4 space-y-4">
           {row.perspectives.map((p) => (
             <li key={p.specialist}>
-              <p className="text-sm font-medium">{specialistNames[p.specialist]}</p>
+              <p className="text-sm font-medium">{nameOf(p.specialist)}</p>
               <p className="text-muted-foreground">{p.reasoning}</p>
             </li>
           ))}
@@ -53,6 +52,7 @@ export default function DifferencesPage() {
           const gaps = data.rows.filter((r) => r.relationship === "missing_info");
           const worth = data.rows.filter((r) => r.relationship === "medication_conflict" || r.relationship === "additional_context");
           const agree = data.rows.filter((r) => r.relationship === "agreement");
+          const nameOf = (id: string) => data.specialists.find((s) => s.id === id)?.name ?? id.replace(/_/g, " ");
           return (
             <div className="space-y-12">
               <section aria-label="Where information differs" className="space-y-5">
@@ -64,21 +64,21 @@ export default function DifferencesPage() {
                       : `We found ${differ.length} areas where the available information does not fully agree.`}
                 </p>
                 <ul className="space-y-4">
-                  {differ.map((r) => <DifferenceCard key={r.id} row={r} flag={r.relationship === "disagreement" ? "disagreement" : undefined} />)}
+                  {differ.map((r) => <DifferenceCard key={r.id} row={r} nameOf={nameOf} flag={r.relationship === "disagreement" ? "disagreement" : undefined} />)}
                 </ul>
               </section>
 
               {gaps.length > 0 && (
                 <section aria-label="Things we couldn’t find" className="space-y-4">
                   <h3 className="text-2xl">Things we couldn’t find</h3>
-                  <ul className="space-y-4">{gaps.map((r) => <DifferenceCard key={r.id} row={r} flag="missing" />)}</ul>
+                  <ul className="space-y-4">{gaps.map((r) => <DifferenceCard key={r.id} row={r} nameOf={nameOf} flag="missing" />)}</ul>
                 </section>
               )}
 
               {worth.length > 0 && (
                 <section aria-label="Worth raising with your doctor" className="space-y-4">
                   <h3 className="text-2xl">Worth raising with your doctor</h3>
-                  <ul className="space-y-4">{worth.map((r) => <DifferenceCard key={r.id} row={r} />)}</ul>
+                  <ul className="space-y-4">{worth.map((r) => <DifferenceCard key={r.id} row={r} nameOf={nameOf} />)}</ul>
                 </section>
               )}
 
@@ -87,7 +87,7 @@ export default function DifferencesPage() {
                   <summary className="cursor-pointer list-none text-2xl font-heading text-ink">
                     Where views agree <span className="text-muted-foreground">· {agree.length}</span>
                   </summary>
-                  <ul className="mt-5 space-y-4">{agree.map((r) => <DifferenceCard key={r.id} row={r} />)}</ul>
+                  <ul className="mt-5 space-y-4">{agree.map((r) => <DifferenceCard key={r.id} row={r} nameOf={nameOf} />)}</ul>
                 </details>
               )}
 

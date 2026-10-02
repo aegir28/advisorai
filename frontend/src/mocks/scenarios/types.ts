@@ -1,5 +1,6 @@
 import type {
   CaseSummary,
+  EvidenceRef,
   Claim,
   Comparison,
   DocumentItem,
@@ -8,6 +9,7 @@ import type {
   MatrixRow,
   Question,
   RoutingPlan,
+  ScenarioId,
   SourceRef,
   SpecialistReport,
   Synthesis,
@@ -34,7 +36,7 @@ export interface ReportPlan {
  * Mock scenarios implement this; the backend will return the same shapes.
  */
 export interface ScenarioData {
-  id: CaseSummary["scenario"];
+  id: ScenarioId;
   seedCase: CaseSummary;
   documents: DocumentItem[];
   facts: Fact[];
@@ -65,3 +67,12 @@ export const src = (docId: string, page: number, section: string, snippet: strin
   section,
   snippet,
 });
+
+/** Build `evidence_refs` for a specialist report from the sources it relied on. */
+export function evidenceRefs(sources: ExternalSource[], ...ids: string[]): EvidenceRef[] {
+  return ids.map((id) => {
+    const s = sources.find((x) => x.id === id);
+    if (!s) throw new Error(`Unknown evidence source in fixture: ${id}`);
+    return { sourceId: s.id, title: s.title, section: s.section };
+  });
+}

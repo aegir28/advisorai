@@ -10,7 +10,9 @@ the browser: there is no backend, no AI call and no real authentication.
 ```bash
 npm install
 npm run dev        # http://localhost:3000
+npm run typecheck
 npm run lint
+npm test           # contract tests (Vitest)
 npm run build
 ```
 
@@ -70,10 +72,11 @@ src/
                   PerspectiveCard, ClaimRow, QuestionList, RunProgress, ComparisonView, markers
     report/       SectionRenderer (any section from JSON) and ReportView (the 8 patient groups)
   config/brand.ts the product name, in one place
-  domain/types.ts typed domain models (mirror case.v1, specialist_report.v1, ...)
+  domain/         schemas.ts (Zod, source of truth) and types.ts (inferred types)
   features/       auth (mock Google + consent), case data hooks, trace context, settings
   i18n/           typed message catalogue (English; ready for Hindi/Hinglish)
-  lib/api/        the AdvisorApi interface and the single switch point
+  lib/api/        the production AdvisorApi interface, runtime validation, the single switch point
+  lib/prototype.ts  demo-only controls (sample cases, forced failures); null with a real backend
   lib/analysis-groups.ts  maps the 14 internal steps to 5 patient-facing stages
   mocks/          synthetic scenarios, builders and the in-browser mock API
 ```
@@ -89,6 +92,14 @@ only decides how much of it to show:
 - `RunProgress` shows five stages (via `groupRun`) instead of the internal steps.
 - The traceability drawer shows document, page, original text, related finding and verification
   status first, with the complete trail one click away.
+
+### Contracts and validation
+
+`src/domain/schemas.ts` is the single source of truth: Zod schemas for every contract, with the
+TypeScript types inferred from them. The versioned contracts carry `schema_version`
+(`case.v1`, `specialist_report.v1`, `report.v1`, `trace.v1`, `run.v1`). Every API response is
+validated in `src/lib/api/validate.ts` before it reaches a screen. Contract tests live in
+`src/__tests__/contracts/`.
 
 ### Mock data behind an API-shaped abstraction
 

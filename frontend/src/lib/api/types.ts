@@ -11,9 +11,7 @@ import type {
   PerspectivesData,
   Question,
   QuestionStatus,
-  RunOutcome,
   SafetyCheckResult,
-  ScenarioId,
   SecondOpinionState,
   Synthesis,
   TimelineData,
@@ -26,16 +24,14 @@ export interface SafetyCheckInput {
   currentSymptoms: string[];
 }
 
-export interface StartAnalysisOptions {
-  /**
-   * Prototype-only: lets people experience partial and failed runs.
-   * The real backend decides the outcome itself and ignores this.
-   */
-  simulate?: RunOutcome;
-}
-
 /**
- * The only surface the UI uses to talk to "the backend".
+ * The only surface the UI uses to talk to "the backend". This is the PRODUCTION
+ * contract: it contains nothing that is specific to the mock. Demo-only controls
+ * live in `src/lib/prototype.ts`.
+ *
+ * Every response is validated against the Zod schemas in `src/domain/schemas.ts`
+ * by `src/lib/api/validate.ts` before it reaches the UI.
+ *
  * The mock implementation lives in src/mocks. The FastAPI client will
  * implement this exact interface (see docs/frontend-data-contract.md).
  *
@@ -61,12 +57,10 @@ export interface AdvisorApi {
 
   getDocuments(caseId: string): Promise<DocumentItem[]>;
   uploadDocument(caseId: string, file: { name: string; sizeKb: number }): Promise<DocumentItem>;
-  attachSampleRecords(caseId: string, scenario: ScenarioId): Promise<CaseSummary>;
   removeDocument(caseId: string, docId: string): Promise<void>;
 
-  startAnalysis(caseId: string, options?: StartAnalysisOptions): Promise<{ runId: string }>;
+  startAnalysis(caseId: string): Promise<{ runId: string }>;
   getRun(runId: string): Promise<AnalysisRun | null>;
-  skipToResults(runId: string): Promise<void>;
 
   getTimeline(caseId: string): Promise<TimelineData | null>;
   getPerspectives(caseId: string): Promise<PerspectivesData | null>;

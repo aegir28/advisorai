@@ -11,7 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import type { RunOutcome, ScenarioId } from "@/domain/types";
 import { useCase, useDocuments } from "@/features/case/hooks";
 import { api } from "@/lib/api";
-import { scenarioBlurbs, scenarioList } from "@/mocks/scenarios";
+import { prototype } from "@/lib/prototype";
 
 export default function UploadPage() {
   const { caseId } = useParams<{ caseId: string }>();
@@ -28,7 +28,8 @@ export default function UploadPage() {
   if (!c.data) return null;
 
   const done = c.data.status === "complete" || c.data.status === "partial";
-  const selected = scenario ?? c.data.scenario;
+  const samples = prototype?.listSampleCases() ?? [];
+  const selected = scenario ?? c.data.scenario ?? samples[0]?.id;
   const documents = docs.data ?? [];
 
   if (done) {
@@ -50,8 +51,10 @@ export default function UploadPage() {
 
   const start = async () => {
     setBusy(true);
-    await api.attachSampleRecords(caseId, selected).catch(() => undefined);
-    await api.startAnalysis(caseId, simulate === "auto" ? undefined : { simulate });
+    // Prototype only: use the chosen sample case's synthetic documents, and decide how the demo run ends.
+    if (prototype && selected) await prototype.attachSampleRecords(caseId, selected).catch(() => undefined);
+    prototype?.setNextRunOutcome(caseId, simulate === "auto" ? undefined : simulate);
+    await api.startAnalysis(caseId);
     router.push(`/cases/${caseId}/analysis`);
   };
 
@@ -73,6 +76,7 @@ export default function UploadPage() {
         </section>
       )}
 
+      {prototype && (
       <details className="no-print rounded-2xl border border-dashed p-4 text-sm" open={documents.length === 0}>
         <summary className="flex cursor-pointer items-center gap-2 font-medium">
           <FlaskConical aria-hidden className="size-4" /> No reports handy? Try a sample case (prototype)
@@ -83,17 +87,17 @@ export default function UploadPage() {
             use it.
           </p>
           <RadioGroup value={selected} onValueChange={(v) => setScenario(v as ScenarioId)} className="grid gap-2" aria-label="Sample case">
-            {scenarioList.map((s) => (
+            {samples.map((s) => (
               <label key={s.id} className="flex cursor-pointer items-start gap-3 rounded-xl border bg-card p-3.5 has-data-checked:border-primary has-data-checked:bg-accent/40">
                 <RadioGroupItem value={s.id} className="mt-1" />
                 <span>
-                  <span className="block font-medium">{scenarioBlurbs[s.id].title}</span>
-                  <span className="block text-muted-foreground">{scenarioBlurbs[s.id].blurb}</span>
+                  <span className="block font-medium">{s.title}</span>
+                  <span className="block text-muted-foreground">{s.blurb}</span>
                 </span>
               </label>
             ))}
           </RadioGroup>
-          <Button variant="outline" disabled={busy} onClick={async () => { setBusy(true); await api.attachSampleRecords(caseId, selected); setBusy(false); }}>
+          <Button variant="outline" disabled={busy} onClick={async () => { if (!selected) return; setBusy(true); await prototype?.attachSampleRecords(caseId, selected); setBusy(false); }}>
             Add these sample reports
           </Button>
 
@@ -107,6 +111,7 @@ export default function UploadPage() {
           </div>
         </div>
       </details>
+      )}
 
       <div className="space-y-3">
         <Button size="lg" className="h-14 w-full rounded-2xl text-base sm:w-auto sm:px-8" onClick={start} disabled={busy || documents.length === 0}>

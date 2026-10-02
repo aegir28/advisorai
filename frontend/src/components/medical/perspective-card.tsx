@@ -93,11 +93,11 @@ export function PerspectiveCard({ report, defaultOpen }: { report: SpecialistRep
           </section>
         )}
 
-        {report.missing.length > 0 && (
+        {report.missing_info.length > 0 && (
           <section className="space-y-3">
             <h4 className="font-medium">What this view couldn’t find</h4>
             <ul className="space-y-3">
-              {report.missing.map((m) => (
+              {report.missing_info.map((m) => (
                 <li key={m.id} className={cn("space-y-2 rounded-2xl border p-4", flagSurface.missing)}>
                   <FlagMarker flag="missing" />
                   <p className="font-medium">{m.item}</p>
