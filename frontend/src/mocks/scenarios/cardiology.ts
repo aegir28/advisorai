@@ -1,5 +1,5 @@
 import type { ExternalSource } from "@/domain/types";
-import { src, type ScenarioData } from "./types";
+import { evidenceRefs, src, type ScenarioData } from "./types";
 
 /**
  * Synthetic demo case. "Rahul Sharma, 52" is entirely fictional.
@@ -130,6 +130,9 @@ export const cardiology: ScenarioData = {
   },
   specialists: [
     {
+      schema_version: "specialist_report.v1", run_id: "r_77", case_id: "c_9f2",
+      questions: [{ id: "gq1", text: "Has a heart ultrasound (echocardiogram) been done, and could its result change the timing?", priority: 1, linkedTo: ["gmi1", "gm2"] }, { id: "gq2", text: "How will my blood sugar control affect the procedure and recovery?", priority: 3, linkedTo: ["gm1"] }],
+      evidence_refs: evidenceRefs(cardiologySources, "src_diab_2"),
       id: "sr_gm", specialist: "general_medicine", name: "General Medicine", version: "1.0", tier: 2, priority: "mandatory",
       routingReason: "Broad view of the whole case.", status: "complete",
       confidence: { overall: "moderate", reason: "Broad summary; some key tests are not in the records." },
@@ -141,13 +144,17 @@ export const cardiology: ScenarioData = {
       uncertainties: [
         { id: "gu1", text: "How the person's symptoms have changed since May is not documented.", impact: "high", resolvableBy: "A recent symptom review with the treating doctor" },
       ],
-      missing: [
+      missing_info: [
         { id: "gmi1", item: "Echocardiogram (heart ultrasound)", whyItMatters: "Shows how well the heart is pumping, which can shape timing decisions." },
         { id: "gmi2", item: "Recent kidney function test", whyItMatters: "Relevant to medicine choices around procedures." },
       ],
       contradictions: [], considerations: [], limitations: ["Only written reports were available, not the original images."],
     },
     {
+      schema_version: "specialist_report.v1", run_id: "r_77", case_id: "c_9f2",
+      questions: [{ id: "cq1", text: "What specific findings support the need for angioplasty now?", priority: 1, linkedTo: ["cf3", "cf4"] }, { id: "cq2", text: "Are there reasonable alternatives, such as adjusting medicines first?", priority: 2, linkedTo: ["cc1", "cf5"] }],
+      evidence_refs: evidenceRefs(cardiologySources, "src_cardio_12", "src_cardio_14"),
+      extensions: { cardiology: { risk_scores_mentioned: [] } },
       id: "sr_cardio", specialist: "cardiology", name: "Cardiology", version: "1.2", tier: 2, priority: "mandatory",
       routingReason: "Troponin, ECG and angiography findings.", status: "complete",
       confidence: { overall: "moderate", reason: "No echocardiogram report is available." },
@@ -161,7 +168,7 @@ export const cardiology: ScenarioData = {
       uncertainties: [
         { id: "cu1", text: "Whether treatment should happen within weeks or be planned later is not settled by the documents.", impact: "high", resolvableBy: "Discussion with the treating cardiologist, plus an echocardiogram" },
       ],
-      missing: [
+      missing_info: [
         { id: "cmi1", item: "Echocardiogram / LVEF", whyItMatters: "Heart pumping strength may influence timing and approach." },
         { id: "cmi2", item: "Stress test or functional assessment", whyItMatters: "Can help show how much the narrowing limits blood flow." },
       ],
@@ -172,6 +179,9 @@ export const cardiology: ScenarioData = {
       limitations: ["Angiography images were not available, only the written report."],
     },
     {
+      schema_version: "specialist_report.v1", run_id: "r_77", case_id: "c_9f2",
+      questions: [{ id: "iq1", text: "What symptoms would make this urgent rather than planned?", priority: 1, linkedTo: ["ic2", "iu1"] }],
+      evidence_refs: evidenceRefs(cardiologySources, "src_cardio_14"),
       id: "sr_ic", specialist: "interventional_cardiology", name: "Interventional Cardiology", version: "1.0", tier: 2, priority: "mandatory",
       routingReason: "A procedure (PCI) is proposed.", status: "complete",
       confidence: { overall: "moderate", reason: "Timing depends on information not in the records." },
@@ -182,10 +192,13 @@ export const cardiology: ScenarioData = {
       uncertainties: [
         { id: "iu1", text: "Whether symptoms have been stable since the admission is not documented.", impact: "high" },
       ],
-      missing: [{ id: "imi1", item: "Echocardiogram / LVEF", whyItMatters: "Part of planning a procedure." }],
+      missing_info: [{ id: "imi1", item: "Echocardiogram / LVEF", whyItMatters: "Part of planning a procedure." }],
       contradictions: [], considerations: [], limitations: [],
     },
     {
+      schema_version: "specialist_report.v1", run_id: "r_77", case_id: "c_9f2",
+      questions: [{ id: "mq1", text: "Is taking antiplatelet medicines together with diclofenac safe for me around the procedure?", priority: 2, linkedTo: ["ms2"] }],
+      evidence_refs: evidenceRefs(cardiologySources, "src_drug_3"),
       id: "sr_ms", specialist: "medication_safety", name: "Medication Safety", version: "1.0", tier: 2, priority: "mandatory",
       routingReason: "A medicine list is present.", status: "complete",
       confidence: { overall: "high", reason: "The medicine list is clear and legible." },
@@ -194,7 +207,7 @@ export const cardiology: ScenarioData = {
         { id: "ms2", statement: "Diclofenac (an NSAID painkiller) is listed alongside antiplatelet medicines. This combination is associated with a higher chance of bleeding and is worth reviewing with the prescriber.", kind: "external_evidence", importance: "high", factRefs: ["f_m6", "f_m1", "f_m2"], sourceIds: ["src_drug_3"] },
       ],
       uncertainties: [],
-      missing: [{ id: "msmi1", item: "Recent kidney function result", whyItMatters: "Relevant to medicine choices around contrast and procedures." }],
+      missing_info: [{ id: "msmi1", item: "Recent kidney function result", whyItMatters: "Relevant to medicine choices around contrast and procedures." }],
       contradictions: [], considerations: [], limitations: [],
     },
   ],

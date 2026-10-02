@@ -1,4 +1,5 @@
 import type {
+  CaseV1,
   Claim,
   CrossReviewData,
   EvidenceData,
@@ -12,6 +13,7 @@ import type {
   Trace,
   TraceNode,
 } from "@/domain/types";
+import { SCHEMA_VERSIONS } from "@/domain/schemas";
 import { t } from "@/i18n";
 import { specialistNames } from "./scenarios";
 import type { ScenarioData } from "./scenarios/types";
@@ -30,7 +32,7 @@ function formatFactText(f: Fact): string {
 
 export function buildTrace(sc: ScenarioData, itemId: string): Trace | null {
   const node = resolve(sc, itemId, 0, new Set());
-  return node ? { itemId, root: node } : null;
+  return node ? { schema_version: SCHEMA_VERSIONS.trace, itemId, root: node } : null;
 }
 
 function resolve(sc: ScenarioData, id: string, depth: number, seen: Set<string>): TraceNode | null {
@@ -76,7 +78,7 @@ function resolve(sc: ScenarioData, id: string, depth: number, seen: Set<string>)
     }
     const unc = r.uncertainties.find((u) => u.id === id);
     if (unc) return { id, level: "specialist", text: unc.text, kind: "interpretation", flag: "uncertain", label: `${r.name} perspective`, children: [] };
-    const miss = r.missing.find((m) => m.id === id);
+    const miss = r.missing_info.find((m) => m.id === id);
     if (miss) return { id, level: "specialist", text: `${miss.item}. ${miss.whyItMatters}`, kind: "interpretation", flag: "missing", label: `${r.name} perspective`, children: [] };
     const con = r.contradictions.find((c) => c.id === id);
     if (con) return { id, level: "specialist", text: con.description, kind: "interpretation", flag: "disagreement", label: `${r.name} perspective`, children: kids(con.between) };
@@ -176,7 +178,7 @@ export function buildReport(sc: ScenarioData, caseId: string, runId: string, gen
     { number: 19, type: "disclaimer", items: [template("disclaimer.long")] },
   ];
 
-  return { id: `rep_${runId}`, caseId, runId, generatedAt, sections };
+  return { schema_version: SCHEMA_VERSIONS.report, id: `rep_${runId}`, caseId, runId, generatedAt, sections };
 }
 
 function qToItem(q: ScenarioData["questions"][number]): ReportItem {
@@ -185,8 +187,13 @@ function qToItem(q: ScenarioData["questions"][number]): ReportItem {
 
 // ── Aggregates ───────────────────────────────────────────
 
-export function buildPerspectives(sc: ScenarioData): PerspectivesData {
-  return { routing: sc.routing, reports: sc.specialists };
+/**
+ * Specialist reports carry the real case and run they belong to. Fixtures are
+ * authored against the seeded case, so they are re-stamped for any other case
+ * that reuses the same synthetic scenario.
+ */
+export function buildPerspectives(sc: ScenarioData, caseId: string, runId: string): PerspectivesData {
+  return { routing: sc.routing, reports: sc.specialists.map((r) => ({ ...r, case_id: caseId, run_id: runId })) };
 }
 
 export function buildEvidence(sc: ScenarioData): EvidenceData {
@@ -208,4 +215,53 @@ export function buildCrossReview(sc: ScenarioData): CrossReviewData {
   sc.matrix.forEach((r) => Object.keys(r.cells).forEach((k) => ids.add(k as SpecialistId)));
   const ordered = sc.specialists.map((s) => s.specialist).filter((s) => ids.has(s));
   return { specialists: ordered.map((id) => ({ id, name: specialistNames[id] })), rows: sc.matrix };
+}
+
+// ── case.v1 ──────────────────────────────────────────────
+
+/**
+ * Derive the canonical structured case from the extracted facts. The backend
+ * will produce this from document intelligence. It never contains names or any
+ * identity field, only a pseudonymous case ID, age and sex.
+ */
+export function buildCaseV1(sc: ScenarioData, caseId: string): CaseV1 {
+  const c = sc.seedCase;
+  const byType = (type: Fact["type"]) => sc.facts.filter((f) => f.type === type);
+  const item = (f: Fact) => ({ text: f.value ? `${f.label}: ${f.value}` : f.label, fact_ref: f.id });
+  const test = (f: Fact) => ({ name: f.label, value: f.value, flag: f.flag, date: f.date, fact_ref: f.id });
+
+  const missing = new Map<string, string>();
+  for (const r of sc.specialists) for (const m of r.missing_info) if (!missing.has(m.item)) missing.set(m.item, m.whyItMatters);
+
+  return {
+    schema_version: SCHEMA_VERSIONS.case,
+    case_id: caseId,
+    demographics: { age: c.ageYears, sex: c.sex },
+    chief_concern: c.concern,
+    symptoms: byType("symptom").map((f) => ({ text: f.value ? `${f.label}: ${f.value}` : f.label, onset: f.date, fact_ref: f.id })),
+    diagnoses: byType("diagnosis").map((f) => ({
+      name: f.label,
+      status: /suspected/i.test(`${f.label} ${f.value ?? ""}`) ? ("suspected" as const) : ("documented" as const),
+      fact_ref: f.id,
+    })),
+    history: [],
+    allergies: [],
+    medications: byType("medication").map((f) => ({ name: f.label, dose: f.value, start: f.date, fact_ref: f.id })),
+    investigations: {
+      labs: byType("lab_result").map(test),
+      imaging: [...byType("imaging"), ...byType("procedure_finding")].map(test),
+      ecg: byType("ecg").map(test),
+      pathology: [],
+    },
+    procedures: [],
+    surgeries: [],
+    treatment_history: byType("treatment_history").map(item),
+    recommendations: byType("recommendation").map((f) => ({ by: "treating clinician", text: f.value ? `${f.label}: ${f.value}` : f.label, fact_ref: f.id })),
+    proposed: { treatment: [], procedure: c.proposedTreatment ? [c.proposedTreatment] : [] },
+    timeline_ref: `tl_${caseId}`,
+    unresolved_questions: sc.synthesis.items.filter((i) => i.group === "uncertainty").map((i) => i.text),
+    missing_information: [...missing].map(([it, why]) => ({ item: it, why_matters: why })),
+    evidence_refs: sc.facts.map((f) => f.id),
+    extensions: {},
+  };
 }

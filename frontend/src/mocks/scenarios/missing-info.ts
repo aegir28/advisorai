@@ -1,5 +1,5 @@
 import type { ExternalSource } from "@/domain/types";
-import { src, type ScenarioData } from "./types";
+import { evidenceRefs, src, type ScenarioData } from "./types";
 
 /**
  * "Hard case" 1 — missing information.
@@ -95,6 +95,9 @@ export const missingInfo: ScenarioData = {
   },
   specialists: [
     {
+      schema_version: "specialist_report.v1", run_id: "r_78", case_id: "c_k21",
+      questions: [{ id: "gqk1", text: "How much non-surgical treatment has been tried, and is a longer physiotherapy trial reasonable?", priority: 1, linkedTo: ["gku1", "gk1"] }],
+      evidence_refs: evidenceRefs(missingInfoSources),
       id: "sr_gm", specialist: "general_medicine", name: "General Medicine", version: "1.0", tier: 2, priority: "mandatory",
       routingReason: "Broad view of the whole case.", status: "complete",
       confidence: { overall: "low", reason: "Key documents are missing or hard to read." },
@@ -103,10 +106,13 @@ export const missingInfo: ScenarioData = {
         { id: "gk2", statement: "Ibuprofen 400 mg three times a day for about three months is listed.", kind: "patient_fact", importance: "medium", factRefs: ["f_km1"] },
       ],
       uncertainties: [{ id: "gku1", text: "How much non-surgical care has been tried is not clear from the records.", impact: "high", resolvableBy: "Treating doctor or physiotherapist notes" }],
-      missing: [{ id: "gkm1", item: "Details of non-surgical treatment so far", whyItMatters: "Surgery is usually discussed after a period of non-surgical care." }],
+      missing_info: [{ id: "gkm1", item: "Details of non-surgical treatment so far", whyItMatters: "Surgery is usually discussed after a period of non-surgical care." }],
       contradictions: [], considerations: [], limitations: ["Two documents could not be read fully."],
     },
     {
+      schema_version: "specialist_report.v1", run_id: "r_78", case_id: "c_k21",
+      questions: [{ id: "oq1", text: "Can I have the written MRI report, and does it confirm a meniscus tear?", priority: 1, linkedTo: ["okm1", "ok2"] }, { id: "oq2", text: "Is my pain more likely to come from a tear or from wear in the joint?", priority: 2, linkedTo: ["oku2"] }],
+      evidence_refs: evidenceRefs(missingInfoSources, "src_ortho_5", "src_ortho_6"),
       id: "sr_ortho", specialist: "orthopedics", name: "Orthopedics", version: "1.1", tier: 2, priority: "mandatory",
       routingReason: "Knee imaging and a surgical suggestion are documented.", status: "complete",
       confidence: { overall: "low", reason: "The MRI report is not available and one X-ray value is uncertain." },
@@ -119,19 +125,22 @@ export const missingInfo: ScenarioData = {
         { id: "oku1", text: "An X-ray measurement could not be read reliably, so the degree of joint narrowing is uncertain.", impact: "medium" },
         { id: "oku2", text: "Whether the pain comes mainly from a tear or from wear-related changes is not clear from the records.", impact: "high" },
       ],
-      missing: [
+      missing_info: [
         { id: "okm1", item: "Written MRI report", whyItMatters: "Commonly used to confirm a suspected tear before surgery." },
         { id: "okm2", item: "Weight-bearing X-ray views", whyItMatters: "Help judge joint wear more reliably." },
       ],
       contradictions: [], considerations: [], limitations: ["Only the written reports were reviewed, not the images."],
     },
     {
+      schema_version: "specialist_report.v1", run_id: "r_78", case_id: "c_k21",
+      questions: [],
+      evidence_refs: evidenceRefs(missingInfoSources),
       id: "sr_ms", specialist: "medication_safety", name: "Medication Safety", version: "1.0", tier: 2, priority: "mandatory",
       routingReason: "A medicine list is present.", status: "incomplete",
       statusNote: "This perspective could not be completed. The report continues without it and says so.",
       confidence: { overall: "low", reason: "The review did not finish." },
       findings: [],
-      uncertainties: [], missing: [], contradictions: [], considerations: [],
+      uncertainties: [], missing_info: [], contradictions: [], considerations: [],
       limitations: ["Incomplete: the structured response did not pass validation after one repair attempt."],
     },
   ],

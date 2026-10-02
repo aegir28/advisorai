@@ -1,5 +1,5 @@
 import type { ExternalSource } from "@/domain/types";
-import { src, type ScenarioData } from "./types";
+import { evidenceRefs, src, type ScenarioData } from "./types";
 
 /**
  * "Hard case" 2 — conflicting reports.
@@ -104,6 +104,9 @@ export const conflicting: ScenarioData = {
   },
   specialists: [
     {
+      schema_version: "specialist_report.v1", run_id: "r_80", case_id: "c_m77",
+      questions: [{ id: "gqa1", text: "Can the radiologist clarify which description of the MRI is accurate?", priority: 1, linkedTo: ["gam1", "gac1"] }],
+      evidence_refs: evidenceRefs(conflictingSources),
       id: "sr_gm", specialist: "general_medicine", name: "General Medicine", version: "1.0", tier: 2, priority: "mandatory",
       routingReason: "Broad view of the whole case.", status: "complete",
       confidence: { overall: "low", reason: "The key investigation is described in two conflicting ways." },
@@ -112,11 +115,14 @@ export const conflicting: ScenarioData = {
         { id: "ga2", statement: "The difference between the two documents may be a wording or copying difference in one of them, but this cannot be told from the documents alone.", kind: "interpretation", importance: "high", factRefs: ["f_a2", "f_a3"] },
       ],
       uncertainties: [{ id: "gau1", text: "Which document correctly describes the scan is unknown.", impact: "high", resolvableBy: "Clarification from the reporting radiologist" }],
-      missing: [{ id: "gam1", item: "Radiologist clarification of the MRI", whyItMatters: "It is the only way to settle which description is accurate." }],
+      missing_info: [{ id: "gam1", item: "Radiologist clarification of the MRI", whyItMatters: "It is the only way to settle which description is accurate." }],
       contradictions: [{ id: "gac1", description: "The MRI report and the discharge summary describe the same scan differently.", between: ["f_a2", "f_a3"] }],
       considerations: [], limitations: [],
     },
     {
+      schema_version: "specialist_report.v1", run_id: "r_80", case_id: "c_m77",
+      questions: [{ id: "nq1", text: "Can a formal re-read of the MRI be arranged?", priority: 1, linkedTo: ["nam1", "nac1"] }, { id: "nq2", text: "Is the 3-month follow-up MRI still needed if the original report is confirmed?", priority: 2, linkedTo: ["nc1"] }],
+      evidence_refs: evidenceRefs(conflictingSources, "src_neuro_7", "src_neuro_9"),
       id: "sr_neuro", specialist: "neurology", name: "Neurology", version: "1.0", tier: 2, priority: "mandatory",
       routingReason: "Recurrent headaches and an MRI discrepancy.", status: "complete",
       confidence: { overall: "low", reason: "The imaging picture is unresolved." },
@@ -127,12 +133,15 @@ export const conflicting: ScenarioData = {
         { id: "na4", statement: "Headaches preceded by short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered.", kind: "external_evidence", importance: "medium", factRefs: ["f_a1"], sourceIds: ["src_neuro_9"] },
       ],
       uncertainties: [{ id: "nau1", text: "Until the discrepancy is resolved, it is not possible to say whether the scan shows anything that needs follow-up.", impact: "high" }],
-      missing: [{ id: "nam1", item: "Radiologist clarification of the MRI", whyItMatters: "Settles which description is accurate." }],
+      missing_info: [{ id: "nam1", item: "Radiologist clarification of the MRI", whyItMatters: "Settles which description is accurate." }],
       contradictions: [{ id: "nac1", description: "MRI report vs discharge summary.", between: ["f_a2", "f_a3"] }],
       considerations: [{ id: "nc1", statement: "The planned follow-up MRI in 3 months is consistent with the discharge summary's description. Whether it is still needed depends on the clarification.", kind: "interpretation", importance: "medium", factRefs: ["f_a4"] }],
       limitations: ["The MRI images were not available, only the reports."],
     },
     {
+      schema_version: "specialist_report.v1", run_id: "r_80", case_id: "c_m77",
+      questions: [{ id: "mqa1", text: "Could my frequent ibuprofen use be affecting my headaches?", priority: 2, linkedTo: ["ma2"] }],
+      evidence_refs: evidenceRefs(conflictingSources, "src_drug_8"),
       id: "sr_ms", specialist: "medication_safety", name: "Medication Safety", version: "1.0", tier: 2, priority: "mandatory",
       routingReason: "A medicine list is present.", status: "complete",
       confidence: { overall: "moderate", reason: "Use frequency is approximate." },
@@ -140,7 +149,7 @@ export const conflicting: ScenarioData = {
         { id: "ma1", statement: "Ibuprofen is used on about 15 days a month, alongside sumatriptan when needed.", kind: "patient_fact", importance: "medium", factRefs: ["f_am1", "f_am2"] },
         { id: "ma2", statement: "Using painkillers on many days each month is associated with more frequent headaches in some people. This is worth reviewing with the prescriber.", kind: "external_evidence", importance: "medium", factRefs: ["f_am2"], sourceIds: ["src_drug_8"] },
       ],
-      uncertainties: [], missing: [], contradictions: [], considerations: [], limitations: [],
+      uncertainties: [], missing_info: [], contradictions: [], considerations: [], limitations: [],
     },
   ],
   matrix: [

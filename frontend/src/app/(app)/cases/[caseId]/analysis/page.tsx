@@ -10,6 +10,7 @@ import { RunProgress } from "@/components/medical/run-progress";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useCase, useCrossReview, useRun } from "@/features/case/hooks";
 import { api } from "@/lib/api";
+import { prototype } from "@/lib/prototype";
 import { invalidateQueries } from "@/lib/use-query";
 import { cn } from "@/lib/utils";
 
@@ -55,7 +56,8 @@ export default function AnalysisPage() {
 
   const retry = async () => {
     setBusy(true);
-    await api.startAnalysis(caseId, { simulate: "complete" });
+    prototype?.setNextRunOutcome(caseId, "complete");
+    await api.startAnalysis(caseId);
     setBusy(false);
   };
 
@@ -65,7 +67,7 @@ export default function AnalysisPage() {
       <>
         <PageIntro
           title={r.status === "failed" ? "We had to stop" : "Reviewing your case"}
-          action={r.status === "running" ? <Button variant="ghost" size="sm" onClick={() => void api.skipToResults(r.id)}>Skip ahead (prototype)</Button> : undefined}
+          action={r.status === "running" && prototype ? <Button variant="ghost" size="sm" onClick={() => void prototype?.skipToResults(r.id)}>Skip ahead (prototype)</Button> : undefined}
         >
           {r.status === "failed"
             ? "Here is where things stopped, and what would help."
@@ -84,7 +86,7 @@ export default function AnalysisPage() {
         )}
 
         <RunProgress run={r} />
-        {r.status === "running" && <p className="mt-10 text-sm text-muted-foreground">Prototype: this takes about 20 seconds instead of a few minutes.</p>}
+        {r.status === "running" && prototype && <p className="mt-10 text-sm text-muted-foreground">Prototype: this takes about 20 seconds instead of a few minutes.</p>}
       </>
     );
   }
