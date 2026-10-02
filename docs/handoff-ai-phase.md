@@ -48,7 +48,7 @@ Do not skip 1: the gateway is the only door to a provider, and de-identification
 
 - **Not verified against the real stack in the build environment:** `supabase start` / `db reset` / `db lint` /
   `test db` and the two Storage API integration tests (images could not be pulled). Everything else was run on
-  native PostgreSQL 16 with stubbed `auth`/`storage` (`supabase/tests/native/`). **Check the `supabase` CI job result
+  native PostgreSQL 16 with stubbed `auth`/`storage` (`supabase/native/`). **Check the `supabase` CI job result
   first.** The browser's multipart `PUT` to a real signed upload URL and a live Google round-trip are also unverified.
 - Docker image not built (registry rate limit); the start command was run natively.
 - Per-user **rate limiting** is not implemented. Add before any public exposure.
@@ -67,7 +67,7 @@ Do not skip 1: the gateway is the only door to a provider, and de-identification
 supabase start -x studio,imgproxy && supabase db reset && supabase test db
 cd backend && uv sync --locked --extra dev && uv run --no-sync pytest
 # without Docker: the labelled substitute
-supabase/tests/native/run.sh up && supabase/tests/native/run.sh pgtap
+supabase/native/run.sh up && supabase/native/run.sh pgtap
 # frontend
 cd frontend && npm ci && npm run typecheck && npm run lint && npm test && npm run build
 # repo guards + benchmark data
