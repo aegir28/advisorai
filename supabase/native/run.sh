@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Native PostgreSQL substitute harness (see stub_supabase.sql for what it is and is not).
-#   supabase/tests/native/run.sh up      create + start a throw-away cluster, apply stubs, migrations, seed
-#   supabase/tests/native/run.sh pgtap   run the pgTAP tests in supabase/tests/database
-#   supabase/tests/native/run.sh reset   drop and rebuild the database (clean migrations + seed)
-#   supabase/tests/native/run.sh down    stop and delete the cluster
+#   supabase/native/run.sh up      create + start a throw-away cluster, apply stubs, migrations, seed
+#   supabase/native/run.sh pgtap   run the pgTAP tests in supabase/tests/database
+#   supabase/native/run.sh reset   drop and rebuild the database (clean migrations + seed)
+#   supabase/native/run.sh down    stop and delete the cluster
 # Prints the ADVISORAI_TEST_ADMIN_DATABASE_URL to use for the backend integration tests.
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
-root="$(cd "$here/../../.." && pwd)"
+root="$(cd "$here/../.." && pwd)"
 VER="${PGVER:-16}"; CLUSTER="advisorai"; PORT="${PGPORT_NATIVE:-54322}"
 psqlq() { su postgres -c "psql -v ON_ERROR_STOP=1 -q -p $PORT -d ${2:-postgres} $1"; }
 
