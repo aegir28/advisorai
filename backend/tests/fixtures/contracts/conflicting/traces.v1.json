@@ -1,0 +1,3372 @@
+[
+  {
+    "schema_version": "trace.v1",
+    "item_id": "f_am1",
+    "root": {
+      "id": "f_am1",
+      "level": "fact",
+      "text": "Sumatriptan: 50 mg, when needed",
+      "kind": "patient_fact",
+      "label": "Fact from your records",
+      "source": {
+        "doc_id": "d_rx3",
+        "page": 1,
+        "section": "Medicines",
+        "snippet": "Tab. Sumatriptan 50 mg SOS"
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "f_am2",
+    "root": {
+      "id": "f_am2",
+      "level": "fact",
+      "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+      "kind": "patient_fact",
+      "label": "Fact from your records",
+      "source": {
+        "doc_id": "d_rx3",
+        "page": 1,
+        "section": "Medicines",
+        "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "ga1",
+    "root": {
+      "id": "ga1",
+      "level": "specialist",
+      "text": "Routine blood tests are within the reference ranges.",
+      "kind": "patient_fact",
+      "label": "General Medicine perspective",
+      "children": [
+        {
+          "id": "f_a5",
+          "level": "fact",
+          "text": "Routine blood tests: Within the reference ranges",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_lab4",
+            "page": 1,
+            "section": "Summary",
+            "snippet": "All parameters within reference range."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "ga2",
+    "root": {
+      "id": "ga2",
+      "level": "specialist",
+      "text": "The difference between the two documents may be a wording or copying difference in one of them, but this cannot be told from the documents alone.",
+      "kind": "interpretation",
+      "label": "General Medicine perspective",
+      "children": [
+        {
+          "id": "f_a2",
+          "level": "fact",
+          "text": "MRI report impression: No intracranial abnormality",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_mri",
+            "page": 2,
+            "section": "Impression",
+            "snippet": "No intracranial abnormality identified."
+          },
+          "children": []
+        },
+        {
+          "id": "f_a3",
+          "level": "fact",
+          "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_dis",
+            "page": 1,
+            "section": "Investigations",
+            "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "gap1",
+    "root": {
+      "id": "gap1",
+      "level": "timeline",
+      "text": "No note from the reporting radiologist explaining the difference between the two documents.",
+      "kind": "interpretation",
+      "flag": "missing",
+      "label": "Timeline check",
+      "children": [
+        {
+          "id": "tl4",
+          "level": "timeline",
+          "text": "Discharge summary describes a small lesion. Follow-up MRI in 3 months advised.",
+          "kind": "patient_fact",
+          "flag": "disagreement",
+          "label": "Timeline event",
+          "children": [
+            {
+              "id": "f_a3",
+              "level": "fact",
+              "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_dis",
+                "page": 1,
+                "section": "Investigations",
+                "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "ma1",
+    "root": {
+      "id": "ma1",
+      "level": "specialist",
+      "text": "Ibuprofen is used on about 15 days a month, alongside sumatriptan when needed.",
+      "kind": "patient_fact",
+      "label": "Medication Safety perspective",
+      "children": [
+        {
+          "id": "f_am1",
+          "level": "fact",
+          "text": "Sumatriptan: 50 mg, when needed",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx3",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Sumatriptan 50 mg SOS"
+          },
+          "children": []
+        },
+        {
+          "id": "f_am2",
+          "level": "fact",
+          "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx3",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "ma2",
+    "root": {
+      "id": "ma2",
+      "level": "specialist",
+      "text": "Using painkillers on many days each month is associated with more frequent headaches in some people. This is worth reviewing with the prescriber.",
+      "kind": "external_evidence",
+      "label": "Medication Safety perspective",
+      "children": [
+        {
+          "id": "f_am2",
+          "level": "fact",
+          "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx3",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+          },
+          "children": []
+        },
+        {
+          "id": "src_drug_8",
+          "level": "evidence_source",
+          "text": "Sample summary: frequent painkiller use and headaches",
+          "kind": "external_evidence",
+          "label": "Reference evidence",
+          "external_source": {
+            "id": "src_drug_8",
+            "title": "Sample summary: frequent painkiller use and headaches",
+            "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+            "year": 2023,
+            "licence": "Prototype placeholder, not a real drug label",
+            "section": "§2 Frequency",
+            "snippet": "Using painkillers on many days each month is associated with more frequent headaches in some people. A prescriber usually reviews this."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "na1",
+    "root": {
+      "id": "na1",
+      "level": "specialist",
+      "text": "The MRI report impression states no intracranial abnormality.",
+      "kind": "patient_fact",
+      "label": "Neurology perspective",
+      "children": [
+        {
+          "id": "f_a2",
+          "level": "fact",
+          "text": "MRI report impression: No intracranial abnormality",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_mri",
+            "page": 2,
+            "section": "Impression",
+            "snippet": "No intracranial abnormality identified."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "na2",
+    "root": {
+      "id": "na2",
+      "level": "specialist",
+      "text": "The discharge summary describes a small lesion in the right frontal lobe on the same scan.",
+      "kind": "patient_fact",
+      "label": "Neurology perspective",
+      "children": [
+        {
+          "id": "f_a3",
+          "level": "fact",
+          "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_dis",
+            "page": 1,
+            "section": "Investigations",
+            "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q1",
+    "root": {
+      "id": "q1",
+      "level": "question",
+      "text": "My MRI report says no abnormality, but my discharge summary describes a small lesion. Can you ask the radiologist to clarify which is correct?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_8",
+          "level": "synthesis",
+          "text": "Your two documents disagree about the same scan, and the specialist perspectives differ on how to read that. One view is that it may be a wording difference in one document. Another is that it should not be assumed either way. We keep both and do not pick one.",
+          "kind": "interpretation",
+          "flag": "disagreement",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mxa1",
+              "level": "matrix",
+              "text": "The MRI shows a lesion. The records themselves disagree. General Medicine leans toward a documentation difference; Neurology wants the radiologist to clarify. Neither view is treated as correct.",
+              "kind": "interpretation",
+              "flag": "disagreement",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "gac1",
+                  "level": "specialist",
+                  "text": "The MRI report and the discharge summary describe the same scan differently.",
+                  "kind": "interpretation",
+                  "flag": "disagreement",
+                  "label": "General Medicine perspective",
+                  "children": [
+                    {
+                      "id": "f_a2",
+                      "level": "fact",
+                      "text": "MRI report impression: No intracranial abnormality",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_mri",
+                        "page": 2,
+                        "section": "Impression",
+                        "snippet": "No intracranial abnormality identified."
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_a3",
+                      "level": "fact",
+                      "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_dis",
+                        "page": 1,
+                        "section": "Investigations",
+                        "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "na1",
+                  "level": "specialist",
+                  "text": "The MRI report impression states no intracranial abnormality.",
+                  "kind": "patient_fact",
+                  "label": "Neurology perspective",
+                  "children": [
+                    {
+                      "id": "f_a2",
+                      "level": "fact",
+                      "text": "MRI report impression: No intracranial abnormality",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_mri",
+                        "page": 2,
+                        "section": "Impression",
+                        "snippet": "No intracranial abnormality identified."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "na2",
+                  "level": "specialist",
+                  "text": "The discharge summary describes a small lesion in the right frontal lobe on the same scan.",
+                  "kind": "patient_fact",
+                  "label": "Neurology perspective",
+                  "children": [
+                    {
+                      "id": "f_a3",
+                      "level": "fact",
+                      "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_dis",
+                        "page": 1,
+                        "section": "Investigations",
+                        "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "cl_a1",
+                  "level": "verification",
+                  "text": "The MRI shows a small lesion in the right frontal lobe.",
+                  "kind": "patient_fact",
+                  "status": "contradicted",
+                  "label": "Claim check",
+                  "children": [
+                    {
+                      "id": "f_a2",
+                      "level": "fact",
+                      "text": "MRI report impression: No intracranial abnormality",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_mri",
+                        "page": 2,
+                        "section": "Impression",
+                        "snippet": "No intracranial abnormality identified."
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_a3",
+                      "level": "fact",
+                      "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_dis",
+                        "page": 1,
+                        "section": "Investigations",
+                        "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "cl_a1",
+              "level": "verification",
+              "text": "The MRI shows a small lesion in the right frontal lobe.",
+              "kind": "patient_fact",
+              "status": "contradicted",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "tl3",
+              "level": "timeline",
+              "text": "MRI brain: report says no abnormality. Impression: no intracranial abnormality.",
+              "kind": "patient_fact",
+              "flag": "disagreement",
+              "label": "Timeline event",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "tl4",
+              "level": "timeline",
+              "text": "Discharge summary describes a small lesion. Follow-up MRI in 3 months advised.",
+              "kind": "patient_fact",
+              "flag": "disagreement",
+              "label": "Timeline event",
+              "children": [
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "mxa1",
+          "level": "matrix",
+          "text": "The MRI shows a lesion. The records themselves disagree. General Medicine leans toward a documentation difference; Neurology wants the radiologist to clarify. Neither view is treated as correct.",
+          "kind": "interpretation",
+          "flag": "disagreement",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "gac1",
+              "level": "specialist",
+              "text": "The MRI report and the discharge summary describe the same scan differently.",
+              "kind": "interpretation",
+              "flag": "disagreement",
+              "label": "General Medicine perspective",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "na1",
+              "level": "specialist",
+              "text": "The MRI report impression states no intracranial abnormality.",
+              "kind": "patient_fact",
+              "label": "Neurology perspective",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "na2",
+              "level": "specialist",
+              "text": "The discharge summary describes a small lesion in the right frontal lobe on the same scan.",
+              "kind": "patient_fact",
+              "label": "Neurology perspective",
+              "children": [
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cl_a1",
+              "level": "verification",
+              "text": "The MRI shows a small lesion in the right frontal lobe.",
+              "kind": "patient_fact",
+              "status": "contradicted",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q2",
+    "root": {
+      "id": "q2",
+      "level": "question",
+      "text": "Is the repeat MRI in 3 months still needed if the radiologist confirms the original report?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_15",
+          "level": "synthesis",
+          "text": "Whether the repeat MRI in 3 months is still needed may depend on the radiologist's clarification.",
+          "kind": "interpretation",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mxa3",
+              "level": "matrix",
+              "text": "A follow-up MRI in 3 months is appropriate. Neurology supports it; General Medicine says it depends on the radiologist's clarification.",
+              "kind": "interpretation",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "nc1",
+                  "level": "specialist",
+                  "text": "The planned follow-up MRI in 3 months is consistent with the discharge summary's description. Whether it is still needed depends on the clarification.",
+                  "kind": "interpretation",
+                  "label": "Neurology perspective",
+                  "children": [
+                    {
+                      "id": "f_a4",
+                      "level": "fact",
+                      "text": "Discharge plan: Follow-up MRI in 3 months and neurology review",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_dis",
+                        "page": 2,
+                        "section": "Plan",
+                        "snippet": "Repeat MRI in 3 months. Neurology review."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "f_a4",
+                  "level": "fact",
+                  "text": "Discharge plan: Follow-up MRI in 3 months and neurology review",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Repeat MRI in 3 months. Neurology review."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "nc1",
+              "level": "specialist",
+              "text": "The planned follow-up MRI in 3 months is consistent with the discharge summary's description. Whether it is still needed depends on the clarification.",
+              "kind": "interpretation",
+              "label": "Neurology perspective",
+              "children": [
+                {
+                  "id": "f_a4",
+                  "level": "fact",
+                  "text": "Discharge plan: Follow-up MRI in 3 months and neurology review",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Repeat MRI in 3 months. Neurology review."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "mxa3",
+          "level": "matrix",
+          "text": "A follow-up MRI in 3 months is appropriate. Neurology supports it; General Medicine says it depends on the radiologist's clarification.",
+          "kind": "interpretation",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "nc1",
+              "level": "specialist",
+              "text": "The planned follow-up MRI in 3 months is consistent with the discharge summary's description. Whether it is still needed depends on the clarification.",
+              "kind": "interpretation",
+              "label": "Neurology perspective",
+              "children": [
+                {
+                  "id": "f_a4",
+                  "level": "fact",
+                  "text": "Discharge plan: Follow-up MRI in 3 months and neurology review",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Repeat MRI in 3 months. Neurology review."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "f_a4",
+              "level": "fact",
+              "text": "Discharge plan: Follow-up MRI in 3 months and neurology review",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_dis",
+                "page": 2,
+                "section": "Plan",
+                "snippet": "Repeat MRI in 3 months. Neurology review."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q3",
+    "root": {
+      "id": "q3",
+      "level": "question",
+      "text": "How confident are you that my headaches are migraine with aura, given that the imaging question is open?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_11",
+          "level": "synthesis",
+          "text": "Whether your headaches are migraine with aura is a working view only. It is held with caution while the imaging question is open.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mxa2",
+              "level": "matrix",
+              "text": "The headache pattern fits migraine with aura. It is a commonly considered pattern. Neurology notes this is harder to settle while the imaging question is open.",
+              "kind": "interpretation",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "na4",
+                  "level": "specialist",
+                  "text": "Headaches preceded by short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered.",
+                  "kind": "external_evidence",
+                  "label": "Neurology perspective",
+                  "children": [
+                    {
+                      "id": "f_a1",
+                      "level": "fact",
+                      "text": "Recurrent headaches with brief flashing lights: Since May",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_neu",
+                        "page": 1,
+                        "section": "History",
+                        "snippet": "Recurrent headaches since May, preceded by about 20 minutes of flashing lights."
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "src_neuro_9",
+                      "level": "evidence_source",
+                      "text": "Sample summary: recurrent headaches with brief visual symptoms",
+                      "kind": "external_evidence",
+                      "label": "Reference evidence",
+                      "external_source": {
+                        "id": "src_neuro_9",
+                        "title": "Sample summary: recurrent headaches with brief visual symptoms",
+                        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                        "year": 2023,
+                        "licence": "Prototype placeholder, not a real guideline",
+                        "section": "§1 Patterns",
+                        "snippet": "Recurrent headaches with short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered. A clinician confirms the cause."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "cl_a4",
+                  "level": "verification",
+                  "text": "The headache pattern is consistent with migraine with aura.",
+                  "kind": "interpretation",
+                  "status": "partially_supported",
+                  "label": "Claim check",
+                  "children": [
+                    {
+                      "id": "f_a1",
+                      "level": "fact",
+                      "text": "Recurrent headaches with brief flashing lights: Since May",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_neu",
+                        "page": 1,
+                        "section": "History",
+                        "snippet": "Recurrent headaches since May, preceded by about 20 minutes of flashing lights."
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_a6",
+                      "level": "fact",
+                      "text": "Migraine with aura (suspected): Suspected",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_neu",
+                        "page": 2,
+                        "section": "Impression",
+                        "snippet": "Features suggest migraine with aura. Imaging requested to exclude other causes."
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "src_neuro_9",
+                      "level": "evidence_source",
+                      "text": "Sample summary: recurrent headaches with brief visual symptoms",
+                      "kind": "external_evidence",
+                      "label": "Reference evidence",
+                      "external_source": {
+                        "id": "src_neuro_9",
+                        "title": "Sample summary: recurrent headaches with brief visual symptoms",
+                        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                        "year": 2023,
+                        "licence": "Prototype placeholder, not a real guideline",
+                        "section": "§1 Patterns",
+                        "snippet": "Recurrent headaches with short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered. A clinician confirms the cause."
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "na4",
+              "level": "specialist",
+              "text": "Headaches preceded by short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered.",
+              "kind": "external_evidence",
+              "label": "Neurology perspective",
+              "children": [
+                {
+                  "id": "f_a1",
+                  "level": "fact",
+                  "text": "Recurrent headaches with brief flashing lights: Since May",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_neu",
+                    "page": 1,
+                    "section": "History",
+                    "snippet": "Recurrent headaches since May, preceded by about 20 minutes of flashing lights."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_neuro_9",
+                  "level": "evidence_source",
+                  "text": "Sample summary: recurrent headaches with brief visual symptoms",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_neuro_9",
+                    "title": "Sample summary: recurrent headaches with brief visual symptoms",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real guideline",
+                    "section": "§1 Patterns",
+                    "snippet": "Recurrent headaches with short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered. A clinician confirms the cause."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "syn_5",
+          "level": "synthesis",
+          "text": "Your neurologist documented migraine with aura as suspected, not as a confirmed diagnosis.",
+          "kind": "patient_fact",
+          "flag": "uncertain",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "f_a6",
+              "level": "fact",
+              "text": "Migraine with aura (suspected): Suspected",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_neu",
+                "page": 2,
+                "section": "Impression",
+                "snippet": "Features suggest migraine with aura. Imaging requested to exclude other causes."
+              },
+              "children": []
+            },
+            {
+              "id": "cl_a4",
+              "level": "verification",
+              "text": "The headache pattern is consistent with migraine with aura.",
+              "kind": "interpretation",
+              "status": "partially_supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_a1",
+                  "level": "fact",
+                  "text": "Recurrent headaches with brief flashing lights: Since May",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_neu",
+                    "page": 1,
+                    "section": "History",
+                    "snippet": "Recurrent headaches since May, preceded by about 20 minutes of flashing lights."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_a6",
+                  "level": "fact",
+                  "text": "Migraine with aura (suspected): Suspected",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_neu",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "Features suggest migraine with aura. Imaging requested to exclude other causes."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_neuro_9",
+                  "level": "evidence_source",
+                  "text": "Sample summary: recurrent headaches with brief visual symptoms",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_neuro_9",
+                    "title": "Sample summary: recurrent headaches with brief visual symptoms",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real guideline",
+                    "section": "§1 Patterns",
+                    "snippet": "Recurrent headaches with short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered. A clinician confirms the cause."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q4",
+    "root": {
+      "id": "q4",
+      "level": "question",
+      "text": "I use ibuprofen on about 15 days a month. Could that be affecting my headaches?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_14",
+          "level": "synthesis",
+          "text": "Using painkillers on many days each month is associated with more frequent headaches in some people. You use ibuprofen on about 15 days a month. This is worth reviewing with your prescriber. Please do not change any medicine on your own.",
+          "kind": "external_evidence",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "ma2",
+              "level": "specialist",
+              "text": "Using painkillers on many days each month is associated with more frequent headaches in some people. This is worth reviewing with the prescriber.",
+              "kind": "external_evidence",
+              "label": "Medication Safety perspective",
+              "children": [
+                {
+                  "id": "f_am2",
+                  "level": "fact",
+                  "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx3",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_drug_8",
+                  "level": "evidence_source",
+                  "text": "Sample summary: frequent painkiller use and headaches",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_drug_8",
+                    "title": "Sample summary: frequent painkiller use and headaches",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real drug label",
+                    "section": "§2 Frequency",
+                    "snippet": "Using painkillers on many days each month is associated with more frequent headaches in some people. A prescriber usually reviews this."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cl_a5",
+              "level": "verification",
+              "text": "Frequent painkiller use is associated with more frequent headaches in some people.",
+              "kind": "external_evidence",
+              "status": "supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_am2",
+                  "level": "fact",
+                  "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx3",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_drug_8",
+                  "level": "evidence_source",
+                  "text": "Sample summary: frequent painkiller use and headaches",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_drug_8",
+                    "title": "Sample summary: frequent painkiller use and headaches",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real drug label",
+                    "section": "§2 Frequency",
+                    "snippet": "Using painkillers on many days each month is associated with more frequent headaches in some people. A prescriber usually reviews this."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "mxa4",
+              "level": "matrix",
+              "text": "Frequent painkiller use is relevant to the headaches. Raised by Medication Safety only.",
+              "kind": "interpretation",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "ma2",
+                  "level": "specialist",
+                  "text": "Using painkillers on many days each month is associated with more frequent headaches in some people. This is worth reviewing with the prescriber.",
+                  "kind": "external_evidence",
+                  "label": "Medication Safety perspective",
+                  "children": [
+                    {
+                      "id": "f_am2",
+                      "level": "fact",
+                      "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx3",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "src_drug_8",
+                      "level": "evidence_source",
+                      "text": "Sample summary: frequent painkiller use and headaches",
+                      "kind": "external_evidence",
+                      "label": "Reference evidence",
+                      "external_source": {
+                        "id": "src_drug_8",
+                        "title": "Sample summary: frequent painkiller use and headaches",
+                        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                        "year": 2023,
+                        "licence": "Prototype placeholder, not a real drug label",
+                        "section": "§2 Frequency",
+                        "snippet": "Using painkillers on many days each month is associated with more frequent headaches in some people. A prescriber usually reviews this."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "cl_a5",
+                  "level": "verification",
+                  "text": "Frequent painkiller use is associated with more frequent headaches in some people.",
+                  "kind": "external_evidence",
+                  "status": "supported",
+                  "label": "Claim check",
+                  "children": [
+                    {
+                      "id": "f_am2",
+                      "level": "fact",
+                      "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx3",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "src_drug_8",
+                      "level": "evidence_source",
+                      "text": "Sample summary: frequent painkiller use and headaches",
+                      "kind": "external_evidence",
+                      "label": "Reference evidence",
+                      "external_source": {
+                        "id": "src_drug_8",
+                        "title": "Sample summary: frequent painkiller use and headaches",
+                        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                        "year": 2023,
+                        "licence": "Prototype placeholder, not a real drug label",
+                        "section": "§2 Frequency",
+                        "snippet": "Using painkillers on many days each month is associated with more frequent headaches in some people. A prescriber usually reviews this."
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ma2",
+          "level": "specialist",
+          "text": "Using painkillers on many days each month is associated with more frequent headaches in some people. This is worth reviewing with the prescriber.",
+          "kind": "external_evidence",
+          "label": "Medication Safety perspective",
+          "children": [
+            {
+              "id": "f_am2",
+              "level": "fact",
+              "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx3",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+              },
+              "children": []
+            },
+            {
+              "id": "src_drug_8",
+              "level": "evidence_source",
+              "text": "Sample summary: frequent painkiller use and headaches",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_drug_8",
+                "title": "Sample summary: frequent painkiller use and headaches",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2023,
+                "licence": "Prototype placeholder, not a real drug label",
+                "section": "§2 Frequency",
+                "snippet": "Using painkillers on many days each month is associated with more frequent headaches in some people. A prescriber usually reviews this."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q5",
+    "root": {
+      "id": "q5",
+      "level": "question",
+      "text": "Having seen the images, what do you see, and does it match the report or the discharge summary?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_8",
+          "level": "synthesis",
+          "text": "Your two documents disagree about the same scan, and the specialist perspectives differ on how to read that. One view is that it may be a wording difference in one document. Another is that it should not be assumed either way. We keep both and do not pick one.",
+          "kind": "interpretation",
+          "flag": "disagreement",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mxa1",
+              "level": "matrix",
+              "text": "The MRI shows a lesion. The records themselves disagree. General Medicine leans toward a documentation difference; Neurology wants the radiologist to clarify. Neither view is treated as correct.",
+              "kind": "interpretation",
+              "flag": "disagreement",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "gac1",
+                  "level": "specialist",
+                  "text": "The MRI report and the discharge summary describe the same scan differently.",
+                  "kind": "interpretation",
+                  "flag": "disagreement",
+                  "label": "General Medicine perspective",
+                  "children": [
+                    {
+                      "id": "f_a2",
+                      "level": "fact",
+                      "text": "MRI report impression: No intracranial abnormality",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_mri",
+                        "page": 2,
+                        "section": "Impression",
+                        "snippet": "No intracranial abnormality identified."
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_a3",
+                      "level": "fact",
+                      "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_dis",
+                        "page": 1,
+                        "section": "Investigations",
+                        "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "na1",
+                  "level": "specialist",
+                  "text": "The MRI report impression states no intracranial abnormality.",
+                  "kind": "patient_fact",
+                  "label": "Neurology perspective",
+                  "children": [
+                    {
+                      "id": "f_a2",
+                      "level": "fact",
+                      "text": "MRI report impression: No intracranial abnormality",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_mri",
+                        "page": 2,
+                        "section": "Impression",
+                        "snippet": "No intracranial abnormality identified."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "na2",
+                  "level": "specialist",
+                  "text": "The discharge summary describes a small lesion in the right frontal lobe on the same scan.",
+                  "kind": "patient_fact",
+                  "label": "Neurology perspective",
+                  "children": [
+                    {
+                      "id": "f_a3",
+                      "level": "fact",
+                      "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_dis",
+                        "page": 1,
+                        "section": "Investigations",
+                        "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "cl_a1",
+                  "level": "verification",
+                  "text": "The MRI shows a small lesion in the right frontal lobe.",
+                  "kind": "patient_fact",
+                  "status": "contradicted",
+                  "label": "Claim check",
+                  "children": [
+                    {
+                      "id": "f_a2",
+                      "level": "fact",
+                      "text": "MRI report impression: No intracranial abnormality",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_mri",
+                        "page": 2,
+                        "section": "Impression",
+                        "snippet": "No intracranial abnormality identified."
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_a3",
+                      "level": "fact",
+                      "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_dis",
+                        "page": 1,
+                        "section": "Investigations",
+                        "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "cl_a1",
+              "level": "verification",
+              "text": "The MRI shows a small lesion in the right frontal lobe.",
+              "kind": "patient_fact",
+              "status": "contradicted",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "tl3",
+              "level": "timeline",
+              "text": "MRI brain: report says no abnormality. Impression: no intracranial abnormality.",
+              "kind": "patient_fact",
+              "flag": "disagreement",
+              "label": "Timeline event",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "tl4",
+              "level": "timeline",
+              "text": "Discharge summary describes a small lesion. Follow-up MRI in 3 months advised.",
+              "kind": "patient_fact",
+              "flag": "disagreement",
+              "label": "Timeline event",
+              "children": [
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "syn_12",
+          "level": "synthesis",
+          "text": "There is no note from the reporting radiologist explaining the difference between the MRI report and the discharge summary.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "nam1",
+              "level": "specialist",
+              "text": "Radiologist clarification of the MRI. Settles which description is accurate.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Neurology perspective",
+              "children": []
+            },
+            {
+              "id": "gam1",
+              "level": "specialist",
+              "text": "Radiologist clarification of the MRI. It is the only way to settle which description is accurate.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "General Medicine perspective",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q6",
+    "root": {
+      "id": "q6",
+      "level": "question",
+      "text": "Which signs would make you want a faster follow-up scan?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_10",
+          "level": "synthesis",
+          "text": "Until the difference is clarified, it is not possible to say whether your scan shows anything that needs follow-up.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "nau1",
+              "level": "specialist",
+              "text": "Until the discrepancy is resolved, it is not possible to say whether the scan shows anything that needs follow-up.",
+              "kind": "interpretation",
+              "flag": "uncertain",
+              "label": "Neurology perspective",
+              "children": []
+            },
+            {
+              "id": "gau1",
+              "level": "specialist",
+              "text": "Which document correctly describes the scan is unknown.",
+              "kind": "interpretation",
+              "flag": "uncertain",
+              "label": "General Medicine perspective",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "src_drug_8",
+    "root": {
+      "id": "src_drug_8",
+      "level": "evidence_source",
+      "text": "Sample summary: frequent painkiller use and headaches",
+      "kind": "external_evidence",
+      "label": "Reference evidence",
+      "external_source": {
+        "id": "src_drug_8",
+        "title": "Sample summary: frequent painkiller use and headaches",
+        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+        "year": 2023,
+        "licence": "Prototype placeholder, not a real drug label",
+        "section": "§2 Frequency",
+        "snippet": "Using painkillers on many days each month is associated with more frequent headaches in some people. A prescriber usually reviews this."
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "src_neuro_7",
+    "root": {
+      "id": "src_neuro_7",
+      "level": "evidence_source",
+      "text": "Sample summary: when an imaging report and a clinical summary disagree",
+      "kind": "external_evidence",
+      "label": "Reference evidence",
+      "external_source": {
+        "id": "src_neuro_7",
+        "title": "Sample summary: when an imaging report and a clinical summary disagree",
+        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+        "year": 2024,
+        "licence": "Prototype placeholder, not a real guideline",
+        "section": "§5 Discrepant reports",
+        "snippet": "When two documents describe the same scan differently, a formal re-read or clarification from the reporting radiologist is commonly requested before conclusions are drawn."
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "src_neuro_9",
+    "root": {
+      "id": "src_neuro_9",
+      "level": "evidence_source",
+      "text": "Sample summary: recurrent headaches with brief visual symptoms",
+      "kind": "external_evidence",
+      "label": "Reference evidence",
+      "external_source": {
+        "id": "src_neuro_9",
+        "title": "Sample summary: recurrent headaches with brief visual symptoms",
+        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+        "year": 2023,
+        "licence": "Prototype placeholder, not a real guideline",
+        "section": "§1 Patterns",
+        "snippet": "Recurrent headaches with short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered. A clinician confirms the cause."
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_1",
+    "root": {
+      "id": "syn_1",
+      "level": "synthesis",
+      "text": "You are 38 and have had recurrent headaches since May, often preceded by about 20 minutes of flashing lights. You are asking what your MRI report and discharge summary are actually saying.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_a1",
+          "level": "fact",
+          "text": "Recurrent headaches with brief flashing lights: Since May",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_neu",
+            "page": 1,
+            "section": "History",
+            "snippet": "Recurrent headaches since May, preceded by about 20 minutes of flashing lights."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_10",
+    "root": {
+      "id": "syn_10",
+      "level": "synthesis",
+      "text": "Until the difference is clarified, it is not possible to say whether your scan shows anything that needs follow-up.",
+      "kind": "interpretation",
+      "flag": "uncertain",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "nau1",
+          "level": "specialist",
+          "text": "Until the discrepancy is resolved, it is not possible to say whether the scan shows anything that needs follow-up.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "Neurology perspective",
+          "children": []
+        },
+        {
+          "id": "gau1",
+          "level": "specialist",
+          "text": "Which document correctly describes the scan is unknown.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "General Medicine perspective",
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_11",
+    "root": {
+      "id": "syn_11",
+      "level": "synthesis",
+      "text": "Whether your headaches are migraine with aura is a working view only. It is held with caution while the imaging question is open.",
+      "kind": "interpretation",
+      "flag": "uncertain",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "mxa2",
+          "level": "matrix",
+          "text": "The headache pattern fits migraine with aura. It is a commonly considered pattern. Neurology notes this is harder to settle while the imaging question is open.",
+          "kind": "interpretation",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "na4",
+              "level": "specialist",
+              "text": "Headaches preceded by short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered.",
+              "kind": "external_evidence",
+              "label": "Neurology perspective",
+              "children": [
+                {
+                  "id": "f_a1",
+                  "level": "fact",
+                  "text": "Recurrent headaches with brief flashing lights: Since May",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_neu",
+                    "page": 1,
+                    "section": "History",
+                    "snippet": "Recurrent headaches since May, preceded by about 20 minutes of flashing lights."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_neuro_9",
+                  "level": "evidence_source",
+                  "text": "Sample summary: recurrent headaches with brief visual symptoms",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_neuro_9",
+                    "title": "Sample summary: recurrent headaches with brief visual symptoms",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real guideline",
+                    "section": "§1 Patterns",
+                    "snippet": "Recurrent headaches with short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered. A clinician confirms the cause."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cl_a4",
+              "level": "verification",
+              "text": "The headache pattern is consistent with migraine with aura.",
+              "kind": "interpretation",
+              "status": "partially_supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_a1",
+                  "level": "fact",
+                  "text": "Recurrent headaches with brief flashing lights: Since May",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_neu",
+                    "page": 1,
+                    "section": "History",
+                    "snippet": "Recurrent headaches since May, preceded by about 20 minutes of flashing lights."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_a6",
+                  "level": "fact",
+                  "text": "Migraine with aura (suspected): Suspected",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_neu",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "Features suggest migraine with aura. Imaging requested to exclude other causes."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_neuro_9",
+                  "level": "evidence_source",
+                  "text": "Sample summary: recurrent headaches with brief visual symptoms",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_neuro_9",
+                    "title": "Sample summary: recurrent headaches with brief visual symptoms",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real guideline",
+                    "section": "§1 Patterns",
+                    "snippet": "Recurrent headaches with short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered. A clinician confirms the cause."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "na4",
+          "level": "specialist",
+          "text": "Headaches preceded by short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered.",
+          "kind": "external_evidence",
+          "label": "Neurology perspective",
+          "children": [
+            {
+              "id": "f_a1",
+              "level": "fact",
+              "text": "Recurrent headaches with brief flashing lights: Since May",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_neu",
+                "page": 1,
+                "section": "History",
+                "snippet": "Recurrent headaches since May, preceded by about 20 minutes of flashing lights."
+              },
+              "children": []
+            },
+            {
+              "id": "src_neuro_9",
+              "level": "evidence_source",
+              "text": "Sample summary: recurrent headaches with brief visual symptoms",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_neuro_9",
+                "title": "Sample summary: recurrent headaches with brief visual symptoms",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2023,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§1 Patterns",
+                "snippet": "Recurrent headaches with short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered. A clinician confirms the cause."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_12",
+    "root": {
+      "id": "syn_12",
+      "level": "synthesis",
+      "text": "There is no note from the reporting radiologist explaining the difference between the MRI report and the discharge summary.",
+      "kind": "interpretation",
+      "flag": "missing",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "nam1",
+          "level": "specialist",
+          "text": "Radiologist clarification of the MRI. Settles which description is accurate.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "Neurology perspective",
+          "children": []
+        },
+        {
+          "id": "gam1",
+          "level": "specialist",
+          "text": "Radiologist clarification of the MRI. It is the only way to settle which description is accurate.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "General Medicine perspective",
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_13",
+    "root": {
+      "id": "syn_13",
+      "level": "synthesis",
+      "text": "The perspectives agree that the two documents cannot both be accepted as written, and that clarifying them is the key step.",
+      "kind": "interpretation",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "mxa1",
+          "level": "matrix",
+          "text": "The MRI shows a lesion. The records themselves disagree. General Medicine leans toward a documentation difference; Neurology wants the radiologist to clarify. Neither view is treated as correct.",
+          "kind": "interpretation",
+          "flag": "disagreement",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "gac1",
+              "level": "specialist",
+              "text": "The MRI report and the discharge summary describe the same scan differently.",
+              "kind": "interpretation",
+              "flag": "disagreement",
+              "label": "General Medicine perspective",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "na1",
+              "level": "specialist",
+              "text": "The MRI report impression states no intracranial abnormality.",
+              "kind": "patient_fact",
+              "label": "Neurology perspective",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "na2",
+              "level": "specialist",
+              "text": "The discharge summary describes a small lesion in the right frontal lobe on the same scan.",
+              "kind": "patient_fact",
+              "label": "Neurology perspective",
+              "children": [
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cl_a1",
+              "level": "verification",
+              "text": "The MRI shows a small lesion in the right frontal lobe.",
+              "kind": "patient_fact",
+              "status": "contradicted",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_14",
+    "root": {
+      "id": "syn_14",
+      "level": "synthesis",
+      "text": "Using painkillers on many days each month is associated with more frequent headaches in some people. You use ibuprofen on about 15 days a month. This is worth reviewing with your prescriber. Please do not change any medicine on your own.",
+      "kind": "external_evidence",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "ma2",
+          "level": "specialist",
+          "text": "Using painkillers on many days each month is associated with more frequent headaches in some people. This is worth reviewing with the prescriber.",
+          "kind": "external_evidence",
+          "label": "Medication Safety perspective",
+          "children": [
+            {
+              "id": "f_am2",
+              "level": "fact",
+              "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx3",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+              },
+              "children": []
+            },
+            {
+              "id": "src_drug_8",
+              "level": "evidence_source",
+              "text": "Sample summary: frequent painkiller use and headaches",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_drug_8",
+                "title": "Sample summary: frequent painkiller use and headaches",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2023,
+                "licence": "Prototype placeholder, not a real drug label",
+                "section": "§2 Frequency",
+                "snippet": "Using painkillers on many days each month is associated with more frequent headaches in some people. A prescriber usually reviews this."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cl_a5",
+          "level": "verification",
+          "text": "Frequent painkiller use is associated with more frequent headaches in some people.",
+          "kind": "external_evidence",
+          "status": "supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_am2",
+              "level": "fact",
+              "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx3",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+              },
+              "children": []
+            },
+            {
+              "id": "src_drug_8",
+              "level": "evidence_source",
+              "text": "Sample summary: frequent painkiller use and headaches",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_drug_8",
+                "title": "Sample summary: frequent painkiller use and headaches",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2023,
+                "licence": "Prototype placeholder, not a real drug label",
+                "section": "§2 Frequency",
+                "snippet": "Using painkillers on many days each month is associated with more frequent headaches in some people. A prescriber usually reviews this."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "mxa4",
+          "level": "matrix",
+          "text": "Frequent painkiller use is relevant to the headaches. Raised by Medication Safety only.",
+          "kind": "interpretation",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "ma2",
+              "level": "specialist",
+              "text": "Using painkillers on many days each month is associated with more frequent headaches in some people. This is worth reviewing with the prescriber.",
+              "kind": "external_evidence",
+              "label": "Medication Safety perspective",
+              "children": [
+                {
+                  "id": "f_am2",
+                  "level": "fact",
+                  "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx3",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_drug_8",
+                  "level": "evidence_source",
+                  "text": "Sample summary: frequent painkiller use and headaches",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_drug_8",
+                    "title": "Sample summary: frequent painkiller use and headaches",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real drug label",
+                    "section": "§2 Frequency",
+                    "snippet": "Using painkillers on many days each month is associated with more frequent headaches in some people. A prescriber usually reviews this."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cl_a5",
+              "level": "verification",
+              "text": "Frequent painkiller use is associated with more frequent headaches in some people.",
+              "kind": "external_evidence",
+              "status": "supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_am2",
+                  "level": "fact",
+                  "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx3",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_drug_8",
+                  "level": "evidence_source",
+                  "text": "Sample summary: frequent painkiller use and headaches",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_drug_8",
+                    "title": "Sample summary: frequent painkiller use and headaches",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real drug label",
+                    "section": "§2 Frequency",
+                    "snippet": "Using painkillers on many days each month is associated with more frequent headaches in some people. A prescriber usually reviews this."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_15",
+    "root": {
+      "id": "syn_15",
+      "level": "synthesis",
+      "text": "Whether the repeat MRI in 3 months is still needed may depend on the radiologist's clarification.",
+      "kind": "interpretation",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "mxa3",
+          "level": "matrix",
+          "text": "A follow-up MRI in 3 months is appropriate. Neurology supports it; General Medicine says it depends on the radiologist's clarification.",
+          "kind": "interpretation",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "nc1",
+              "level": "specialist",
+              "text": "The planned follow-up MRI in 3 months is consistent with the discharge summary's description. Whether it is still needed depends on the clarification.",
+              "kind": "interpretation",
+              "label": "Neurology perspective",
+              "children": [
+                {
+                  "id": "f_a4",
+                  "level": "fact",
+                  "text": "Discharge plan: Follow-up MRI in 3 months and neurology review",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Repeat MRI in 3 months. Neurology review."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "f_a4",
+              "level": "fact",
+              "text": "Discharge plan: Follow-up MRI in 3 months and neurology review",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_dis",
+                "page": 2,
+                "section": "Plan",
+                "snippet": "Repeat MRI in 3 months. Neurology review."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "nc1",
+          "level": "specialist",
+          "text": "The planned follow-up MRI in 3 months is consistent with the discharge summary's description. Whether it is still needed depends on the clarification.",
+          "kind": "interpretation",
+          "label": "Neurology perspective",
+          "children": [
+            {
+              "id": "f_a4",
+              "level": "fact",
+              "text": "Discharge plan: Follow-up MRI in 3 months and neurology review",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_dis",
+                "page": 2,
+                "section": "Plan",
+                "snippet": "Repeat MRI in 3 months. Neurology review."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_16",
+    "root": {
+      "id": "syn_16",
+      "level": "synthesis",
+      "text": "Before deciding anything, it may help to get the radiologist's clarification and ask your doctors how they read the difference.",
+      "kind": "interpretation",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "syn_8",
+          "level": "synthesis",
+          "text": "Your two documents disagree about the same scan, and the specialist perspectives differ on how to read that. One view is that it may be a wording difference in one document. Another is that it should not be assumed either way. We keep both and do not pick one.",
+          "kind": "interpretation",
+          "flag": "disagreement",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mxa1",
+              "level": "matrix",
+              "text": "The MRI shows a lesion. The records themselves disagree. General Medicine leans toward a documentation difference; Neurology wants the radiologist to clarify. Neither view is treated as correct.",
+              "kind": "interpretation",
+              "flag": "disagreement",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "gac1",
+                  "level": "specialist",
+                  "text": "The MRI report and the discharge summary describe the same scan differently.",
+                  "kind": "interpretation",
+                  "flag": "disagreement",
+                  "label": "General Medicine perspective",
+                  "children": [
+                    {
+                      "id": "f_a2",
+                      "level": "fact",
+                      "text": "MRI report impression: No intracranial abnormality",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_mri",
+                        "page": 2,
+                        "section": "Impression",
+                        "snippet": "No intracranial abnormality identified."
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_a3",
+                      "level": "fact",
+                      "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_dis",
+                        "page": 1,
+                        "section": "Investigations",
+                        "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "na1",
+                  "level": "specialist",
+                  "text": "The MRI report impression states no intracranial abnormality.",
+                  "kind": "patient_fact",
+                  "label": "Neurology perspective",
+                  "children": [
+                    {
+                      "id": "f_a2",
+                      "level": "fact",
+                      "text": "MRI report impression: No intracranial abnormality",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_mri",
+                        "page": 2,
+                        "section": "Impression",
+                        "snippet": "No intracranial abnormality identified."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "na2",
+                  "level": "specialist",
+                  "text": "The discharge summary describes a small lesion in the right frontal lobe on the same scan.",
+                  "kind": "patient_fact",
+                  "label": "Neurology perspective",
+                  "children": [
+                    {
+                      "id": "f_a3",
+                      "level": "fact",
+                      "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_dis",
+                        "page": 1,
+                        "section": "Investigations",
+                        "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "cl_a1",
+                  "level": "verification",
+                  "text": "The MRI shows a small lesion in the right frontal lobe.",
+                  "kind": "patient_fact",
+                  "status": "contradicted",
+                  "label": "Claim check",
+                  "children": [
+                    {
+                      "id": "f_a2",
+                      "level": "fact",
+                      "text": "MRI report impression: No intracranial abnormality",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_mri",
+                        "page": 2,
+                        "section": "Impression",
+                        "snippet": "No intracranial abnormality identified."
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_a3",
+                      "level": "fact",
+                      "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_dis",
+                        "page": 1,
+                        "section": "Investigations",
+                        "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "cl_a1",
+              "level": "verification",
+              "text": "The MRI shows a small lesion in the right frontal lobe.",
+              "kind": "patient_fact",
+              "status": "contradicted",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "tl3",
+              "level": "timeline",
+              "text": "MRI brain: report says no abnormality. Impression: no intracranial abnormality.",
+              "kind": "patient_fact",
+              "flag": "disagreement",
+              "label": "Timeline event",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "tl4",
+              "level": "timeline",
+              "text": "Discharge summary describes a small lesion. Follow-up MRI in 3 months advised.",
+              "kind": "patient_fact",
+              "flag": "disagreement",
+              "label": "Timeline event",
+              "children": [
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "syn_12",
+          "level": "synthesis",
+          "text": "There is no note from the reporting radiologist explaining the difference between the MRI report and the discharge summary.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "nam1",
+              "level": "specialist",
+              "text": "Radiologist clarification of the MRI. Settles which description is accurate.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Neurology perspective",
+              "children": []
+            },
+            {
+              "id": "gam1",
+              "level": "specialist",
+              "text": "Radiologist clarification of the MRI. It is the only way to settle which description is accurate.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "General Medicine perspective",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_2",
+    "root": {
+      "id": "syn_2",
+      "level": "synthesis",
+      "text": "Your MRI report's conclusion says: no abnormality was identified inside the skull.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_a2",
+          "level": "fact",
+          "text": "MRI report impression: No intracranial abnormality",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_mri",
+            "page": 2,
+            "section": "Impression",
+            "snippet": "No intracranial abnormality identified."
+          },
+          "children": []
+        },
+        {
+          "id": "cl_a2",
+          "level": "verification",
+          "text": "The MRI report impression states no intracranial abnormality.",
+          "kind": "patient_fact",
+          "status": "supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_a2",
+              "level": "fact",
+              "text": "MRI report impression: No intracranial abnormality",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_mri",
+                "page": 2,
+                "section": "Impression",
+                "snippet": "No intracranial abnormality identified."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_3",
+    "root": {
+      "id": "syn_3",
+      "level": "synthesis",
+      "text": "Your hospital discharge summary describes the MRI differently: a small lesion in the right frontal lobe, for follow-up.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_a3",
+          "level": "fact",
+          "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_dis",
+            "page": 1,
+            "section": "Investigations",
+            "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+          },
+          "children": []
+        },
+        {
+          "id": "na2",
+          "level": "specialist",
+          "text": "The discharge summary describes a small lesion in the right frontal lobe on the same scan.",
+          "kind": "patient_fact",
+          "label": "Neurology perspective",
+          "children": [
+            {
+              "id": "f_a3",
+              "level": "fact",
+              "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_dis",
+                "page": 1,
+                "section": "Investigations",
+                "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_4",
+    "root": {
+      "id": "syn_4",
+      "level": "synthesis",
+      "text": "Your routine blood tests were within the reference ranges.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_a5",
+          "level": "fact",
+          "text": "Routine blood tests: Within the reference ranges",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_lab4",
+            "page": 1,
+            "section": "Summary",
+            "snippet": "All parameters within reference range."
+          },
+          "children": []
+        },
+        {
+          "id": "ga1",
+          "level": "specialist",
+          "text": "Routine blood tests are within the reference ranges.",
+          "kind": "patient_fact",
+          "label": "General Medicine perspective",
+          "children": [
+            {
+              "id": "f_a5",
+              "level": "fact",
+              "text": "Routine blood tests: Within the reference ranges",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_lab4",
+                "page": 1,
+                "section": "Summary",
+                "snippet": "All parameters within reference range."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_5",
+    "root": {
+      "id": "syn_5",
+      "level": "synthesis",
+      "text": "Your neurologist documented migraine with aura as suspected, not as a confirmed diagnosis.",
+      "kind": "patient_fact",
+      "flag": "uncertain",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_a6",
+          "level": "fact",
+          "text": "Migraine with aura (suspected): Suspected",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_neu",
+            "page": 2,
+            "section": "Impression",
+            "snippet": "Features suggest migraine with aura. Imaging requested to exclude other causes."
+          },
+          "children": []
+        },
+        {
+          "id": "cl_a4",
+          "level": "verification",
+          "text": "The headache pattern is consistent with migraine with aura.",
+          "kind": "interpretation",
+          "status": "partially_supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_a1",
+              "level": "fact",
+              "text": "Recurrent headaches with brief flashing lights: Since May",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_neu",
+                "page": 1,
+                "section": "History",
+                "snippet": "Recurrent headaches since May, preceded by about 20 minutes of flashing lights."
+              },
+              "children": []
+            },
+            {
+              "id": "f_a6",
+              "level": "fact",
+              "text": "Migraine with aura (suspected): Suspected",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_neu",
+                "page": 2,
+                "section": "Impression",
+                "snippet": "Features suggest migraine with aura. Imaging requested to exclude other causes."
+              },
+              "children": []
+            },
+            {
+              "id": "src_neuro_9",
+              "level": "evidence_source",
+              "text": "Sample summary: recurrent headaches with brief visual symptoms",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_neuro_9",
+                "title": "Sample summary: recurrent headaches with brief visual symptoms",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2023,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§1 Patterns",
+                "snippet": "Recurrent headaches with short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered. A clinician confirms the cause."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_6",
+    "root": {
+      "id": "syn_6",
+      "level": "synthesis",
+      "text": "Your current medicines are sumatriptan when needed, and ibuprofen when needed (about 15 days a month).",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_am1",
+          "level": "fact",
+          "text": "Sumatriptan: 50 mg, when needed",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx3",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Sumatriptan 50 mg SOS"
+          },
+          "children": []
+        },
+        {
+          "id": "f_am2",
+          "level": "fact",
+          "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx3",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+          },
+          "children": []
+        },
+        {
+          "id": "ma1",
+          "level": "specialist",
+          "text": "Ibuprofen is used on about 15 days a month, alongside sumatriptan when needed.",
+          "kind": "patient_fact",
+          "label": "Medication Safety perspective",
+          "children": [
+            {
+              "id": "f_am1",
+              "level": "fact",
+              "text": "Sumatriptan: 50 mg, when needed",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx3",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Sumatriptan 50 mg SOS"
+              },
+              "children": []
+            },
+            {
+              "id": "f_am2",
+              "level": "fact",
+              "text": "Ibuprofen: 400 mg, when needed (about 15 days a month)",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx3",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Ibuprofen 400 mg SOS, using ~15 days/month"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_7",
+    "root": {
+      "id": "syn_7",
+      "level": "synthesis",
+      "text": "The discharge summary advises a repeat MRI in 3 months and a neurology review.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_a4",
+          "level": "fact",
+          "text": "Discharge plan: Follow-up MRI in 3 months and neurology review",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_dis",
+            "page": 2,
+            "section": "Plan",
+            "snippet": "Repeat MRI in 3 months. Neurology review."
+          },
+          "children": []
+        },
+        {
+          "id": "nc1",
+          "level": "specialist",
+          "text": "The planned follow-up MRI in 3 months is consistent with the discharge summary's description. Whether it is still needed depends on the clarification.",
+          "kind": "interpretation",
+          "label": "Neurology perspective",
+          "children": [
+            {
+              "id": "f_a4",
+              "level": "fact",
+              "text": "Discharge plan: Follow-up MRI in 3 months and neurology review",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_dis",
+                "page": 2,
+                "section": "Plan",
+                "snippet": "Repeat MRI in 3 months. Neurology review."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_8",
+    "root": {
+      "id": "syn_8",
+      "level": "synthesis",
+      "text": "Your two documents disagree about the same scan, and the specialist perspectives differ on how to read that. One view is that it may be a wording difference in one document. Another is that it should not be assumed either way. We keep both and do not pick one.",
+      "kind": "interpretation",
+      "flag": "disagreement",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "mxa1",
+          "level": "matrix",
+          "text": "The MRI shows a lesion. The records themselves disagree. General Medicine leans toward a documentation difference; Neurology wants the radiologist to clarify. Neither view is treated as correct.",
+          "kind": "interpretation",
+          "flag": "disagreement",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "gac1",
+              "level": "specialist",
+              "text": "The MRI report and the discharge summary describe the same scan differently.",
+              "kind": "interpretation",
+              "flag": "disagreement",
+              "label": "General Medicine perspective",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "na1",
+              "level": "specialist",
+              "text": "The MRI report impression states no intracranial abnormality.",
+              "kind": "patient_fact",
+              "label": "Neurology perspective",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "na2",
+              "level": "specialist",
+              "text": "The discharge summary describes a small lesion in the right frontal lobe on the same scan.",
+              "kind": "patient_fact",
+              "label": "Neurology perspective",
+              "children": [
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cl_a1",
+              "level": "verification",
+              "text": "The MRI shows a small lesion in the right frontal lobe.",
+              "kind": "patient_fact",
+              "status": "contradicted",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_a2",
+                  "level": "fact",
+                  "text": "MRI report impression: No intracranial abnormality",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_mri",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "No intracranial abnormality identified."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_a3",
+                  "level": "fact",
+                  "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_dis",
+                    "page": 1,
+                    "section": "Investigations",
+                    "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cl_a1",
+          "level": "verification",
+          "text": "The MRI shows a small lesion in the right frontal lobe.",
+          "kind": "patient_fact",
+          "status": "contradicted",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_a2",
+              "level": "fact",
+              "text": "MRI report impression: No intracranial abnormality",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_mri",
+                "page": 2,
+                "section": "Impression",
+                "snippet": "No intracranial abnormality identified."
+              },
+              "children": []
+            },
+            {
+              "id": "f_a3",
+              "level": "fact",
+              "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_dis",
+                "page": 1,
+                "section": "Investigations",
+                "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "tl3",
+          "level": "timeline",
+          "text": "MRI brain: report says no abnormality. Impression: no intracranial abnormality.",
+          "kind": "patient_fact",
+          "flag": "disagreement",
+          "label": "Timeline event",
+          "children": [
+            {
+              "id": "f_a2",
+              "level": "fact",
+              "text": "MRI report impression: No intracranial abnormality",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_mri",
+                "page": 2,
+                "section": "Impression",
+                "snippet": "No intracranial abnormality identified."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "tl4",
+          "level": "timeline",
+          "text": "Discharge summary describes a small lesion. Follow-up MRI in 3 months advised.",
+          "kind": "patient_fact",
+          "flag": "disagreement",
+          "label": "Timeline event",
+          "children": [
+            {
+              "id": "f_a3",
+              "level": "fact",
+              "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_dis",
+                "page": 1,
+                "section": "Investigations",
+                "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_9",
+    "root": {
+      "id": "syn_9",
+      "level": "synthesis",
+      "text": "When two documents describe the same scan differently, a formal re-read or clarification from the reporting radiologist is commonly requested before conclusions are drawn.",
+      "kind": "external_evidence",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "cl_a3",
+          "level": "verification",
+          "text": "When documents disagree, a radiologist re-read is commonly requested.",
+          "kind": "external_evidence",
+          "status": "supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_a2",
+              "level": "fact",
+              "text": "MRI report impression: No intracranial abnormality",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_mri",
+                "page": 2,
+                "section": "Impression",
+                "snippet": "No intracranial abnormality identified."
+              },
+              "children": []
+            },
+            {
+              "id": "f_a3",
+              "level": "fact",
+              "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_dis",
+                "page": 1,
+                "section": "Investigations",
+                "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+              },
+              "children": []
+            },
+            {
+              "id": "src_neuro_7",
+              "level": "evidence_source",
+              "text": "Sample summary: when an imaging report and a clinical summary disagree",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_neuro_7",
+                "title": "Sample summary: when an imaging report and a clinical summary disagree",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2024,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§5 Discrepant reports",
+                "snippet": "When two documents describe the same scan differently, a formal re-read or clarification from the reporting radiologist is commonly requested before conclusions are drawn."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "na3",
+          "level": "specialist",
+          "text": "When two documents describe a scan differently, a formal re-read by the reporting radiologist is commonly requested before conclusions are drawn.",
+          "kind": "external_evidence",
+          "label": "Neurology perspective",
+          "children": [
+            {
+              "id": "src_neuro_7",
+              "level": "evidence_source",
+              "text": "Sample summary: when an imaging report and a clinical summary disagree",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_neuro_7",
+                "title": "Sample summary: when an imaging report and a clinical summary disagree",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2024,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§5 Discrepant reports",
+                "snippet": "When two documents describe the same scan differently, a formal re-read or clarification from the reporting radiologist is commonly requested before conclusions are drawn."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl1",
+    "root": {
+      "id": "tl1",
+      "level": "timeline",
+      "text": "Headaches with flashing lights begin. Recurrent since May.",
+      "kind": "patient_fact",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_a1",
+          "level": "fact",
+          "text": "Recurrent headaches with brief flashing lights: Since May",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_neu",
+            "page": 1,
+            "section": "History",
+            "snippet": "Recurrent headaches since May, preceded by about 20 minutes of flashing lights."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl2",
+    "root": {
+      "id": "tl2",
+      "level": "timeline",
+      "text": "Neurology consultation. Migraine with aura suspected; MRI requested.",
+      "kind": "patient_fact",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_a6",
+          "level": "fact",
+          "text": "Migraine with aura (suspected): Suspected",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_neu",
+            "page": 2,
+            "section": "Impression",
+            "snippet": "Features suggest migraine with aura. Imaging requested to exclude other causes."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl3",
+    "root": {
+      "id": "tl3",
+      "level": "timeline",
+      "text": "MRI brain: report says no abnormality. Impression: no intracranial abnormality.",
+      "kind": "patient_fact",
+      "flag": "disagreement",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_a2",
+          "level": "fact",
+          "text": "MRI report impression: No intracranial abnormality",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_mri",
+            "page": 2,
+            "section": "Impression",
+            "snippet": "No intracranial abnormality identified."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl4",
+    "root": {
+      "id": "tl4",
+      "level": "timeline",
+      "text": "Discharge summary describes a small lesion. Follow-up MRI in 3 months advised.",
+      "kind": "patient_fact",
+      "flag": "disagreement",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_a3",
+          "level": "fact",
+          "text": "Discharge summary description of the MRI: Small lesion, right frontal lobe",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_dis",
+            "page": 1,
+            "section": "Investigations",
+            "snippet": "MRI brain (17-Jul): small lesion in the right frontal lobe, for follow-up."
+          },
+          "children": []
+        }
+      ]
+    }
+  }
+]

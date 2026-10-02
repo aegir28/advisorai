@@ -1,0 +1,4379 @@
+[
+  {
+    "schema_version": "trace.v1",
+    "item_id": "cf1",
+    "root": {
+      "id": "cf1",
+      "level": "specialist",
+      "text": "High-sensitivity troponin was raised at 182 ng/L (reference below 34).",
+      "kind": "patient_fact",
+      "label": "Cardiology perspective",
+      "children": [
+        {
+          "id": "f_118",
+          "level": "fact",
+          "text": "Troponin I (high-sensitivity): 182 ng/L",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_lab3",
+            "page": 2,
+            "section": "Cardiac markers",
+            "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "cf3",
+    "root": {
+      "id": "cf3",
+      "level": "specialist",
+      "text": "The angiography report describes about 80 % narrowing in the LAD artery.",
+      "kind": "patient_fact",
+      "label": "Cardiology perspective",
+      "children": [
+        {
+          "id": "f_140",
+          "level": "fact",
+          "text": "LAD artery narrowing: About 80 %",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_angio",
+            "page": 2,
+            "section": "Findings",
+            "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "f_m1",
+    "root": {
+      "id": "f_m1",
+      "level": "fact",
+      "text": "Aspirin: 75 mg, once daily",
+      "kind": "patient_fact",
+      "label": "Fact from your records",
+      "source": {
+        "doc_id": "d_rx",
+        "page": 1,
+        "section": "Medicines",
+        "snippet": "Tab. Aspirin 75 mg OD"
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "f_m2",
+    "root": {
+      "id": "f_m2",
+      "level": "fact",
+      "text": "Clopidogrel: 75 mg, once daily",
+      "kind": "patient_fact",
+      "label": "Fact from your records",
+      "source": {
+        "doc_id": "d_rx",
+        "page": 1,
+        "section": "Medicines",
+        "snippet": "Tab. Clopidogrel 75 mg OD"
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "f_m3",
+    "root": {
+      "id": "f_m3",
+      "level": "fact",
+      "text": "Metformin: 1000 mg, twice daily",
+      "kind": "patient_fact",
+      "label": "Fact from your records",
+      "source": {
+        "doc_id": "d_rx",
+        "page": 1,
+        "section": "Medicines",
+        "snippet": "Tab. Metformin 1000 mg BD"
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "f_m4",
+    "root": {
+      "id": "f_m4",
+      "level": "fact",
+      "text": "Atorvastatin: 40 mg, at night",
+      "kind": "patient_fact",
+      "label": "Fact from your records",
+      "source": {
+        "doc_id": "d_rx",
+        "page": 1,
+        "section": "Medicines",
+        "snippet": "Tab. Atorvastatin 40 mg HS"
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "f_m5",
+    "root": {
+      "id": "f_m5",
+      "level": "fact",
+      "text": "Metoprolol: 25 mg, twice daily",
+      "kind": "patient_fact",
+      "label": "Fact from your records",
+      "source": {
+        "doc_id": "d_rx",
+        "page": 1,
+        "section": "Medicines",
+        "snippet": "Tab. Metoprolol 25 mg BD"
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "f_m6",
+    "root": {
+      "id": "f_m6",
+      "level": "fact",
+      "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+      "kind": "patient_fact",
+      "label": "Fact from your records",
+      "source": {
+        "doc_id": "d_rx",
+        "page": 1,
+        "section": "Medicines",
+        "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "gap1",
+    "root": {
+      "id": "gap1",
+      "level": "timeline",
+      "text": "No heart ultrasound (echocardiogram) is on file between the admission and the angioplasty recommendation.",
+      "kind": "interpretation",
+      "flag": "missing",
+      "label": "Timeline check",
+      "children": [
+        {
+          "id": "tl5",
+          "level": "timeline",
+          "text": "Coronary angiography. About 80 % narrowing in the LAD artery.",
+          "kind": "patient_fact",
+          "label": "Timeline event",
+          "children": [
+            {
+              "id": "f_140",
+              "level": "fact",
+              "text": "LAD artery narrowing: About 80 %",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_angio",
+                "page": 2,
+                "section": "Findings",
+                "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "gm1",
+    "root": {
+      "id": "gm1",
+      "level": "specialist",
+      "text": "HbA1c is 8.9 %, above the usual target of about 7 %.",
+      "kind": "patient_fact",
+      "label": "General Medicine perspective",
+      "children": [
+        {
+          "id": "f_hba1c",
+          "level": "fact",
+          "text": "HbA1c: 8.9 %",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_lab1",
+            "page": 1,
+            "section": "Diabetes panel",
+            "snippet": "HbA1c 8.9 % (target < 7.0 %) H"
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "gm2",
+    "root": {
+      "id": "gm2",
+      "level": "specialist",
+      "text": "Whether the timing is urgent or can be planned depends on current symptoms and heart function, which the records do not fully show.",
+      "kind": "interpretation",
+      "label": "General Medicine perspective",
+      "children": [
+        {
+          "id": "f_118",
+          "level": "fact",
+          "text": "Troponin I (high-sensitivity): 182 ng/L",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_lab3",
+            "page": 2,
+            "section": "Cardiac markers",
+            "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+          },
+          "children": []
+        },
+        {
+          "id": "f_121",
+          "level": "fact",
+          "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_consult",
+            "page": 2,
+            "section": "Plan",
+            "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "ic1",
+    "root": {
+      "id": "ic1",
+      "level": "specialist",
+      "text": "The LAD narrowing described in the report is a typical target when angioplasty is discussed.",
+      "kind": "interpretation",
+      "label": "Interventional Cardiology perspective",
+      "children": [
+        {
+          "id": "f_140",
+          "level": "fact",
+          "text": "LAD artery narrowing: About 80 %",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_angio",
+            "page": 2,
+            "section": "Findings",
+            "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "ic2",
+    "root": {
+      "id": "ic2",
+      "level": "specialist",
+      "text": "If symptoms have been stable, a planned timeline after optimising medicines and getting an echocardiogram may also be reasonable to discuss.",
+      "kind": "interpretation",
+      "label": "Interventional Cardiology perspective",
+      "children": [
+        {
+          "id": "f_121",
+          "level": "fact",
+          "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_consult",
+            "page": 2,
+            "section": "Plan",
+            "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+          },
+          "children": []
+        },
+        {
+          "id": "f_sym1",
+          "level": "fact",
+          "text": "Chest tightness on exertion: Climbing stairs, since January",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_gp",
+            "page": 1,
+            "section": "History",
+            "snippet": "Chest tightness on climbing two flights of stairs for the past few weeks."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "ms1",
+    "root": {
+      "id": "ms1",
+      "level": "specialist",
+      "text": "Two antiplatelet medicines (aspirin and clopidogrel) are listed.",
+      "kind": "patient_fact",
+      "label": "Medication Safety perspective",
+      "children": [
+        {
+          "id": "f_m1",
+          "level": "fact",
+          "text": "Aspirin: 75 mg, once daily",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Aspirin 75 mg OD"
+          },
+          "children": []
+        },
+        {
+          "id": "f_m2",
+          "level": "fact",
+          "text": "Clopidogrel: 75 mg, once daily",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Clopidogrel 75 mg OD"
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "ms2",
+    "root": {
+      "id": "ms2",
+      "level": "specialist",
+      "text": "Diclofenac (an NSAID painkiller) is listed alongside antiplatelet medicines. This combination is associated with a higher chance of bleeding and is worth reviewing with the prescriber.",
+      "kind": "external_evidence",
+      "label": "Medication Safety perspective",
+      "children": [
+        {
+          "id": "f_m6",
+          "level": "fact",
+          "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+          },
+          "children": []
+        },
+        {
+          "id": "f_m1",
+          "level": "fact",
+          "text": "Aspirin: 75 mg, once daily",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Aspirin 75 mg OD"
+          },
+          "children": []
+        },
+        {
+          "id": "f_m2",
+          "level": "fact",
+          "text": "Clopidogrel: 75 mg, once daily",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Clopidogrel 75 mg OD"
+          },
+          "children": []
+        },
+        {
+          "id": "src_drug_3",
+          "level": "evidence_source",
+          "text": "Sample summary: antiplatelet medicines and NSAIDs",
+          "kind": "external_evidence",
+          "label": "Reference evidence",
+          "external_source": {
+            "id": "src_drug_3",
+            "title": "Sample summary: antiplatelet medicines and NSAIDs",
+            "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+            "year": 2023,
+            "licence": "Prototype placeholder, not a real drug label",
+            "section": "§3 Interactions",
+            "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q1",
+    "root": {
+      "id": "q1",
+      "level": "question",
+      "text": "What specific findings in my angiography and blood tests support the need for angioplasty now?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "cl_51",
+          "level": "verification",
+          "text": "Angioplasty is commonly discussed when troponin is raised and a significant narrowing is found.",
+          "kind": "external_evidence",
+          "status": "supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_118",
+              "level": "fact",
+              "text": "Troponin I (high-sensitivity): 182 ng/L",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_lab3",
+                "page": 2,
+                "section": "Cardiac markers",
+                "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+              },
+              "children": []
+            },
+            {
+              "id": "f_140",
+              "level": "fact",
+              "text": "LAD artery narrowing: About 80 %",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_angio",
+                "page": 2,
+                "section": "Findings",
+                "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+              },
+              "children": []
+            },
+            {
+              "id": "src_cardio_12",
+              "level": "evidence_source",
+              "text": "Sample summary: when invasive treatment is discussed in coronary artery disease",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_cardio_12",
+                "title": "Sample summary: when invasive treatment is discussed in coronary artery disease",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2024,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§4 Discussing revascularisation",
+                "snippet": "Revascularisation is commonly discussed when a significant narrowing is found together with a rise in cardiac troponin. Timing may be planned or urgent depending on symptoms and heart function."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "f_140",
+          "level": "fact",
+          "text": "LAD artery narrowing: About 80 %",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_angio",
+            "page": 2,
+            "section": "Findings",
+            "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q2",
+    "root": {
+      "id": "q2",
+      "level": "question",
+      "text": "Has an echocardiogram been done? Could its result change the decision or the timing?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_9",
+          "level": "synthesis",
+          "text": "Your records do not include a heart ultrasound (echocardiogram). This test shows how well the heart is pumping. You may want to ask whether it has been done, or whether it is needed before deciding on timing.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mx4",
+              "level": "matrix",
+              "text": "Heart-pump function (LVEF) is known. All three flag this independently. No echocardiogram is in the records.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "gmi1",
+                  "level": "specialist",
+                  "text": "Echocardiogram (heart ultrasound). Shows how well the heart is pumping, which can shape timing decisions.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "General Medicine perspective",
+                  "children": []
+                },
+                {
+                  "id": "cmi1",
+                  "level": "specialist",
+                  "text": "Echocardiogram / LVEF. Heart pumping strength may influence timing and approach.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "Cardiology perspective",
+                  "children": []
+                },
+                {
+                  "id": "imi1",
+                  "level": "specialist",
+                  "text": "Echocardiogram / LVEF. Part of planning a procedure.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "Interventional Cardiology perspective",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "gmi1",
+              "level": "specialist",
+              "text": "Echocardiogram (heart ultrasound). Shows how well the heart is pumping, which can shape timing decisions.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "General Medicine perspective",
+              "children": []
+            },
+            {
+              "id": "cmi1",
+              "level": "specialist",
+              "text": "Echocardiogram / LVEF. Heart pumping strength may influence timing and approach.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Cardiology perspective",
+              "children": []
+            },
+            {
+              "id": "imi1",
+              "level": "specialist",
+              "text": "Echocardiogram / LVEF. Part of planning a procedure.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Interventional Cardiology perspective",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "mx4",
+          "level": "matrix",
+          "text": "Heart-pump function (LVEF) is known. All three flag this independently. No echocardiogram is in the records.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "gmi1",
+              "level": "specialist",
+              "text": "Echocardiogram (heart ultrasound). Shows how well the heart is pumping, which can shape timing decisions.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "General Medicine perspective",
+              "children": []
+            },
+            {
+              "id": "cmi1",
+              "level": "specialist",
+              "text": "Echocardiogram / LVEF. Heart pumping strength may influence timing and approach.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Cardiology perspective",
+              "children": []
+            },
+            {
+              "id": "imi1",
+              "level": "specialist",
+              "text": "Echocardiogram / LVEF. Part of planning a procedure.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Interventional Cardiology perspective",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q3",
+    "root": {
+      "id": "q3",
+      "level": "question",
+      "text": "What happens if I take a few weeks to decide? Is there a risk in waiting in my case?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_8",
+          "level": "synthesis",
+          "text": "Perspectives differ on timing. Your cardiologist recommended 1–2 weeks. Another perspective notes that if symptoms have been stable, a planned timeline may also be reasonable to discuss. Both views are kept.",
+          "kind": "interpretation",
+          "flag": "disagreement",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mx3",
+              "level": "matrix",
+              "text": "Timing: within 1–2 weeks, or planned later. Interventional Cardiology raises a planned timeline as a reasonable discussion point; the treating cardiologist recommended 1–2 weeks. We don't pick a side. Which view fits depends on information not in the records.",
+              "kind": "interpretation",
+              "flag": "disagreement",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "ic2",
+                  "level": "specialist",
+                  "text": "If symptoms have been stable, a planned timeline after optimising medicines and getting an echocardiogram may also be reasonable to discuss.",
+                  "kind": "interpretation",
+                  "label": "Interventional Cardiology perspective",
+                  "children": [
+                    {
+                      "id": "f_121",
+                      "level": "fact",
+                      "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_consult",
+                        "page": 2,
+                        "section": "Plan",
+                        "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_sym1",
+                      "level": "fact",
+                      "text": "Chest tightness on exertion: Climbing stairs, since January",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_gp",
+                        "page": 1,
+                        "section": "History",
+                        "snippet": "Chest tightness on climbing two flights of stairs for the past few weeks."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "gm2",
+                  "level": "specialist",
+                  "text": "Whether the timing is urgent or can be planned depends on current symptoms and heart function, which the records do not fully show.",
+                  "kind": "interpretation",
+                  "label": "General Medicine perspective",
+                  "children": [
+                    {
+                      "id": "f_118",
+                      "level": "fact",
+                      "text": "Troponin I (high-sensitivity): 182 ng/L",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_lab3",
+                        "page": 2,
+                        "section": "Cardiac markers",
+                        "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_121",
+                      "level": "fact",
+                      "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_consult",
+                        "page": 2,
+                        "section": "Plan",
+                        "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "cu1",
+                  "level": "specialist",
+                  "text": "Whether treatment should happen within weeks or be planned later is not settled by the documents.",
+                  "kind": "interpretation",
+                  "flag": "uncertain",
+                  "label": "Cardiology perspective",
+                  "children": []
+                },
+                {
+                  "id": "cl_54",
+                  "level": "verification",
+                  "text": "Treatment must happen urgently within 1–2 weeks.",
+                  "kind": "interpretation",
+                  "status": "insufficient_evidence",
+                  "label": "Claim check",
+                  "children": [
+                    {
+                      "id": "f_121",
+                      "level": "fact",
+                      "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_consult",
+                        "page": 2,
+                        "section": "Plan",
+                        "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "cl_54",
+              "level": "verification",
+              "text": "Treatment must happen urgently within 1–2 weeks.",
+              "kind": "interpretation",
+              "status": "insufficient_evidence",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_121",
+                  "level": "fact",
+                  "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_consult",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cl_55",
+              "level": "verification",
+              "text": "A planned approach after optimising medicines is reasonable to discuss.",
+              "kind": "interpretation",
+              "status": "partially_supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_sym1",
+                  "level": "fact",
+                  "text": "Chest tightness on exertion: Climbing stairs, since January",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_gp",
+                    "page": 1,
+                    "section": "History",
+                    "snippet": "Chest tightness on climbing two flights of stairs for the past few weeks."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_cardio_14",
+                  "level": "evidence_source",
+                  "text": "Sample summary: medicines as part of care for stable coronary disease",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_cardio_14",
+                    "title": "Sample summary: medicines as part of care for stable coronary disease",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2024,
+                    "licence": "Prototype placeholder, not a real guideline",
+                    "section": "§2 Medicines first",
+                    "snippet": "For people whose symptoms are stable, optimising medicines is often discussed alongside, or before, a procedure. The choice depends on the individual."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "mx3",
+          "level": "matrix",
+          "text": "Timing: within 1–2 weeks, or planned later. Interventional Cardiology raises a planned timeline as a reasonable discussion point; the treating cardiologist recommended 1–2 weeks. We don't pick a side. Which view fits depends on information not in the records.",
+          "kind": "interpretation",
+          "flag": "disagreement",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "ic2",
+              "level": "specialist",
+              "text": "If symptoms have been stable, a planned timeline after optimising medicines and getting an echocardiogram may also be reasonable to discuss.",
+              "kind": "interpretation",
+              "label": "Interventional Cardiology perspective",
+              "children": [
+                {
+                  "id": "f_121",
+                  "level": "fact",
+                  "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_consult",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_sym1",
+                  "level": "fact",
+                  "text": "Chest tightness on exertion: Climbing stairs, since January",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_gp",
+                    "page": 1,
+                    "section": "History",
+                    "snippet": "Chest tightness on climbing two flights of stairs for the past few weeks."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "gm2",
+              "level": "specialist",
+              "text": "Whether the timing is urgent or can be planned depends on current symptoms and heart function, which the records do not fully show.",
+              "kind": "interpretation",
+              "label": "General Medicine perspective",
+              "children": [
+                {
+                  "id": "f_118",
+                  "level": "fact",
+                  "text": "Troponin I (high-sensitivity): 182 ng/L",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_lab3",
+                    "page": 2,
+                    "section": "Cardiac markers",
+                    "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_121",
+                  "level": "fact",
+                  "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_consult",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cu1",
+              "level": "specialist",
+              "text": "Whether treatment should happen within weeks or be planned later is not settled by the documents.",
+              "kind": "interpretation",
+              "flag": "uncertain",
+              "label": "Cardiology perspective",
+              "children": []
+            },
+            {
+              "id": "cl_54",
+              "level": "verification",
+              "text": "Treatment must happen urgently within 1–2 weeks.",
+              "kind": "interpretation",
+              "status": "insufficient_evidence",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_121",
+                  "level": "fact",
+                  "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_consult",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q4",
+    "root": {
+      "id": "q4",
+      "level": "question",
+      "text": "Are there reasonable alternatives for my situation, such as adjusting medicines first? Why were they not preferred?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "cf5",
+          "level": "specialist",
+          "text": "For stable symptoms, medicines-first approaches are also sometimes discussed as an alternative.",
+          "kind": "external_evidence",
+          "label": "Cardiology perspective",
+          "children": [
+            {
+              "id": "src_cardio_14",
+              "level": "evidence_source",
+              "text": "Sample summary: medicines as part of care for stable coronary disease",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_cardio_14",
+                "title": "Sample summary: medicines as part of care for stable coronary disease",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2024,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§2 Medicines first",
+                "snippet": "For people whose symptoms are stable, optimising medicines is often discussed alongside, or before, a procedure. The choice depends on the individual."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "syn_14",
+          "level": "synthesis",
+          "text": "For people whose symptoms are stable, doctors sometimes also discuss optimising medicines first. You may want to ask why one path was preferred in your case.",
+          "kind": "external_evidence",
+          "flag": "uncertain",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "cf5",
+              "level": "specialist",
+              "text": "For stable symptoms, medicines-first approaches are also sometimes discussed as an alternative.",
+              "kind": "external_evidence",
+              "label": "Cardiology perspective",
+              "children": [
+                {
+                  "id": "src_cardio_14",
+                  "level": "evidence_source",
+                  "text": "Sample summary: medicines as part of care for stable coronary disease",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_cardio_14",
+                    "title": "Sample summary: medicines as part of care for stable coronary disease",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2024,
+                    "licence": "Prototype placeholder, not a real guideline",
+                    "section": "§2 Medicines first",
+                    "snippet": "For people whose symptoms are stable, optimising medicines is often discussed alongside, or before, a procedure. The choice depends on the individual."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cc1",
+              "level": "specialist",
+              "text": "A discussion of alternatives, including medicines first, may help the person understand why one path was preferred.",
+              "kind": "interpretation",
+              "label": "Cardiology perspective",
+              "children": [
+                {
+                  "id": "f_121",
+                  "level": "fact",
+                  "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_consult",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cl_55",
+              "level": "verification",
+              "text": "A planned approach after optimising medicines is reasonable to discuss.",
+              "kind": "interpretation",
+              "status": "partially_supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_sym1",
+                  "level": "fact",
+                  "text": "Chest tightness on exertion: Climbing stairs, since January",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_gp",
+                    "page": 1,
+                    "section": "History",
+                    "snippet": "Chest tightness on climbing two flights of stairs for the past few weeks."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_cardio_14",
+                  "level": "evidence_source",
+                  "text": "Sample summary: medicines as part of care for stable coronary disease",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_cardio_14",
+                    "title": "Sample summary: medicines as part of care for stable coronary disease",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2024,
+                    "licence": "Prototype placeholder, not a real guideline",
+                    "section": "§2 Medicines first",
+                    "snippet": "For people whose symptoms are stable, optimising medicines is often discussed alongside, or before, a procedure. The choice depends on the individual."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q5",
+    "root": {
+      "id": "q5",
+      "level": "question",
+      "text": "I take two antiplatelet medicines and a painkiller (diclofenac). Is that combination safe for me around the procedure?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "ms2",
+          "level": "specialist",
+          "text": "Diclofenac (an NSAID painkiller) is listed alongside antiplatelet medicines. This combination is associated with a higher chance of bleeding and is worth reviewing with the prescriber.",
+          "kind": "external_evidence",
+          "label": "Medication Safety perspective",
+          "children": [
+            {
+              "id": "f_m6",
+              "level": "fact",
+              "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+              },
+              "children": []
+            },
+            {
+              "id": "f_m1",
+              "level": "fact",
+              "text": "Aspirin: 75 mg, once daily",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Aspirin 75 mg OD"
+              },
+              "children": []
+            },
+            {
+              "id": "f_m2",
+              "level": "fact",
+              "text": "Clopidogrel: 75 mg, once daily",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Clopidogrel 75 mg OD"
+              },
+              "children": []
+            },
+            {
+              "id": "src_drug_3",
+              "level": "evidence_source",
+              "text": "Sample summary: antiplatelet medicines and NSAIDs",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_drug_3",
+                "title": "Sample summary: antiplatelet medicines and NSAIDs",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2023,
+                "licence": "Prototype placeholder, not a real drug label",
+                "section": "§3 Interactions",
+                "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "syn_13",
+          "level": "synthesis",
+          "text": "Your list includes two antiplatelet medicines and diclofenac, a painkiller. Taking these together is associated with a higher chance of bleeding. This is worth reviewing with your prescriber. Please do not change any medicine on your own.",
+          "kind": "external_evidence",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "ms2",
+              "level": "specialist",
+              "text": "Diclofenac (an NSAID painkiller) is listed alongside antiplatelet medicines. This combination is associated with a higher chance of bleeding and is worth reviewing with the prescriber.",
+              "kind": "external_evidence",
+              "label": "Medication Safety perspective",
+              "children": [
+                {
+                  "id": "f_m6",
+                  "level": "fact",
+                  "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_m1",
+                  "level": "fact",
+                  "text": "Aspirin: 75 mg, once daily",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Aspirin 75 mg OD"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_m2",
+                  "level": "fact",
+                  "text": "Clopidogrel: 75 mg, once daily",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Clopidogrel 75 mg OD"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_drug_3",
+                  "level": "evidence_source",
+                  "text": "Sample summary: antiplatelet medicines and NSAIDs",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_drug_3",
+                    "title": "Sample summary: antiplatelet medicines and NSAIDs",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real drug label",
+                    "section": "§3 Interactions",
+                    "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cl_53",
+              "level": "verification",
+              "text": "Taking an NSAID together with antiplatelet medicines is associated with a higher chance of bleeding.",
+              "kind": "external_evidence",
+              "status": "supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_m1",
+                  "level": "fact",
+                  "text": "Aspirin: 75 mg, once daily",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Aspirin 75 mg OD"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_m2",
+                  "level": "fact",
+                  "text": "Clopidogrel: 75 mg, once daily",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Clopidogrel 75 mg OD"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_m6",
+                  "level": "fact",
+                  "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_drug_3",
+                  "level": "evidence_source",
+                  "text": "Sample summary: antiplatelet medicines and NSAIDs",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_drug_3",
+                    "title": "Sample summary: antiplatelet medicines and NSAIDs",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real drug label",
+                    "section": "§3 Interactions",
+                    "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "mx5",
+              "level": "matrix",
+              "text": "Antiplatelet medicines together with an NSAID. Medication Safety flags the combination. Cardiology says its importance depends on the full plan.",
+              "kind": "interpretation",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "ms2",
+                  "level": "specialist",
+                  "text": "Diclofenac (an NSAID painkiller) is listed alongside antiplatelet medicines. This combination is associated with a higher chance of bleeding and is worth reviewing with the prescriber.",
+                  "kind": "external_evidence",
+                  "label": "Medication Safety perspective",
+                  "children": [
+                    {
+                      "id": "f_m6",
+                      "level": "fact",
+                      "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_m1",
+                      "level": "fact",
+                      "text": "Aspirin: 75 mg, once daily",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Aspirin 75 mg OD"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_m2",
+                      "level": "fact",
+                      "text": "Clopidogrel: 75 mg, once daily",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Clopidogrel 75 mg OD"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "src_drug_3",
+                      "level": "evidence_source",
+                      "text": "Sample summary: antiplatelet medicines and NSAIDs",
+                      "kind": "external_evidence",
+                      "label": "Reference evidence",
+                      "external_source": {
+                        "id": "src_drug_3",
+                        "title": "Sample summary: antiplatelet medicines and NSAIDs",
+                        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                        "year": 2023,
+                        "licence": "Prototype placeholder, not a real drug label",
+                        "section": "§3 Interactions",
+                        "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "cl_53",
+                  "level": "verification",
+                  "text": "Taking an NSAID together with antiplatelet medicines is associated with a higher chance of bleeding.",
+                  "kind": "external_evidence",
+                  "status": "supported",
+                  "label": "Claim check",
+                  "children": [
+                    {
+                      "id": "f_m1",
+                      "level": "fact",
+                      "text": "Aspirin: 75 mg, once daily",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Aspirin 75 mg OD"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_m2",
+                      "level": "fact",
+                      "text": "Clopidogrel: 75 mg, once daily",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Clopidogrel 75 mg OD"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_m6",
+                      "level": "fact",
+                      "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "src_drug_3",
+                      "level": "evidence_source",
+                      "text": "Sample summary: antiplatelet medicines and NSAIDs",
+                      "kind": "external_evidence",
+                      "label": "Reference evidence",
+                      "external_source": {
+                        "id": "src_drug_3",
+                        "title": "Sample summary: antiplatelet medicines and NSAIDs",
+                        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                        "year": 2023,
+                        "licence": "Prototype placeholder, not a real drug label",
+                        "section": "§3 Interactions",
+                        "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q6",
+    "root": {
+      "id": "q6",
+      "level": "question",
+      "text": "How will my diabetes control affect the procedure and recovery?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "gm1",
+          "level": "specialist",
+          "text": "HbA1c is 8.9 %, above the usual target of about 7 %.",
+          "kind": "patient_fact",
+          "label": "General Medicine perspective",
+          "children": [
+            {
+              "id": "f_hba1c",
+              "level": "fact",
+              "text": "HbA1c: 8.9 %",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_lab1",
+                "page": 1,
+                "section": "Diabetes panel",
+                "snippet": "HbA1c 8.9 % (target < 7.0 %) H"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "syn_12",
+          "level": "synthesis",
+          "text": "How your blood sugar level might affect the procedure and recovery is uncertain. General references say it can matter, but cannot say how much for you.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "cl_56",
+              "level": "verification",
+              "text": "Higher HbA1c can influence recovery after a procedure.",
+              "kind": "external_evidence",
+              "status": "partially_supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_hba1c",
+                  "level": "fact",
+                  "text": "HbA1c: 8.9 %",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_lab1",
+                    "page": 1,
+                    "section": "Diabetes panel",
+                    "snippet": "HbA1c 8.9 % (target < 7.0 %) H"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_diab_2",
+                  "level": "evidence_source",
+                  "text": "Sample summary: blood sugar control around procedures",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_diab_2",
+                    "title": "Sample summary: blood sugar control around procedures",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2024,
+                    "licence": "Prototype placeholder, not a real guideline",
+                    "section": "§1 Peri-procedure glucose",
+                    "snippet": "Higher long-term blood sugar (HbA1c) can influence healing and recovery. Teams often review glucose control before planned procedures."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "gm1",
+              "level": "specialist",
+              "text": "HbA1c is 8.9 %, above the usual target of about 7 %.",
+              "kind": "patient_fact",
+              "label": "General Medicine perspective",
+              "children": [
+                {
+                  "id": "f_hba1c",
+                  "level": "fact",
+                  "text": "HbA1c: 8.9 %",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_lab1",
+                    "page": 1,
+                    "section": "Diabetes panel",
+                    "snippet": "HbA1c 8.9 % (target < 7.0 %) H"
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q7",
+    "root": {
+      "id": "q7",
+      "level": "question",
+      "text": "Having seen my angiography report, do you see the same reasons for considering angioplasty?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "f_140",
+          "level": "fact",
+          "text": "LAD artery narrowing: About 80 %",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_angio",
+            "page": 2,
+            "section": "Findings",
+            "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+          },
+          "children": []
+        },
+        {
+          "id": "syn_3",
+          "level": "synthesis",
+          "text": "Your angiography report describes about 80 % narrowing in one heart artery (the LAD), with no significant narrowing in the other arteries.",
+          "kind": "patient_fact",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "f_140",
+              "level": "fact",
+              "text": "LAD artery narrowing: About 80 %",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_angio",
+                "page": 2,
+                "section": "Findings",
+                "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+              },
+              "children": []
+            },
+            {
+              "id": "f_150",
+              "level": "fact",
+              "text": "Other arteries: No significant narrowing",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_angio",
+                "page": 2,
+                "section": "Findings",
+                "snippet": "RCA and LCx: no significant stenosis."
+              },
+              "children": []
+            },
+            {
+              "id": "cf3",
+              "level": "specialist",
+              "text": "The angiography report describes about 80 % narrowing in the LAD artery.",
+              "kind": "patient_fact",
+              "label": "Cardiology perspective",
+              "children": [
+                {
+                  "id": "f_140",
+                  "level": "fact",
+                  "text": "LAD artery narrowing: About 80 %",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_angio",
+                    "page": 2,
+                    "section": "Findings",
+                    "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q8",
+    "root": {
+      "id": "q8",
+      "level": "question",
+      "text": "What symptoms would make this urgent rather than planned?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_8",
+          "level": "synthesis",
+          "text": "Perspectives differ on timing. Your cardiologist recommended 1–2 weeks. Another perspective notes that if symptoms have been stable, a planned timeline may also be reasonable to discuss. Both views are kept.",
+          "kind": "interpretation",
+          "flag": "disagreement",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mx3",
+              "level": "matrix",
+              "text": "Timing: within 1–2 weeks, or planned later. Interventional Cardiology raises a planned timeline as a reasonable discussion point; the treating cardiologist recommended 1–2 weeks. We don't pick a side. Which view fits depends on information not in the records.",
+              "kind": "interpretation",
+              "flag": "disagreement",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "ic2",
+                  "level": "specialist",
+                  "text": "If symptoms have been stable, a planned timeline after optimising medicines and getting an echocardiogram may also be reasonable to discuss.",
+                  "kind": "interpretation",
+                  "label": "Interventional Cardiology perspective",
+                  "children": [
+                    {
+                      "id": "f_121",
+                      "level": "fact",
+                      "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_consult",
+                        "page": 2,
+                        "section": "Plan",
+                        "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_sym1",
+                      "level": "fact",
+                      "text": "Chest tightness on exertion: Climbing stairs, since January",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_gp",
+                        "page": 1,
+                        "section": "History",
+                        "snippet": "Chest tightness on climbing two flights of stairs for the past few weeks."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "gm2",
+                  "level": "specialist",
+                  "text": "Whether the timing is urgent or can be planned depends on current symptoms and heart function, which the records do not fully show.",
+                  "kind": "interpretation",
+                  "label": "General Medicine perspective",
+                  "children": [
+                    {
+                      "id": "f_118",
+                      "level": "fact",
+                      "text": "Troponin I (high-sensitivity): 182 ng/L",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_lab3",
+                        "page": 2,
+                        "section": "Cardiac markers",
+                        "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_121",
+                      "level": "fact",
+                      "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_consult",
+                        "page": 2,
+                        "section": "Plan",
+                        "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "cu1",
+                  "level": "specialist",
+                  "text": "Whether treatment should happen within weeks or be planned later is not settled by the documents.",
+                  "kind": "interpretation",
+                  "flag": "uncertain",
+                  "label": "Cardiology perspective",
+                  "children": []
+                },
+                {
+                  "id": "cl_54",
+                  "level": "verification",
+                  "text": "Treatment must happen urgently within 1–2 weeks.",
+                  "kind": "interpretation",
+                  "status": "insufficient_evidence",
+                  "label": "Claim check",
+                  "children": [
+                    {
+                      "id": "f_121",
+                      "level": "fact",
+                      "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_consult",
+                        "page": 2,
+                        "section": "Plan",
+                        "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "cl_54",
+              "level": "verification",
+              "text": "Treatment must happen urgently within 1–2 weeks.",
+              "kind": "interpretation",
+              "status": "insufficient_evidence",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_121",
+                  "level": "fact",
+                  "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_consult",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cl_55",
+              "level": "verification",
+              "text": "A planned approach after optimising medicines is reasonable to discuss.",
+              "kind": "interpretation",
+              "status": "partially_supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_sym1",
+                  "level": "fact",
+                  "text": "Chest tightness on exertion: Climbing stairs, since January",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_gp",
+                    "page": 1,
+                    "section": "History",
+                    "snippet": "Chest tightness on climbing two flights of stairs for the past few weeks."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_cardio_14",
+                  "level": "evidence_source",
+                  "text": "Sample summary: medicines as part of care for stable coronary disease",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_cardio_14",
+                    "title": "Sample summary: medicines as part of care for stable coronary disease",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2024,
+                    "licence": "Prototype placeholder, not a real guideline",
+                    "section": "§2 Medicines first",
+                    "snippet": "For people whose symptoms are stable, optimising medicines is often discussed alongside, or before, a procedure. The choice depends on the individual."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "syn_11",
+          "level": "synthesis",
+          "text": "It is not possible to tell from the documents alone whether this is urgent or can be planned, because current symptoms and heart function are not documented.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "cu1",
+              "level": "specialist",
+              "text": "Whether treatment should happen within weeks or be planned later is not settled by the documents.",
+              "kind": "interpretation",
+              "flag": "uncertain",
+              "label": "Cardiology perspective",
+              "children": []
+            },
+            {
+              "id": "iu1",
+              "level": "specialist",
+              "text": "Whether symptoms have been stable since the admission is not documented.",
+              "kind": "interpretation",
+              "flag": "uncertain",
+              "label": "Interventional Cardiology perspective",
+              "children": []
+            },
+            {
+              "id": "gu1",
+              "level": "specialist",
+              "text": "How the person's symptoms have changed since May is not documented.",
+              "kind": "interpretation",
+              "flag": "uncertain",
+              "label": "General Medicine perspective",
+              "children": []
+            },
+            {
+              "id": "cl_54",
+              "level": "verification",
+              "text": "Treatment must happen urgently within 1–2 weeks.",
+              "kind": "interpretation",
+              "status": "insufficient_evidence",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_121",
+                  "level": "fact",
+                  "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_consult",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q9",
+    "root": {
+      "id": "q9",
+      "level": "question",
+      "text": "Which additional tests, if any, would you want before advising on timing?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_9",
+          "level": "synthesis",
+          "text": "Your records do not include a heart ultrasound (echocardiogram). This test shows how well the heart is pumping. You may want to ask whether it has been done, or whether it is needed before deciding on timing.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mx4",
+              "level": "matrix",
+              "text": "Heart-pump function (LVEF) is known. All three flag this independently. No echocardiogram is in the records.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "gmi1",
+                  "level": "specialist",
+                  "text": "Echocardiogram (heart ultrasound). Shows how well the heart is pumping, which can shape timing decisions.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "General Medicine perspective",
+                  "children": []
+                },
+                {
+                  "id": "cmi1",
+                  "level": "specialist",
+                  "text": "Echocardiogram / LVEF. Heart pumping strength may influence timing and approach.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "Cardiology perspective",
+                  "children": []
+                },
+                {
+                  "id": "imi1",
+                  "level": "specialist",
+                  "text": "Echocardiogram / LVEF. Part of planning a procedure.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "Interventional Cardiology perspective",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "gmi1",
+              "level": "specialist",
+              "text": "Echocardiogram (heart ultrasound). Shows how well the heart is pumping, which can shape timing decisions.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "General Medicine perspective",
+              "children": []
+            },
+            {
+              "id": "cmi1",
+              "level": "specialist",
+              "text": "Echocardiogram / LVEF. Heart pumping strength may influence timing and approach.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Cardiology perspective",
+              "children": []
+            },
+            {
+              "id": "imi1",
+              "level": "specialist",
+              "text": "Echocardiogram / LVEF. Part of planning a procedure.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Interventional Cardiology perspective",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "syn_10",
+          "level": "synthesis",
+          "text": "No recent kidney function result was found. It is relevant to medicine choices around procedures.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "gmi2",
+              "level": "specialist",
+              "text": "Recent kidney function test. Relevant to medicine choices around procedures.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "General Medicine perspective",
+              "children": []
+            },
+            {
+              "id": "msmi1",
+              "level": "specialist",
+              "text": "Recent kidney function result. Relevant to medicine choices around contrast and procedures.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Medication Safety perspective",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "src_cardio_12",
+    "root": {
+      "id": "src_cardio_12",
+      "level": "evidence_source",
+      "text": "Sample summary: when invasive treatment is discussed in coronary artery disease",
+      "kind": "external_evidence",
+      "label": "Reference evidence",
+      "external_source": {
+        "id": "src_cardio_12",
+        "title": "Sample summary: when invasive treatment is discussed in coronary artery disease",
+        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+        "year": 2024,
+        "licence": "Prototype placeholder, not a real guideline",
+        "section": "§4 Discussing revascularisation",
+        "snippet": "Revascularisation is commonly discussed when a significant narrowing is found together with a rise in cardiac troponin. Timing may be planned or urgent depending on symptoms and heart function."
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "src_cardio_14",
+    "root": {
+      "id": "src_cardio_14",
+      "level": "evidence_source",
+      "text": "Sample summary: medicines as part of care for stable coronary disease",
+      "kind": "external_evidence",
+      "label": "Reference evidence",
+      "external_source": {
+        "id": "src_cardio_14",
+        "title": "Sample summary: medicines as part of care for stable coronary disease",
+        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+        "year": 2024,
+        "licence": "Prototype placeholder, not a real guideline",
+        "section": "§2 Medicines first",
+        "snippet": "For people whose symptoms are stable, optimising medicines is often discussed alongside, or before, a procedure. The choice depends on the individual."
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "src_diab_2",
+    "root": {
+      "id": "src_diab_2",
+      "level": "evidence_source",
+      "text": "Sample summary: blood sugar control around procedures",
+      "kind": "external_evidence",
+      "label": "Reference evidence",
+      "external_source": {
+        "id": "src_diab_2",
+        "title": "Sample summary: blood sugar control around procedures",
+        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+        "year": 2024,
+        "licence": "Prototype placeholder, not a real guideline",
+        "section": "§1 Peri-procedure glucose",
+        "snippet": "Higher long-term blood sugar (HbA1c) can influence healing and recovery. Teams often review glucose control before planned procedures."
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "src_drug_3",
+    "root": {
+      "id": "src_drug_3",
+      "level": "evidence_source",
+      "text": "Sample summary: antiplatelet medicines and NSAIDs",
+      "kind": "external_evidence",
+      "label": "Reference evidence",
+      "external_source": {
+        "id": "src_drug_3",
+        "title": "Sample summary: antiplatelet medicines and NSAIDs",
+        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+        "year": 2023,
+        "licence": "Prototype placeholder, not a real drug label",
+        "section": "§3 Interactions",
+        "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_1",
+    "root": {
+      "id": "syn_1",
+      "level": "synthesis",
+      "text": "A blood test during your April admission showed troponin (a marker of heart-muscle strain) at 182 ng/L. The lab's reference is below 34.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_118",
+          "level": "fact",
+          "text": "Troponin I (high-sensitivity): 182 ng/L",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_lab3",
+            "page": 2,
+            "section": "Cardiac markers",
+            "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+          },
+          "children": []
+        },
+        {
+          "id": "cl_52",
+          "level": "verification",
+          "text": "Troponin I was 182 ng/L, above the lab's reference of below 34.",
+          "kind": "patient_fact",
+          "status": "supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_118",
+              "level": "fact",
+              "text": "Troponin I (high-sensitivity): 182 ng/L",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_lab3",
+                "page": 2,
+                "section": "Cardiac markers",
+                "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_10",
+    "root": {
+      "id": "syn_10",
+      "level": "synthesis",
+      "text": "No recent kidney function result was found. It is relevant to medicine choices around procedures.",
+      "kind": "interpretation",
+      "flag": "missing",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "gmi2",
+          "level": "specialist",
+          "text": "Recent kidney function test. Relevant to medicine choices around procedures.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "General Medicine perspective",
+          "children": []
+        },
+        {
+          "id": "msmi1",
+          "level": "specialist",
+          "text": "Recent kidney function result. Relevant to medicine choices around contrast and procedures.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "Medication Safety perspective",
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_11",
+    "root": {
+      "id": "syn_11",
+      "level": "synthesis",
+      "text": "It is not possible to tell from the documents alone whether this is urgent or can be planned, because current symptoms and heart function are not documented.",
+      "kind": "interpretation",
+      "flag": "uncertain",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "cu1",
+          "level": "specialist",
+          "text": "Whether treatment should happen within weeks or be planned later is not settled by the documents.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "Cardiology perspective",
+          "children": []
+        },
+        {
+          "id": "iu1",
+          "level": "specialist",
+          "text": "Whether symptoms have been stable since the admission is not documented.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "Interventional Cardiology perspective",
+          "children": []
+        },
+        {
+          "id": "gu1",
+          "level": "specialist",
+          "text": "How the person's symptoms have changed since May is not documented.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "General Medicine perspective",
+          "children": []
+        },
+        {
+          "id": "cl_54",
+          "level": "verification",
+          "text": "Treatment must happen urgently within 1–2 weeks.",
+          "kind": "interpretation",
+          "status": "insufficient_evidence",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_121",
+              "level": "fact",
+              "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_consult",
+                "page": 2,
+                "section": "Plan",
+                "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_12",
+    "root": {
+      "id": "syn_12",
+      "level": "synthesis",
+      "text": "How your blood sugar level might affect the procedure and recovery is uncertain. General references say it can matter, but cannot say how much for you.",
+      "kind": "interpretation",
+      "flag": "uncertain",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "cl_56",
+          "level": "verification",
+          "text": "Higher HbA1c can influence recovery after a procedure.",
+          "kind": "external_evidence",
+          "status": "partially_supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_hba1c",
+              "level": "fact",
+              "text": "HbA1c: 8.9 %",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_lab1",
+                "page": 1,
+                "section": "Diabetes panel",
+                "snippet": "HbA1c 8.9 % (target < 7.0 %) H"
+              },
+              "children": []
+            },
+            {
+              "id": "src_diab_2",
+              "level": "evidence_source",
+              "text": "Sample summary: blood sugar control around procedures",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_diab_2",
+                "title": "Sample summary: blood sugar control around procedures",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2024,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§1 Peri-procedure glucose",
+                "snippet": "Higher long-term blood sugar (HbA1c) can influence healing and recovery. Teams often review glucose control before planned procedures."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "gm1",
+          "level": "specialist",
+          "text": "HbA1c is 8.9 %, above the usual target of about 7 %.",
+          "kind": "patient_fact",
+          "label": "General Medicine perspective",
+          "children": [
+            {
+              "id": "f_hba1c",
+              "level": "fact",
+              "text": "HbA1c: 8.9 %",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_lab1",
+                "page": 1,
+                "section": "Diabetes panel",
+                "snippet": "HbA1c 8.9 % (target < 7.0 %) H"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_13",
+    "root": {
+      "id": "syn_13",
+      "level": "synthesis",
+      "text": "Your list includes two antiplatelet medicines and diclofenac, a painkiller. Taking these together is associated with a higher chance of bleeding. This is worth reviewing with your prescriber. Please do not change any medicine on your own.",
+      "kind": "external_evidence",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "ms2",
+          "level": "specialist",
+          "text": "Diclofenac (an NSAID painkiller) is listed alongside antiplatelet medicines. This combination is associated with a higher chance of bleeding and is worth reviewing with the prescriber.",
+          "kind": "external_evidence",
+          "label": "Medication Safety perspective",
+          "children": [
+            {
+              "id": "f_m6",
+              "level": "fact",
+              "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+              },
+              "children": []
+            },
+            {
+              "id": "f_m1",
+              "level": "fact",
+              "text": "Aspirin: 75 mg, once daily",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Aspirin 75 mg OD"
+              },
+              "children": []
+            },
+            {
+              "id": "f_m2",
+              "level": "fact",
+              "text": "Clopidogrel: 75 mg, once daily",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Clopidogrel 75 mg OD"
+              },
+              "children": []
+            },
+            {
+              "id": "src_drug_3",
+              "level": "evidence_source",
+              "text": "Sample summary: antiplatelet medicines and NSAIDs",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_drug_3",
+                "title": "Sample summary: antiplatelet medicines and NSAIDs",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2023,
+                "licence": "Prototype placeholder, not a real drug label",
+                "section": "§3 Interactions",
+                "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cl_53",
+          "level": "verification",
+          "text": "Taking an NSAID together with antiplatelet medicines is associated with a higher chance of bleeding.",
+          "kind": "external_evidence",
+          "status": "supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_m1",
+              "level": "fact",
+              "text": "Aspirin: 75 mg, once daily",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Aspirin 75 mg OD"
+              },
+              "children": []
+            },
+            {
+              "id": "f_m2",
+              "level": "fact",
+              "text": "Clopidogrel: 75 mg, once daily",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Clopidogrel 75 mg OD"
+              },
+              "children": []
+            },
+            {
+              "id": "f_m6",
+              "level": "fact",
+              "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+              },
+              "children": []
+            },
+            {
+              "id": "src_drug_3",
+              "level": "evidence_source",
+              "text": "Sample summary: antiplatelet medicines and NSAIDs",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_drug_3",
+                "title": "Sample summary: antiplatelet medicines and NSAIDs",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2023,
+                "licence": "Prototype placeholder, not a real drug label",
+                "section": "§3 Interactions",
+                "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "mx5",
+          "level": "matrix",
+          "text": "Antiplatelet medicines together with an NSAID. Medication Safety flags the combination. Cardiology says its importance depends on the full plan.",
+          "kind": "interpretation",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "ms2",
+              "level": "specialist",
+              "text": "Diclofenac (an NSAID painkiller) is listed alongside antiplatelet medicines. This combination is associated with a higher chance of bleeding and is worth reviewing with the prescriber.",
+              "kind": "external_evidence",
+              "label": "Medication Safety perspective",
+              "children": [
+                {
+                  "id": "f_m6",
+                  "level": "fact",
+                  "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_m1",
+                  "level": "fact",
+                  "text": "Aspirin: 75 mg, once daily",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Aspirin 75 mg OD"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_m2",
+                  "level": "fact",
+                  "text": "Clopidogrel: 75 mg, once daily",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Clopidogrel 75 mg OD"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_drug_3",
+                  "level": "evidence_source",
+                  "text": "Sample summary: antiplatelet medicines and NSAIDs",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_drug_3",
+                    "title": "Sample summary: antiplatelet medicines and NSAIDs",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real drug label",
+                    "section": "§3 Interactions",
+                    "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cl_53",
+              "level": "verification",
+              "text": "Taking an NSAID together with antiplatelet medicines is associated with a higher chance of bleeding.",
+              "kind": "external_evidence",
+              "status": "supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_m1",
+                  "level": "fact",
+                  "text": "Aspirin: 75 mg, once daily",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Aspirin 75 mg OD"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_m2",
+                  "level": "fact",
+                  "text": "Clopidogrel: 75 mg, once daily",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Clopidogrel 75 mg OD"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_m6",
+                  "level": "fact",
+                  "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_drug_3",
+                  "level": "evidence_source",
+                  "text": "Sample summary: antiplatelet medicines and NSAIDs",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_drug_3",
+                    "title": "Sample summary: antiplatelet medicines and NSAIDs",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real drug label",
+                    "section": "§3 Interactions",
+                    "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_14",
+    "root": {
+      "id": "syn_14",
+      "level": "synthesis",
+      "text": "For people whose symptoms are stable, doctors sometimes also discuss optimising medicines first. You may want to ask why one path was preferred in your case.",
+      "kind": "external_evidence",
+      "flag": "uncertain",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "cf5",
+          "level": "specialist",
+          "text": "For stable symptoms, medicines-first approaches are also sometimes discussed as an alternative.",
+          "kind": "external_evidence",
+          "label": "Cardiology perspective",
+          "children": [
+            {
+              "id": "src_cardio_14",
+              "level": "evidence_source",
+              "text": "Sample summary: medicines as part of care for stable coronary disease",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_cardio_14",
+                "title": "Sample summary: medicines as part of care for stable coronary disease",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2024,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§2 Medicines first",
+                "snippet": "For people whose symptoms are stable, optimising medicines is often discussed alongside, or before, a procedure. The choice depends on the individual."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cc1",
+          "level": "specialist",
+          "text": "A discussion of alternatives, including medicines first, may help the person understand why one path was preferred.",
+          "kind": "interpretation",
+          "label": "Cardiology perspective",
+          "children": [
+            {
+              "id": "f_121",
+              "level": "fact",
+              "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_consult",
+                "page": 2,
+                "section": "Plan",
+                "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cl_55",
+          "level": "verification",
+          "text": "A planned approach after optimising medicines is reasonable to discuss.",
+          "kind": "interpretation",
+          "status": "partially_supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_sym1",
+              "level": "fact",
+              "text": "Chest tightness on exertion: Climbing stairs, since January",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_gp",
+                "page": 1,
+                "section": "History",
+                "snippet": "Chest tightness on climbing two flights of stairs for the past few weeks."
+              },
+              "children": []
+            },
+            {
+              "id": "src_cardio_14",
+              "level": "evidence_source",
+              "text": "Sample summary: medicines as part of care for stable coronary disease",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_cardio_14",
+                "title": "Sample summary: medicines as part of care for stable coronary disease",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2024,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§2 Medicines first",
+                "snippet": "For people whose symptoms are stable, optimising medicines is often discussed alongside, or before, a procedure. The choice depends on the individual."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_15",
+    "root": {
+      "id": "syn_15",
+      "level": "synthesis",
+      "text": "Your treating cardiologist recommended angioplasty (PCI) to the LAD artery within 1–2 weeks.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_121",
+          "level": "fact",
+          "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_consult",
+            "page": 2,
+            "section": "Plan",
+            "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_16",
+    "root": {
+      "id": "syn_16",
+      "level": "synthesis",
+      "text": "Your current prescription list has six medicines: aspirin, clopidogrel, metformin, atorvastatin, metoprolol and diclofenac (as needed).",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_m1",
+          "level": "fact",
+          "text": "Aspirin: 75 mg, once daily",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Aspirin 75 mg OD"
+          },
+          "children": []
+        },
+        {
+          "id": "f_m2",
+          "level": "fact",
+          "text": "Clopidogrel: 75 mg, once daily",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Clopidogrel 75 mg OD"
+          },
+          "children": []
+        },
+        {
+          "id": "f_m3",
+          "level": "fact",
+          "text": "Metformin: 1000 mg, twice daily",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Metformin 1000 mg BD"
+          },
+          "children": []
+        },
+        {
+          "id": "f_m4",
+          "level": "fact",
+          "text": "Atorvastatin: 40 mg, at night",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Atorvastatin 40 mg HS"
+          },
+          "children": []
+        },
+        {
+          "id": "f_m5",
+          "level": "fact",
+          "text": "Metoprolol: 25 mg, twice daily",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Metoprolol 25 mg BD"
+          },
+          "children": []
+        },
+        {
+          "id": "f_m6",
+          "level": "fact",
+          "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+          },
+          "children": []
+        },
+        {
+          "id": "gm3",
+          "level": "specialist",
+          "text": "Six regular medicines are listed, including two antiplatelet medicines and a painkiller (NSAID).",
+          "kind": "patient_fact",
+          "label": "General Medicine perspective",
+          "children": [
+            {
+              "id": "f_m1",
+              "level": "fact",
+              "text": "Aspirin: 75 mg, once daily",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Aspirin 75 mg OD"
+              },
+              "children": []
+            },
+            {
+              "id": "f_m2",
+              "level": "fact",
+              "text": "Clopidogrel: 75 mg, once daily",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Clopidogrel 75 mg OD"
+              },
+              "children": []
+            },
+            {
+              "id": "f_m6",
+              "level": "fact",
+              "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_17",
+    "root": {
+      "id": "syn_17",
+      "level": "synthesis",
+      "text": "Your records document type 2 diabetes and coronary artery disease affecting the LAD artery.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_dx1",
+          "level": "fact",
+          "text": "Type 2 diabetes mellitus: Documented",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_gp",
+            "page": 1,
+            "section": "Problem list",
+            "snippet": "Type 2 diabetes mellitus, on metformin."
+          },
+          "children": []
+        },
+        {
+          "id": "f_dx2",
+          "level": "fact",
+          "text": "Coronary artery disease (LAD): Documented",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_consult",
+            "page": 1,
+            "section": "Impression",
+            "snippet": "Coronary artery disease with significant LAD stenosis."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_18",
+    "root": {
+      "id": "syn_18",
+      "level": "synthesis",
+      "text": "You are 52 and have type 2 diabetes. Since January you have had chest tightness when climbing stairs. You are asking whether angioplasty is necessary now.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_sym1",
+          "level": "fact",
+          "text": "Chest tightness on exertion: Climbing stairs, since January",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_gp",
+            "page": 1,
+            "section": "History",
+            "snippet": "Chest tightness on climbing two flights of stairs for the past few weeks."
+          },
+          "children": []
+        },
+        {
+          "id": "f_dx1",
+          "level": "fact",
+          "text": "Type 2 diabetes mellitus: Documented",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_gp",
+            "page": 1,
+            "section": "Problem list",
+            "snippet": "Type 2 diabetes mellitus, on metformin."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_19",
+    "root": {
+      "id": "syn_19",
+      "level": "synthesis",
+      "text": "Your blood sugar control and kidney function may be part of how the team plans around a procedure.",
+      "kind": "interpretation",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "cl_56",
+          "level": "verification",
+          "text": "Higher HbA1c can influence recovery after a procedure.",
+          "kind": "external_evidence",
+          "status": "partially_supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_hba1c",
+              "level": "fact",
+              "text": "HbA1c: 8.9 %",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_lab1",
+                "page": 1,
+                "section": "Diabetes panel",
+                "snippet": "HbA1c 8.9 % (target < 7.0 %) H"
+              },
+              "children": []
+            },
+            {
+              "id": "src_diab_2",
+              "level": "evidence_source",
+              "text": "Sample summary: blood sugar control around procedures",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_diab_2",
+                "title": "Sample summary: blood sugar control around procedures",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2024,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§1 Peri-procedure glucose",
+                "snippet": "Higher long-term blood sugar (HbA1c) can influence healing and recovery. Teams often review glucose control before planned procedures."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "gmi2",
+          "level": "specialist",
+          "text": "Recent kidney function test. Relevant to medicine choices around procedures.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "General Medicine perspective",
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_2",
+    "root": {
+      "id": "syn_2",
+      "level": "synthesis",
+      "text": "Your February ECG noted ST-segment changes, which are a type of change in the heart's electrical trace.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_ecg1",
+          "level": "fact",
+          "text": "ECG: ST-segment changes: ST depression, lateral leads",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_ecg",
+            "page": 1,
+            "section": "Interpretation",
+            "snippet": "ST depression approx. 1 mm in V4–V6. Suggest clinical correlation."
+          },
+          "children": []
+        },
+        {
+          "id": "cf2",
+          "level": "specialist",
+          "text": "The February ECG showed ST-segment changes in the lateral leads.",
+          "kind": "patient_fact",
+          "label": "Cardiology perspective",
+          "children": [
+            {
+              "id": "f_ecg1",
+              "level": "fact",
+              "text": "ECG: ST-segment changes: ST depression, lateral leads",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_ecg",
+                "page": 1,
+                "section": "Interpretation",
+                "snippet": "ST depression approx. 1 mm in V4–V6. Suggest clinical correlation."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_20",
+    "root": {
+      "id": "syn_20",
+      "level": "synthesis",
+      "text": "Before deciding, it may help to clarify three things with your doctors: heart pumping strength, how much risk there is in waiting, and the medicine combination.",
+      "kind": "interpretation",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "syn_9",
+          "level": "synthesis",
+          "text": "Your records do not include a heart ultrasound (echocardiogram). This test shows how well the heart is pumping. You may want to ask whether it has been done, or whether it is needed before deciding on timing.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mx4",
+              "level": "matrix",
+              "text": "Heart-pump function (LVEF) is known. All three flag this independently. No echocardiogram is in the records.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "gmi1",
+                  "level": "specialist",
+                  "text": "Echocardiogram (heart ultrasound). Shows how well the heart is pumping, which can shape timing decisions.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "General Medicine perspective",
+                  "children": []
+                },
+                {
+                  "id": "cmi1",
+                  "level": "specialist",
+                  "text": "Echocardiogram / LVEF. Heart pumping strength may influence timing and approach.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "Cardiology perspective",
+                  "children": []
+                },
+                {
+                  "id": "imi1",
+                  "level": "specialist",
+                  "text": "Echocardiogram / LVEF. Part of planning a procedure.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "Interventional Cardiology perspective",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "gmi1",
+              "level": "specialist",
+              "text": "Echocardiogram (heart ultrasound). Shows how well the heart is pumping, which can shape timing decisions.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "General Medicine perspective",
+              "children": []
+            },
+            {
+              "id": "cmi1",
+              "level": "specialist",
+              "text": "Echocardiogram / LVEF. Heart pumping strength may influence timing and approach.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Cardiology perspective",
+              "children": []
+            },
+            {
+              "id": "imi1",
+              "level": "specialist",
+              "text": "Echocardiogram / LVEF. Part of planning a procedure.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Interventional Cardiology perspective",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "syn_11",
+          "level": "synthesis",
+          "text": "It is not possible to tell from the documents alone whether this is urgent or can be planned, because current symptoms and heart function are not documented.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "cu1",
+              "level": "specialist",
+              "text": "Whether treatment should happen within weeks or be planned later is not settled by the documents.",
+              "kind": "interpretation",
+              "flag": "uncertain",
+              "label": "Cardiology perspective",
+              "children": []
+            },
+            {
+              "id": "iu1",
+              "level": "specialist",
+              "text": "Whether symptoms have been stable since the admission is not documented.",
+              "kind": "interpretation",
+              "flag": "uncertain",
+              "label": "Interventional Cardiology perspective",
+              "children": []
+            },
+            {
+              "id": "gu1",
+              "level": "specialist",
+              "text": "How the person's symptoms have changed since May is not documented.",
+              "kind": "interpretation",
+              "flag": "uncertain",
+              "label": "General Medicine perspective",
+              "children": []
+            },
+            {
+              "id": "cl_54",
+              "level": "verification",
+              "text": "Treatment must happen urgently within 1–2 weeks.",
+              "kind": "interpretation",
+              "status": "insufficient_evidence",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_121",
+                  "level": "fact",
+                  "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_consult",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "syn_13",
+          "level": "synthesis",
+          "text": "Your list includes two antiplatelet medicines and diclofenac, a painkiller. Taking these together is associated with a higher chance of bleeding. This is worth reviewing with your prescriber. Please do not change any medicine on your own.",
+          "kind": "external_evidence",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "ms2",
+              "level": "specialist",
+              "text": "Diclofenac (an NSAID painkiller) is listed alongside antiplatelet medicines. This combination is associated with a higher chance of bleeding and is worth reviewing with the prescriber.",
+              "kind": "external_evidence",
+              "label": "Medication Safety perspective",
+              "children": [
+                {
+                  "id": "f_m6",
+                  "level": "fact",
+                  "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_m1",
+                  "level": "fact",
+                  "text": "Aspirin: 75 mg, once daily",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Aspirin 75 mg OD"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_m2",
+                  "level": "fact",
+                  "text": "Clopidogrel: 75 mg, once daily",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Clopidogrel 75 mg OD"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_drug_3",
+                  "level": "evidence_source",
+                  "text": "Sample summary: antiplatelet medicines and NSAIDs",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_drug_3",
+                    "title": "Sample summary: antiplatelet medicines and NSAIDs",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real drug label",
+                    "section": "§3 Interactions",
+                    "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cl_53",
+              "level": "verification",
+              "text": "Taking an NSAID together with antiplatelet medicines is associated with a higher chance of bleeding.",
+              "kind": "external_evidence",
+              "status": "supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_m1",
+                  "level": "fact",
+                  "text": "Aspirin: 75 mg, once daily",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Aspirin 75 mg OD"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_m2",
+                  "level": "fact",
+                  "text": "Clopidogrel: 75 mg, once daily",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Clopidogrel 75 mg OD"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_m6",
+                  "level": "fact",
+                  "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_drug_3",
+                  "level": "evidence_source",
+                  "text": "Sample summary: antiplatelet medicines and NSAIDs",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_drug_3",
+                    "title": "Sample summary: antiplatelet medicines and NSAIDs",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2023,
+                    "licence": "Prototype placeholder, not a real drug label",
+                    "section": "§3 Interactions",
+                    "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "mx5",
+              "level": "matrix",
+              "text": "Antiplatelet medicines together with an NSAID. Medication Safety flags the combination. Cardiology says its importance depends on the full plan.",
+              "kind": "interpretation",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "ms2",
+                  "level": "specialist",
+                  "text": "Diclofenac (an NSAID painkiller) is listed alongside antiplatelet medicines. This combination is associated with a higher chance of bleeding and is worth reviewing with the prescriber.",
+                  "kind": "external_evidence",
+                  "label": "Medication Safety perspective",
+                  "children": [
+                    {
+                      "id": "f_m6",
+                      "level": "fact",
+                      "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_m1",
+                      "level": "fact",
+                      "text": "Aspirin: 75 mg, once daily",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Aspirin 75 mg OD"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_m2",
+                      "level": "fact",
+                      "text": "Clopidogrel: 75 mg, once daily",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Clopidogrel 75 mg OD"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "src_drug_3",
+                      "level": "evidence_source",
+                      "text": "Sample summary: antiplatelet medicines and NSAIDs",
+                      "kind": "external_evidence",
+                      "label": "Reference evidence",
+                      "external_source": {
+                        "id": "src_drug_3",
+                        "title": "Sample summary: antiplatelet medicines and NSAIDs",
+                        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                        "year": 2023,
+                        "licence": "Prototype placeholder, not a real drug label",
+                        "section": "§3 Interactions",
+                        "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "cl_53",
+                  "level": "verification",
+                  "text": "Taking an NSAID together with antiplatelet medicines is associated with a higher chance of bleeding.",
+                  "kind": "external_evidence",
+                  "status": "supported",
+                  "label": "Claim check",
+                  "children": [
+                    {
+                      "id": "f_m1",
+                      "level": "fact",
+                      "text": "Aspirin: 75 mg, once daily",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Aspirin 75 mg OD"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_m2",
+                      "level": "fact",
+                      "text": "Clopidogrel: 75 mg, once daily",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Clopidogrel 75 mg OD"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "f_m6",
+                      "level": "fact",
+                      "text": "Diclofenac (painkiller, NSAID): 50 mg, when needed",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_rx",
+                        "page": 1,
+                        "section": "Medicines",
+                        "snippet": "Tab. Diclofenac 50 mg SOS (for joint pain)"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "src_drug_3",
+                      "level": "evidence_source",
+                      "text": "Sample summary: antiplatelet medicines and NSAIDs",
+                      "kind": "external_evidence",
+                      "label": "Reference evidence",
+                      "external_source": {
+                        "id": "src_drug_3",
+                        "title": "Sample summary: antiplatelet medicines and NSAIDs",
+                        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                        "year": 2023,
+                        "licence": "Prototype placeholder, not a real drug label",
+                        "section": "§3 Interactions",
+                        "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_3",
+    "root": {
+      "id": "syn_3",
+      "level": "synthesis",
+      "text": "Your angiography report describes about 80 % narrowing in one heart artery (the LAD), with no significant narrowing in the other arteries.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_140",
+          "level": "fact",
+          "text": "LAD artery narrowing: About 80 %",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_angio",
+            "page": 2,
+            "section": "Findings",
+            "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+          },
+          "children": []
+        },
+        {
+          "id": "f_150",
+          "level": "fact",
+          "text": "Other arteries: No significant narrowing",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_angio",
+            "page": 2,
+            "section": "Findings",
+            "snippet": "RCA and LCx: no significant stenosis."
+          },
+          "children": []
+        },
+        {
+          "id": "cf3",
+          "level": "specialist",
+          "text": "The angiography report describes about 80 % narrowing in the LAD artery.",
+          "kind": "patient_fact",
+          "label": "Cardiology perspective",
+          "children": [
+            {
+              "id": "f_140",
+              "level": "fact",
+              "text": "LAD artery narrowing: About 80 %",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_angio",
+                "page": 2,
+                "section": "Findings",
+                "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_4",
+    "root": {
+      "id": "syn_4",
+      "level": "synthesis",
+      "text": "Your HbA1c, a measure of average blood sugar, was 8.9 %. The usual target in the report is below 7 %.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_hba1c",
+          "level": "fact",
+          "text": "HbA1c: 8.9 %",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_lab1",
+            "page": 1,
+            "section": "Diabetes panel",
+            "snippet": "HbA1c 8.9 % (target < 7.0 %) H"
+          },
+          "children": []
+        },
+        {
+          "id": "gm1",
+          "level": "specialist",
+          "text": "HbA1c is 8.9 %, above the usual target of about 7 %.",
+          "kind": "patient_fact",
+          "label": "General Medicine perspective",
+          "children": [
+            {
+              "id": "f_hba1c",
+              "level": "fact",
+              "text": "HbA1c: 8.9 %",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_lab1",
+                "page": 1,
+                "section": "Diabetes panel",
+                "snippet": "HbA1c 8.9 % (target < 7.0 %) H"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_5",
+    "root": {
+      "id": "syn_5",
+      "level": "synthesis",
+      "text": "A raised troponin together with a significant artery narrowing is the type of picture in which angioplasty is commonly discussed. This is general reference information, not a judgement about your doctor's advice.",
+      "kind": "interpretation",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "cl_51",
+          "level": "verification",
+          "text": "Angioplasty is commonly discussed when troponin is raised and a significant narrowing is found.",
+          "kind": "external_evidence",
+          "status": "supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_118",
+              "level": "fact",
+              "text": "Troponin I (high-sensitivity): 182 ng/L",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_lab3",
+                "page": 2,
+                "section": "Cardiac markers",
+                "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+              },
+              "children": []
+            },
+            {
+              "id": "f_140",
+              "level": "fact",
+              "text": "LAD artery narrowing: About 80 %",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_angio",
+                "page": 2,
+                "section": "Findings",
+                "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+              },
+              "children": []
+            },
+            {
+              "id": "src_cardio_12",
+              "level": "evidence_source",
+              "text": "Sample summary: when invasive treatment is discussed in coronary artery disease",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_cardio_12",
+                "title": "Sample summary: when invasive treatment is discussed in coronary artery disease",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2024,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§4 Discussing revascularisation",
+                "snippet": "Revascularisation is commonly discussed when a significant narrowing is found together with a rise in cardiac troponin. Timing may be planned or urgent depending on symptoms and heart function."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cf4",
+          "level": "specialist",
+          "text": "These findings together are the type of picture in which angioplasty is commonly discussed.",
+          "kind": "external_evidence",
+          "label": "Cardiology perspective",
+          "children": [
+            {
+              "id": "f_118",
+              "level": "fact",
+              "text": "Troponin I (high-sensitivity): 182 ng/L",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_lab3",
+                "page": 2,
+                "section": "Cardiac markers",
+                "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+              },
+              "children": []
+            },
+            {
+              "id": "f_140",
+              "level": "fact",
+              "text": "LAD artery narrowing: About 80 %",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_angio",
+                "page": 2,
+                "section": "Findings",
+                "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+              },
+              "children": []
+            },
+            {
+              "id": "src_cardio_12",
+              "level": "evidence_source",
+              "text": "Sample summary: when invasive treatment is discussed in coronary artery disease",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_cardio_12",
+                "title": "Sample summary: when invasive treatment is discussed in coronary artery disease",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2024,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§4 Discussing revascularisation",
+                "snippet": "Revascularisation is commonly discussed when a significant narrowing is found together with a rise in cardiac troponin. Timing may be planned or urgent depending on symptoms and heart function."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "ic1",
+          "level": "specialist",
+          "text": "The LAD narrowing described in the report is a typical target when angioplasty is discussed.",
+          "kind": "interpretation",
+          "label": "Interventional Cardiology perspective",
+          "children": [
+            {
+              "id": "f_140",
+              "level": "fact",
+              "text": "LAD artery narrowing: About 80 %",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_angio",
+                "page": 2,
+                "section": "Findings",
+                "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_7",
+    "root": {
+      "id": "syn_7",
+      "level": "synthesis",
+      "text": "The perspectives that reviewed it agree that the troponin rise is significant.",
+      "kind": "interpretation",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "mx1",
+          "level": "matrix",
+          "text": "The troponin rise is clinically significant. The perspectives that assessed it agree. Agreement among reviewers is not treated as evidence on its own.",
+          "kind": "interpretation",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "cf1",
+              "level": "specialist",
+              "text": "High-sensitivity troponin was raised at 182 ng/L (reference below 34).",
+              "kind": "patient_fact",
+              "label": "Cardiology perspective",
+              "children": [
+                {
+                  "id": "f_118",
+                  "level": "fact",
+                  "text": "Troponin I (high-sensitivity): 182 ng/L",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_lab3",
+                    "page": 2,
+                    "section": "Cardiac markers",
+                    "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cl_52",
+              "level": "verification",
+              "text": "Troponin I was 182 ng/L, above the lab's reference of below 34.",
+              "kind": "patient_fact",
+              "status": "supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_118",
+                  "level": "fact",
+                  "text": "Troponin I (high-sensitivity): 182 ng/L",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_lab3",
+                    "page": 2,
+                    "section": "Cardiac markers",
+                    "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_8",
+    "root": {
+      "id": "syn_8",
+      "level": "synthesis",
+      "text": "Perspectives differ on timing. Your cardiologist recommended 1–2 weeks. Another perspective notes that if symptoms have been stable, a planned timeline may also be reasonable to discuss. Both views are kept.",
+      "kind": "interpretation",
+      "flag": "disagreement",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "mx3",
+          "level": "matrix",
+          "text": "Timing: within 1–2 weeks, or planned later. Interventional Cardiology raises a planned timeline as a reasonable discussion point; the treating cardiologist recommended 1–2 weeks. We don't pick a side. Which view fits depends on information not in the records.",
+          "kind": "interpretation",
+          "flag": "disagreement",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "ic2",
+              "level": "specialist",
+              "text": "If symptoms have been stable, a planned timeline after optimising medicines and getting an echocardiogram may also be reasonable to discuss.",
+              "kind": "interpretation",
+              "label": "Interventional Cardiology perspective",
+              "children": [
+                {
+                  "id": "f_121",
+                  "level": "fact",
+                  "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_consult",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_sym1",
+                  "level": "fact",
+                  "text": "Chest tightness on exertion: Climbing stairs, since January",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_gp",
+                    "page": 1,
+                    "section": "History",
+                    "snippet": "Chest tightness on climbing two flights of stairs for the past few weeks."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "gm2",
+              "level": "specialist",
+              "text": "Whether the timing is urgent or can be planned depends on current symptoms and heart function, which the records do not fully show.",
+              "kind": "interpretation",
+              "label": "General Medicine perspective",
+              "children": [
+                {
+                  "id": "f_118",
+                  "level": "fact",
+                  "text": "Troponin I (high-sensitivity): 182 ng/L",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_lab3",
+                    "page": 2,
+                    "section": "Cardiac markers",
+                    "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_121",
+                  "level": "fact",
+                  "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_consult",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "cu1",
+              "level": "specialist",
+              "text": "Whether treatment should happen within weeks or be planned later is not settled by the documents.",
+              "kind": "interpretation",
+              "flag": "uncertain",
+              "label": "Cardiology perspective",
+              "children": []
+            },
+            {
+              "id": "cl_54",
+              "level": "verification",
+              "text": "Treatment must happen urgently within 1–2 weeks.",
+              "kind": "interpretation",
+              "status": "insufficient_evidence",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_121",
+                  "level": "fact",
+                  "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_consult",
+                    "page": 2,
+                    "section": "Plan",
+                    "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cl_54",
+          "level": "verification",
+          "text": "Treatment must happen urgently within 1–2 weeks.",
+          "kind": "interpretation",
+          "status": "insufficient_evidence",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_121",
+              "level": "fact",
+              "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_consult",
+                "page": 2,
+                "section": "Plan",
+                "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "cl_55",
+          "level": "verification",
+          "text": "A planned approach after optimising medicines is reasonable to discuss.",
+          "kind": "interpretation",
+          "status": "partially_supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_sym1",
+              "level": "fact",
+              "text": "Chest tightness on exertion: Climbing stairs, since January",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_gp",
+                "page": 1,
+                "section": "History",
+                "snippet": "Chest tightness on climbing two flights of stairs for the past few weeks."
+              },
+              "children": []
+            },
+            {
+              "id": "src_cardio_14",
+              "level": "evidence_source",
+              "text": "Sample summary: medicines as part of care for stable coronary disease",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_cardio_14",
+                "title": "Sample summary: medicines as part of care for stable coronary disease",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2024,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§2 Medicines first",
+                "snippet": "For people whose symptoms are stable, optimising medicines is often discussed alongside, or before, a procedure. The choice depends on the individual."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_9",
+    "root": {
+      "id": "syn_9",
+      "level": "synthesis",
+      "text": "Your records do not include a heart ultrasound (echocardiogram). This test shows how well the heart is pumping. You may want to ask whether it has been done, or whether it is needed before deciding on timing.",
+      "kind": "interpretation",
+      "flag": "missing",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "mx4",
+          "level": "matrix",
+          "text": "Heart-pump function (LVEF) is known. All three flag this independently. No echocardiogram is in the records.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "gmi1",
+              "level": "specialist",
+              "text": "Echocardiogram (heart ultrasound). Shows how well the heart is pumping, which can shape timing decisions.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "General Medicine perspective",
+              "children": []
+            },
+            {
+              "id": "cmi1",
+              "level": "specialist",
+              "text": "Echocardiogram / LVEF. Heart pumping strength may influence timing and approach.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Cardiology perspective",
+              "children": []
+            },
+            {
+              "id": "imi1",
+              "level": "specialist",
+              "text": "Echocardiogram / LVEF. Part of planning a procedure.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Interventional Cardiology perspective",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "gmi1",
+          "level": "specialist",
+          "text": "Echocardiogram (heart ultrasound). Shows how well the heart is pumping, which can shape timing decisions.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "General Medicine perspective",
+          "children": []
+        },
+        {
+          "id": "cmi1",
+          "level": "specialist",
+          "text": "Echocardiogram / LVEF. Heart pumping strength may influence timing and approach.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "Cardiology perspective",
+          "children": []
+        },
+        {
+          "id": "imi1",
+          "level": "specialist",
+          "text": "Echocardiogram / LVEF. Part of planning a procedure.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "Interventional Cardiology perspective",
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl1",
+    "root": {
+      "id": "tl1",
+      "level": "timeline",
+      "text": "Chest tightness on exertion begins. Noticed when climbing stairs.",
+      "kind": "patient_fact",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_sym1",
+          "level": "fact",
+          "text": "Chest tightness on exertion: Climbing stairs, since January",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_gp",
+            "page": 1,
+            "section": "History",
+            "snippet": "Chest tightness on climbing two flights of stairs for the past few weeks."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl2",
+    "root": {
+      "id": "tl2",
+      "level": "timeline",
+      "text": "GP visit and ECG. ST-segment changes noted on the ECG.",
+      "kind": "patient_fact",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_ecg1",
+          "level": "fact",
+          "text": "ECG: ST-segment changes: ST depression, lateral leads",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_ecg",
+            "page": 1,
+            "section": "Interpretation",
+            "snippet": "ST depression approx. 1 mm in V4–V6. Suggest clinical correlation."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl3",
+    "root": {
+      "id": "tl3",
+      "level": "timeline",
+      "text": "Blood sugar and cholesterol tests. HbA1c 8.9 %, LDL 142 mg/dL.",
+      "kind": "patient_fact",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_hba1c",
+          "level": "fact",
+          "text": "HbA1c: 8.9 %",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_lab1",
+            "page": 1,
+            "section": "Diabetes panel",
+            "snippet": "HbA1c 8.9 % (target < 7.0 %) H"
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl4",
+    "root": {
+      "id": "tl4",
+      "level": "timeline",
+      "text": "Hospital admission. Troponin I 182 ng/L (reference below 34).",
+      "kind": "patient_fact",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_118",
+          "level": "fact",
+          "text": "Troponin I (high-sensitivity): 182 ng/L",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_lab3",
+            "page": 2,
+            "section": "Cardiac markers",
+            "snippet": "Troponin I (HS) 182 ng/L (ref < 34) H"
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl5",
+    "root": {
+      "id": "tl5",
+      "level": "timeline",
+      "text": "Coronary angiography. About 80 % narrowing in the LAD artery.",
+      "kind": "patient_fact",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_140",
+          "level": "fact",
+          "text": "LAD artery narrowing: About 80 %",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_angio",
+            "page": 2,
+            "section": "Findings",
+            "snippet": "Proximal LAD: 80 % stenosis. Other vessels: no significant disease."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl6",
+    "root": {
+      "id": "tl6",
+      "level": "timeline",
+      "text": "Cardiology consultation. Coronary artery disease documented.",
+      "kind": "patient_fact",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_dx2",
+          "level": "fact",
+          "text": "Coronary artery disease (LAD): Documented",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_consult",
+            "page": 1,
+            "section": "Impression",
+            "snippet": "Coronary artery disease with significant LAD stenosis."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl7",
+    "root": {
+      "id": "tl7",
+      "level": "timeline",
+      "text": "Angioplasty (PCI) recommended. Within 1–2 weeks, per the treating cardiologist.",
+      "kind": "patient_fact",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_121",
+          "level": "fact",
+          "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_consult",
+            "page": 2,
+            "section": "Plan",
+            "snippet": "Recommend PCI to the LAD within 1–2 weeks. Continue current medicines."
+          },
+          "children": []
+        }
+      ]
+    }
+  }
+]

@@ -35,11 +35,12 @@ There is no `v2`. A change that is not backward compatible needs an ADR first.
 
 ### Casing
 
-The versioned envelope fields use the blueprint's snake_case wire names (`schema_version`,
-`run_id`, `case_id`, `missing_info`, `evidence_refs`). Fields that already existed in the Phase 1
-UI contract keep their camelCase names (`factRefs`, `routingReason`, `evidenceIds`, ...) so the UI
-did not have to change. A Pydantic alias generator can serialise either form. This is a known,
-deliberate inconsistency.
+The **wire** format is snake_case throughout ([ADR 0001](adr/0001-wire-casing.md)); the backend
+does not use an alias generator. This file's schemas describe the frontend **domain** model, which
+keeps the camelCase names Phase 1 already used (`factRefs`, `routingReason`, `evidenceIds`, `caseId`
+on the report and run, ...) next to its snake_case envelope fields. The explicit adapter
+[`frontend/src/lib/api/http/casing.ts`](../frontend/src/lib/api/http/casing.ts) converts at the API
+boundary: `backend wire -> Pydantic -> httpApi adapter -> domain model -> UI`.
 
 ### `specialist_report.v1`
 
@@ -55,6 +56,31 @@ deliberate inconsistency.
   template text (disclaimers, "nothing found" notes) may be untraced.
 - A run has exactly the 14 workflow steps, numbered 1..14. A `failed` run must carry `failure`.
 - `case.v1` contains no identity fields: names, phone and email never appear in it.
+
+## Backend (Phase 2A)
+
+[`backend/`](../backend/README.md) is a FastAPI service. So far it serves `GET /api/v1/health`,
+OpenAPI at `/api/v1/docs`, the error contract and request IDs, and carries Pydantic v2 models for the
+five versioned contracts (`backend/app/schemas/`). The data endpoints in the table below are **not
+built yet**; the frontend's `httpApi` reports them as "not available yet".
+
+### Optional means absent, never null
+
+`.optional()` accepts a missing key and rejects `null`; the Pydantic models behave identically
+([ADR 0001](adr/0001-wire-casing.md)). Send or omit, never `null`.
+
+### Error contract
+
+Every error is `{"error": {"code", "message", "request_id", "details"}}`
+([ADR 0002](adr/0002-error-contract.md)). The frontend turns it into an `ApiError`
+(`code`, `message`, `requestId`, `details`). Send `X-Request-ID` to correlate; it is echoed on every
+response.
+
+### Fixtures shared by both sides
+
+`npm run export:fixtures` (in `frontend/`) writes the three synthetic scenarios, in wire form, to
+`backend/tests/fixtures/contracts/`. Backend tests validate them with Pydantic; a frontend test
+fails if they drift from the scenarios.
 
 ## Endpoint mapping (`/api/v1`)
 
@@ -111,6 +137,8 @@ are demo features. They are **not** part of `AdvisorApi`. They live in a separat
 
 ## Tests
 
-`npm test` (Vitest) proves the three synthetic scenarios conform to every contract, that every ID
+`npm test` (Vitest) also covers the HTTP boundary (`src/__tests__/http/`) and the fixture export
+(`src/__tests__/fixtures/`); the backend has its own suite (`pytest`, see `backend/README.md`).
+Before that, `npm test` proves the three synthetic scenarios conform to every contract, that every ID
 resolves, that malformed data is rejected, and that `AdvisorApi` has no mock-only members. See
 `frontend/src/__tests__/contracts/`.

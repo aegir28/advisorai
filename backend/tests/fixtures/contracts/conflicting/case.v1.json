@@ -1,0 +1,104 @@
+{
+  "schema_version": "case.v1",
+  "case_id": "c_m77",
+  "demographics": {
+    "age": 38,
+    "sex": "M"
+  },
+  "chief_concern": "My MRI report and my discharge summary seem to say different things. What is actually being said?",
+  "symptoms": [
+    {
+      "text": "Recurrent headaches with brief flashing lights: Since May",
+      "onset": "2026-05-10",
+      "fact_ref": "f_a1"
+    }
+  ],
+  "diagnoses": [
+    {
+      "name": "Migraine with aura (suspected)",
+      "status": "suspected",
+      "fact_ref": "f_a6"
+    }
+  ],
+  "history": [],
+  "allergies": [],
+  "medications": [
+    {
+      "name": "Sumatriptan",
+      "dose": "50 mg, when needed",
+      "start": "2026-06-30",
+      "fact_ref": "f_am1"
+    },
+    {
+      "name": "Ibuprofen",
+      "dose": "400 mg, when needed (about 15 days a month)",
+      "start": "2026-06-30",
+      "fact_ref": "f_am2"
+    }
+  ],
+  "investigations": {
+    "labs": [
+      {
+        "name": "Routine blood tests",
+        "value": "Within the reference ranges",
+        "date": "2026-06-30",
+        "fact_ref": "f_a5"
+      }
+    ],
+    "imaging": [
+      {
+        "name": "MRI report impression",
+        "value": "No intracranial abnormality",
+        "date": "2026-07-14",
+        "fact_ref": "f_a2"
+      },
+      {
+        "name": "Discharge summary description of the MRI",
+        "value": "Small lesion, right frontal lobe",
+        "flag": "abnormal",
+        "date": "2026-07-17",
+        "fact_ref": "f_a3"
+      }
+    ],
+    "ecg": [],
+    "pathology": []
+  },
+  "procedures": [],
+  "surgeries": [],
+  "treatment_history": [],
+  "recommendations": [
+    {
+      "by": "treating clinician",
+      "text": "Discharge plan: Follow-up MRI in 3 months and neurology review",
+      "fact_ref": "f_a4"
+    }
+  ],
+  "proposed": {
+    "treatment": [],
+    "procedure": [
+      "Follow-up MRI in 3 months and a neurology review"
+    ]
+  },
+  "timeline_ref": "tl_c_m77",
+  "unresolved_questions": [
+    "Until the difference is clarified, it is not possible to say whether your scan shows anything that needs follow-up.",
+    "Whether your headaches are migraine with aura is a working view only. It is held with caution while the imaging question is open."
+  ],
+  "missing_information": [
+    {
+      "item": "Radiologist clarification of the MRI",
+      "why_matters": "It is the only way to settle which description is accurate."
+    }
+  ],
+  "evidence_refs": [
+    "f_a1",
+    "f_a2",
+    "f_a3",
+    "f_a4",
+    "f_a5",
+    "f_a6",
+    "f_am1",
+    "f_am2"
+  ],
+  "extensions": {}
+}

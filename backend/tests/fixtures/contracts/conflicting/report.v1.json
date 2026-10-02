@@ -1,0 +1,515 @@
+{
+  "schema_version": "report.v1",
+  "id": "rep_r_80",
+  "case_id": "c_m77",
+  "run_id": "r_80",
+  "generated_at": "2026-09-30T11:25:00Z",
+  "sections": [
+    {
+      "number": 1,
+      "type": "prose",
+      "items": [
+        {
+          "id": "syn_1",
+          "text": "You are 38 and have had recurrent headaches since May, often preceded by about 20 minutes of flashing lights. You are asking what your MRI report and discharge summary are actually saying.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_1"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_2",
+          "text": "Your MRI report's conclusion says: no abnormality was identified inside the skull.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_2"
+          ]
+        },
+        {
+          "id": "syn_3",
+          "text": "Your hospital discharge summary describes the MRI differently: a small lesion in the right frontal lobe, for follow-up.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_3"
+          ]
+        },
+        {
+          "id": "syn_4",
+          "text": "Your routine blood tests were within the reference ranges.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_4"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "type": "timeline",
+      "items": [
+        {
+          "id": "tl1",
+          "text": "Headaches with flashing lights begin. Recurrent since May.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "tl1"
+          ],
+          "meta": {
+            "date": "2026-05-10",
+            "precision": "approx"
+          }
+        },
+        {
+          "id": "tl2",
+          "text": "Neurology consultation. Migraine with aura suspected; MRI requested.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "tl2"
+          ],
+          "meta": {
+            "date": "2026-06-30",
+            "precision": "day"
+          }
+        },
+        {
+          "id": "tl3",
+          "text": "MRI brain: report says no abnormality. Impression: no intracranial abnormality.",
+          "kind": "patient_fact",
+          "flag": "disagreement",
+          "evidence_ids": [
+            "tl3"
+          ],
+          "meta": {
+            "date": "2026-07-14",
+            "precision": "day"
+          }
+        },
+        {
+          "id": "tl4",
+          "text": "Discharge summary describes a small lesion. Follow-up MRI in 3 months advised.",
+          "kind": "patient_fact",
+          "flag": "disagreement",
+          "evidence_ids": [
+            "tl4"
+          ],
+          "meta": {
+            "date": "2026-07-17",
+            "precision": "day"
+          }
+        },
+        {
+          "id": "gap1",
+          "text": "No note from the reporting radiologist explaining the difference between the two documents.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "evidence_ids": [
+            "gap1"
+          ],
+          "meta": {
+            "gap": "true"
+          }
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_5",
+          "text": "Your neurologist documented migraine with aura as suspected, not as a confirmed diagnosis.",
+          "kind": "patient_fact",
+          "flag": "uncertain",
+          "evidence_ids": [
+            "syn_5"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "type": "medicines",
+      "items": [
+        {
+          "id": "f_am1",
+          "text": "Sumatriptan",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "f_am1"
+          ],
+          "meta": {
+            "dose": "50 mg, when needed"
+          }
+        },
+        {
+          "id": "f_am2",
+          "text": "Ibuprofen",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "f_am2"
+          ],
+          "meta": {
+            "dose": "400 mg, when needed (about 15 days a month)"
+          }
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_6",
+          "text": "Your current medicines are sumatriptan when needed, and ibuprofen when needed (about 15 days a month).",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_6"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_7",
+          "text": "The discharge summary advises a repeat MRI in 3 months and a neurology review.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_7"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_9",
+          "text": "When two documents describe the same scan differently, a formal re-read or clarification from the reporting radiologist is commonly requested before conclusions are drawn.",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "syn_9"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_10",
+          "text": "Until the difference is clarified, it is not possible to say whether your scan shows anything that needs follow-up.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "evidence_ids": [
+            "syn_10"
+          ]
+        },
+        {
+          "id": "syn_11",
+          "text": "Whether your headaches are migraine with aura is a working view only. It is held with caution while the imaging question is open.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "evidence_ids": [
+            "syn_11"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_12",
+          "text": "There is no note from the reporting radiologist explaining the difference between the MRI report and the discharge summary.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "evidence_ids": [
+            "syn_12"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_14",
+          "text": "Using painkillers on many days each month is associated with more frequent headaches in some people. You use ibuprofen on about 15 days a month. This is worth reviewing with your prescriber. Please do not change any medicine on your own.",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "syn_14"
+          ]
+        },
+        {
+          "id": "syn_15",
+          "text": "Whether the repeat MRI in 3 months is still needed may depend on the radiologist's clarification.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "syn_15"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "type": "perspectives",
+      "items": [
+        {
+          "id": "ga2",
+          "text": "The difference between the two documents may be a wording or copying difference in one of them, but this cannot be told from the documents alone.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "ga2"
+          ],
+          "meta": {
+            "specialist": "General Medicine",
+            "confidence": "low"
+          }
+        },
+        {
+          "id": "ga1",
+          "text": "Routine blood tests are within the reference ranges.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "ga1"
+          ],
+          "meta": {
+            "specialist": "General Medicine",
+            "confidence": "low"
+          }
+        },
+        {
+          "id": "na1",
+          "text": "The MRI report impression states no intracranial abnormality.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "na1"
+          ],
+          "meta": {
+            "specialist": "Neurology",
+            "confidence": "low"
+          }
+        },
+        {
+          "id": "na2",
+          "text": "The discharge summary describes a small lesion in the right frontal lobe on the same scan.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "na2"
+          ],
+          "meta": {
+            "specialist": "Neurology",
+            "confidence": "low"
+          }
+        },
+        {
+          "id": "ma1",
+          "text": "Ibuprofen is used on about 15 days a month, alongside sumatriptan when needed.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "ma1"
+          ],
+          "meta": {
+            "specialist": "Medication Safety",
+            "confidence": "moderate"
+          }
+        },
+        {
+          "id": "ma2",
+          "text": "Using painkillers on many days each month is associated with more frequent headaches in some people. This is worth reviewing with the prescriber.",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "ma2"
+          ],
+          "meta": {
+            "specialist": "Medication Safety",
+            "confidence": "moderate"
+          }
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "type": "agreements",
+      "items": [
+        {
+          "id": "syn_13",
+          "text": "The perspectives agree that the two documents cannot both be accepted as written, and that clarifying them is the key step.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "syn_13"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "type": "disagreements",
+      "items": [
+        {
+          "id": "syn_8",
+          "text": "Your two documents disagree about the same scan, and the specialist perspectives differ on how to read that. One view is that it may be a wording difference in one document. Another is that it should not be assumed either way. We keep both and do not pick one.",
+          "kind": "interpretation",
+          "flag": "disagreement",
+          "evidence_ids": [
+            "syn_8"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "type": "questions",
+      "question_audience": "current_doctor",
+      "items": [
+        {
+          "id": "q1",
+          "text": "My MRI report says no abnormality, but my discharge summary describes a small lesion. Can you ask the radiologist to clarify which is correct?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q1"
+          ],
+          "meta": {
+            "priority": "1",
+            "category": "Testing"
+          }
+        },
+        {
+          "id": "q2",
+          "text": "Is the repeat MRI in 3 months still needed if the radiologist confirms the original report?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q2"
+          ],
+          "meta": {
+            "priority": "1",
+            "category": "Timing"
+          }
+        },
+        {
+          "id": "q3",
+          "text": "How confident are you that my headaches are migraine with aura, given that the imaging question is open?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q3"
+          ],
+          "meta": {
+            "priority": "2",
+            "category": "Diagnosis"
+          }
+        },
+        {
+          "id": "q4",
+          "text": "I use ibuprofen on about 15 days a month. Could that be affecting my headaches?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q4"
+          ],
+          "meta": {
+            "priority": "3",
+            "category": "Medicines"
+          }
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "type": "questions",
+      "question_audience": "second_opinion_doctor",
+      "items": [
+        {
+          "id": "q5",
+          "text": "Having seen the images, what do you see, and does it match the report or the discharge summary?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q5"
+          ],
+          "meta": {
+            "priority": "1",
+            "category": "Testing"
+          }
+        },
+        {
+          "id": "q6",
+          "text": "Which signs would make you want a faster follow-up scan?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q6"
+          ],
+          "meta": {
+            "priority": "2",
+            "category": "Next steps"
+          }
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_16",
+          "text": "Before deciding anything, it may help to get the radiologist's clarification and ask your doctors how they read the difference.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "syn_16"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "type": "references",
+      "items": [
+        {
+          "id": "src_neuro_7",
+          "text": "Sample summary: when an imaging report and a clinical summary disagree. AdvisorAI sample evidence library (synthetic placeholder), 2024",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "src_neuro_7"
+          ]
+        },
+        {
+          "id": "src_neuro_9",
+          "text": "Sample summary: recurrent headaches with brief visual symptoms. AdvisorAI sample evidence library (synthetic placeholder), 2023",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "src_neuro_9"
+          ]
+        },
+        {
+          "id": "src_drug_8",
+          "text": "Sample summary: frequent painkiller use and headaches. AdvisorAI sample evidence library (synthetic placeholder), 2023",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "src_drug_8"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "type": "disclaimer",
+      "items": [
+        {
+          "text": "AI assists understanding and preparation. Qualified healthcare professionals make medical decisions. AdvisorAI is not a substitute for professional medical care, diagnosis or treatment.",
+          "kind": "template",
+          "evidence_ids": []
+        }
+      ]
+    }
+  ]
+}

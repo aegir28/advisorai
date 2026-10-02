@@ -12,11 +12,12 @@ import { z } from "zod";
  * Versioned contracts carry an explicit `schema_version`:
  *   case.v1 · specialist_report.v1 · report.v1 · trace.v1 · run.v1
  *
- * Naming note: the versioned envelope fields (`schema_version`, `run_id`,
- * `case_id`, `missing_info`, `evidence_refs`, ...) use the blueprint's
- * snake_case wire names. Fields that already existed in the Phase 1 UI contract
- * keep their camelCase names for backward compatibility. A Pydantic alias
- * generator on the backend can serialise either without UI changes.
+ * Naming note: this file is the FRONTEND DOMAIN model. It mixes snake_case
+ * (`schema_version`, `run_id`, `missing_info`, ...) and the camelCase names the
+ * Phase 1 UI already used (`factRefs`, `routingReason`, ...). The WIRE contract
+ * is snake_case throughout (ADR 0001, docs/adr/0001-wire-casing.md): the explicit
+ * adapter in `src/lib/api/http/casing.ts` converts at the API boundary, and the
+ * backend's Pydantic models in `backend/app/schemas/` mirror the wire form.
  */
 
 export const SCHEMA_VERSIONS = {
@@ -527,3 +528,17 @@ export const NewCaseInputSchema = z.object({
 });
 
 export const StartAnalysisResultSchema = z.object({ runId: Id });
+
+// ── API error envelope (backend ADR 0002) ────────────────
+/**
+ * Every /api/v1 error response. This is a WIRE shape (snake_case), validated before it is turned
+ * into an `ApiError`. `code` is a plain string so a code added by a newer backend still parses.
+ */
+export const ErrorEnvelopeSchema = z.object({
+  error: z.object({
+    code: z.string().min(1),
+    message: z.string(),
+    request_id: z.string().min(1),
+    details: z.record(z.string(), z.unknown()).default({}),
+  }),
+});
