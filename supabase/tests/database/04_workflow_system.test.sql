@@ -21,7 +21,7 @@ exception when others then
   execute 'reset role';
   return 'err:' || sqlstate;
 end $$;
-grant app_system, app_backend to current_user;
+do $$ begin execute format('grant app_system, app_backend to %I', current_user); end $$;
 
 insert into auth.users (id, aud, role, email) values
   ('eeeeeeee-0000-4000-8000-000000000001', 'authenticated', 'authenticated', 'e1@advisorai.test'),
