@@ -4,7 +4,8 @@ from fastapi import APIRouter
 
 from app.core.config import API_PREFIX
 
-from . import health
+from . import health, me
 
 api_v1 = APIRouter(prefix=API_PREFIX)
 api_v1.include_router(health.router)
+api_v1.include_router(me.router)

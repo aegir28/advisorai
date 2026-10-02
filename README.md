@@ -10,10 +10,10 @@ questions to take to a qualified doctor.
 AdvisorAI is **not** a doctor. It does not diagnose, prescribe, tell anyone to stop a medicine, say
 a doctor is right or wrong, or decide whether a procedure should happen.
 
-> **Status: Phase 1 prototype + Phase 2A backend foundation.** The clickable frontend runs on
-> mocked, entirely fictional data. The backend is a FastAPI skeleton (health, error contract,
-> request IDs, Pydantic contracts, OpenAPI) with no database, AI or real authentication yet.
-> Never enter real medical information.
+> **Status: Phase 1 prototype + Phase 2A/2B backend and database foundation.** The clickable frontend
+> runs on mocked, entirely fictional data. The backend is FastAPI with a Supabase Postgres foundation
+> (RLS, private storage, audit log, JWT verification). There is no real sign-in, upload, AI or OCR yet.
+> **Synthetic data only: never enter real medical information.**
 
 ## Repository layout
 
@@ -22,12 +22,12 @@ a doctor is right or wrong, or decide whether a procedure should happen.
 | [`frontend/`](frontend) | Next.js 15 app: the interactive prototype | **Implemented** |
 | [`docs/`](docs) | Design direction, data contract, scope notes | Written |
 | [`backend/`](backend) | FastAPI backend: foundation only (Phase 2A) | **Foundation** |
-| [`supabase/`](supabase) | Future SQL: tables, RLS, storage policies | Placeholder |
+| [`supabase/`](supabase) | Migrations, RLS, storage policies, pgTAP tests, synthetic seed | **Foundation** |
 | [`registry/`](registry) | Future agent and model configuration | Placeholder |
 | [`workflows/`](workflows) | Future workflow (DAG) definitions | Placeholder |
 | [`evidence/`](evidence) | Future curated evidence library | Placeholder |
 | [`evals/`](evals) | Future benchmark cases and scoring | Placeholder |
-| [`.github/`](.github) | CI: backend lint, types, tests, fixture drift check | **Backend CI** |
+| [`.github/`](.github) | CI: backend checks, fixture drift, Supabase stack + pgTAP + integration | **Backend + DB CI** |
 
 ## Run the prototype
 

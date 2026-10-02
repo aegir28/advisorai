@@ -1,0 +1,72 @@
+name: supabase
+
+# Runs the real local Supabase stack, applies the migrations from a CLEAN database, runs the pgTAP /
+# RLS tests, then the backend integration tests against that same database (two users, anon, the
+# user-context mechanism, audit, signed URLs).
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - "supabase/**"
+      - "backend/**"
+      - ".github/workflows/supabase.yml"
+  pull_request:
+    paths:
+      - "supabase/**"
+      - "backend/**"
+      - ".github/workflows/supabase.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.107.0
+
+      # Services are configured in supabase/config.toml (the Data API, realtime, analytics and the
+      # rest are disabled there). Studio and imgproxy are not needed in CI.
+      - name: Start the local Supabase stack
+        run: supabase start -x studio,imgproxy
+
+      # A clean database: drops it, applies every migration in order, then supabase/seed.sql.
+      # The last migration FAILS the run if RLS, grants or roles are not as designed.
+      - name: Migrations from a clean database
+        run: supabase db reset
+
+      - name: Lint the database
+        run: supabase db lint --level error
+
+      - name: pgTAP / RLS tests
+        run: supabase test db
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.12.22"
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+
+      - name: Connection details for the integration tests
+        run: |
+          eval "$(supabase status -o env)"
+          echo "::add-mask::${SERVICE_ROLE_KEY:-}"
+          echo "ADVISORAI_TEST_ADMIN_DATABASE_URL=${DB_URL/postgresql:\/\//postgresql+asyncpg://}" >> "$GITHUB_ENV"
+          echo "ADVISORAI_TEST_SUPABASE_URL=${API_URL:-}" >> "$GITHUB_ENV"
+          echo "ADVISORAI_TEST_SERVICE_ROLE_KEY=${SERVICE_ROLE_KEY:-}" >> "$GITHUB_ENV"
+
+      - name: Backend integration tests
+        working-directory: backend
+        run: |
+          uv sync --locked --extra dev --python 3.13
+          uv run --no-sync pytest tests/integration -q -rs
+
+      - name: Stop the stack
+        if: always()
+        run: supabase stop --no-backup
