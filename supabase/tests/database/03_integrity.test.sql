@@ -123,5 +123,36 @@ insert into public.cases (id, owner_user_id, patient_id, code, concern) values
 select lives_ok($$delete from public.cases where id = 'c2000000-0000-4000-8000-000000000001'$$, 'a case can be deleted');
 select is((select count(*)::int from public.patients where id = 'c1000000-0000-4000-8000-000000000001'), 0, 'deleting the case also deleted its patient row');
 
+-- ── Phase 2C: one READY document per content hash per case (upload validation) ──────────────────
+insert into auth.users (id, aud, role, email) values
+  ('dddddddd-0000-4000-8000-000000000001', 'authenticated', 'authenticated', 'd@advisorai.test');
+insert into public.patients (id, owner_user_id, age_years, sex)
+  values ('dddddddd-1000-4000-8000-000000000001', 'dddddddd-0000-4000-8000-000000000001', 40, 'F');
+insert into public.cases (id, owner_user_id, patient_id, code, concern)
+  values ('dddddddd-2000-4000-8000-000000000001', 'dddddddd-0000-4000-8000-000000000001',
+          'dddddddd-1000-4000-8000-000000000001', 'AC-DUP', 'synthetic');
+insert into public.documents (id, owner_user_id, case_id, type, title, status, storage_path, sha256) values
+  ('dddddddd-3000-4000-8000-000000000001', 'dddddddd-0000-4000-8000-000000000001',
+   'dddddddd-2000-4000-8000-000000000001', 'lab', 'a.pdf', 'ready',
+   'dddddddd-0000-4000-8000-000000000001/dddddddd-2000-4000-8000-000000000001/dddddddd-3000-4000-8000-000000000001',
+   repeat('a', 64));
+
+select throws_ok(
+  $$insert into public.documents (id, owner_user_id, case_id, type, title, status, storage_path, sha256) values
+    ('dddddddd-3000-4000-8000-000000000002', 'dddddddd-0000-4000-8000-000000000001',
+     'dddddddd-2000-4000-8000-000000000001', 'lab', 'b.pdf', 'ready',
+     'dddddddd-0000-4000-8000-000000000001/dddddddd-2000-4000-8000-000000000001/dddddddd-3000-4000-8000-000000000002',
+     repeat('a', 64))$$,
+  '23505'::char(5), null::text, 'two READY documents with the same content hash cannot exist in one case');
+
+select lives_ok(
+  $$insert into public.documents (id, owner_user_id, case_id, type, title, status, storage_path, sha256) values
+    ('dddddddd-3000-4000-8000-000000000003', 'dddddddd-0000-4000-8000-000000000001',
+     'dddddddd-2000-4000-8000-000000000001', 'lab', 'c.pdf', 'duplicate',
+     'dddddddd-0000-4000-8000-000000000001/dddddddd-2000-4000-8000-000000000001/dddddddd-3000-4000-8000-000000000003',
+     repeat('a', 64))$$,
+  'the same hash is allowed once the document is marked duplicate');
+
+
 select * from finish();
 rollback;

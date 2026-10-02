@@ -5,13 +5,12 @@ RLS -> the caller's own profile. The route takes no user ID from the client.
 """
 
 from datetime import datetime
-from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Request
 
+from app.api.dependencies import DatabaseDep
 from app.auth.dependencies import CurrentUserDep
 from app.core.errors import AppError
-from app.db.database import Database
 from app.db.profiles import get_profile
 from app.schemas.common import WireModel
 from app.schemas.errors import ErrorCode
@@ -26,16 +25,6 @@ class MeResponse(WireModel):
     consented_at: datetime | None = None
     consent_version: str | None = None
     data_mode: str
-
-
-def get_database(request: Request) -> Database:
-    database: Database | None = request.app.state.database
-    if database is None:
-        raise AppError(ErrorCode.SERVICE_UNAVAILABLE, "The service is not ready.", status_code=503)
-    return database
-
-
-DatabaseDep = Annotated[Database, Depends(get_database)]
 
 
 @router.get(

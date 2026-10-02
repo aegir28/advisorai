@@ -54,6 +54,8 @@ class Settings(BaseSettings):
     signed_url_ttl_seconds: int = Field(
         default=MAX_SIGNED_URL_TTL_SECONDS, ge=30, le=MAX_SIGNED_URL_TTL_SECONDS
     )
+    # Upload limits (the 20 MB / PDF-JPEG-PNG rules are fixed by the bucket and `docintel.validate`).
+    max_documents_per_case: int = Field(default=30, ge=1, le=100)
     # Server-side secret for the HMAC of client IPs in the audit log.
     audit_ip_hmac_secret: SecretStr | None = None
 

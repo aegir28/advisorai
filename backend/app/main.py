@@ -33,6 +33,8 @@ from app.core.request_id import REQUEST_ID_HEADER, RequestIdMiddleware
 from app.db.database import Database, create_engine
 from app.openapi import DESCRIPTION, install_openapi
 from app.schemas import ErrorEnvelope
+from app.services.cases import CaseService
+from app.services.documents import DocumentService
 from app.storage.gateway import StorageGateway, SupabaseStorageGateway
 from app.storage.service import DocumentUrlService
 
@@ -78,6 +80,13 @@ def create_app(
         else None
     )
 
+    cases = CaseService(database, audit, storage) if database is not None and audit is not None else None
+    documents = (
+        DocumentService(database, audit, storage, settings)
+        if database is not None and audit is not None and storage is not None
+        else None
+    )
+
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         yield
@@ -117,6 +126,8 @@ def create_app(
     app.state.audit = audit
     app.state.storage = storage
     app.state.document_urls = document_urls
+    app.state.cases = cases
+    app.state.documents = documents
     register_exception_handlers(app)
     app.include_router(api_v1)
     install_openapi(app)
