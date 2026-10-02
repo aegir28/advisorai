@@ -1,0 +1,209 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/*
+ * AdvisorAI design system — "Quiet Clinic"
+ * Warm paper background, deep ink-teal primary, a serif voice for headings.
+ * Semantic hues are deliberately NOT red/green so nothing reads as
+ * "right/wrong". Red is reserved for the urgent-care screen only.
+ */
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-fact: var(--fact);
+  --color-fact-soft: var(--fact-soft);
+  --color-interp: var(--interp);
+  --color-interp-soft: var(--interp-soft);
+  --color-evidence: var(--evidence);
+  --color-evidence-soft: var(--evidence-soft);
+  --color-uncertain: var(--uncertain);
+  --color-uncertain-soft: var(--uncertain-soft);
+  --color-missing: var(--missing);
+  --color-missing-soft: var(--missing-soft);
+  --color-disagree: var(--disagree);
+  --color-disagree-soft: var(--disagree-soft);
+  --color-urgent: var(--urgent);
+  --color-urgent-soft: var(--urgent-soft);
+  --color-ink: var(--ink);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  color-scheme: light;
+  --radius: 0.75rem;
+
+  --background: oklch(0.982 0.006 90);
+  --foreground: oklch(0.255 0.028 225);
+  --ink: oklch(0.2 0.03 225);
+  --card: oklch(0.996 0.003 90);
+  --card-foreground: oklch(0.255 0.028 225);
+  --popover: oklch(0.996 0.003 90);
+  --popover-foreground: oklch(0.255 0.028 225);
+
+  --primary: oklch(0.4 0.075 200);
+  --primary-foreground: oklch(0.985 0.006 90);
+  --secondary: oklch(0.953 0.014 190);
+  --secondary-foreground: oklch(0.3 0.05 205);
+  --muted: oklch(0.962 0.008 90);
+  --muted-foreground: oklch(0.47 0.02 225);
+  --accent: oklch(0.94 0.032 195);
+  --accent-foreground: oklch(0.3 0.06 205);
+
+  --destructive: oklch(0.52 0.19 27);
+  --border: oklch(0.9 0.01 90);
+  --input: oklch(0.87 0.012 90);
+  --ring: oklch(0.55 0.09 200);
+
+  /* Kinds of content */
+  --fact: oklch(0.43 0.09 250);
+  --fact-soft: oklch(0.957 0.022 250);
+  --interp: oklch(0.44 0.13 295);
+  --interp-soft: oklch(0.957 0.028 295);
+  --evidence: oklch(0.44 0.07 170);
+  --evidence-soft: oklch(0.955 0.025 170);
+
+  /* Things that must stay visible */
+  --uncertain: oklch(0.46 0.1 68);
+  --uncertain-soft: oklch(0.963 0.055 92);
+  --missing: oklch(0.44 0.035 250);
+  --missing-soft: oklch(0.958 0.012 250);
+  --disagree: oklch(0.43 0.14 335);
+  --disagree-soft: oklch(0.957 0.03 335);
+
+  /* Emergency only */
+  --urgent: oklch(0.5 0.2 27);
+  --urgent-soft: oklch(0.962 0.03 27);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-heading text-ink;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: oklch(0.88 0.06 195);
+  }
+}
+
+@layer components {
+  /* Paper-like surface used for report-style content */
+  .paper {
+    @apply rounded-2xl border bg-card;
+    box-shadow: 0 1px 0 oklch(0.9 0.01 90), 0 8px 24px -16px oklch(0.3 0.03 225 / 0.18);
+  }
+  .eyebrow {
+    @apply text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground;
+  }
+  /* Dashed edge = "this is a gap", independent of colour */
+  .gap-edge {
+    border-style: dashed;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Print: the patient report is meant to be taken to a doctor ── */
+@media print {
+  @page {
+    margin: 16mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 11pt;
+  }
+  .no-print,
+  [data-no-print] {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .paper {
+    box-shadow: none !important;
+    border-color: #ccc !important;
+    break-inside: avoid;
+  }
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+  .report-section {
+    break-inside: avoid-page;
+  }
+  /* Collapsed report groups still print */
+  .report-group-body[hidden] {
+    display: block !important;
+  }
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+.print-only {
+  display: none;
+}
