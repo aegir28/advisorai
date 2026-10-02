@@ -59,7 +59,7 @@ alter role app_system  with password '<choose a different one>';
 
 ## Without Docker: the native substitute
 
-If Docker or the Supabase images are unavailable, `supabase/tests/native/run.sh up|pgtap|reset|down` builds a
+If Docker or the Supabase images are unavailable, `supabase/native/run.sh up|pgtap|reset|down` builds a
 throw-away PostgreSQL 16 cluster with a **stub** of the Supabase `auth`/`storage` schemas and roles, applies the
 real migrations and seed, and runs the real pgTAP files. It prints the `ADVISORAI_TEST_ADMIN_DATABASE_URL` for the
 backend integration tests (the two Storage API tests still skip). It is **not** a replacement for the stack above
