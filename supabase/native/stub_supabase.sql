@@ -1,5 +1,5 @@
 -- SUBSTITUTE for the parts of a Supabase stack the migrations touch (auth, storage, extensions, roles).
--- Used ONLY by supabase/tests/native/run.sh when Docker or the Supabase CLI cannot run. It is NOT a
+-- Used ONLY by supabase/native/run.sh when Docker or the Supabase CLI cannot run. It is NOT a
 -- replacement for `supabase start` + `supabase db reset` + `supabase test db` (the `supabase` CI workflow),
 -- and a green native run must never be reported as one.
 --
