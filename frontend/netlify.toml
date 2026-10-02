@@ -1,0 +1,25 @@
+# Netlify (free plan): the Next.js frontend. Blueprint, Part 8. Commercial use of Vercel Hobby is not allowed,
+# which is why this project uses Netlify. Netlify's Next.js runtime is applied automatically.
+#
+# Public build-time variables are set in the Netlify UI (Site settings -> Environment variables):
+#   NEXT_PUBLIC_API_MODE=http
+#   NEXT_PUBLIC_API_BASE_URL=https://<the Render backend>
+#   NEXT_PUBLIC_AUTH_MODE=supabase
+#   NEXT_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY=<the PUBLIC anon key>
+# Nothing else. A service-role key must never be a Netlify variable for this site.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

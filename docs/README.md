@@ -2,6 +2,9 @@
 
 - [`design-direction.md`](design-direction.md): visual directions explored, the one chosen and why.
 - [`frontend-data-contract.md`](frontend-data-contract.md): what the frontend expects from the backend.
+- [`deployment.md`](deployment.md): free-tier deployment foundations and the secrets map.
+- [`observability.md`](observability.md): what is logged, measured and deliberately not.
+- [`handoff-ai-phase.md`](handoff-ai-phase.md): **start here for the AI / API-key phase.**
 
 The architecture blueprint (product scope, agentic workflow, verification, security and build plan)
 is the source of truth for the product. It is maintained outside this repository for now.
@@ -17,3 +20,4 @@ is the source of truth for the product. It is maintained outside this repository
 - [`adr/0007-case-and-document-lifecycle.md`](adr/0007-case-and-document-lifecycle.md): case and document endpoints, secure upload, validation without AI, purge order.
 - [`adr/0008-workflow-persistence-and-worker.md`](adr/0008-workflow-persistence-and-worker.md): job queue, step persistence, engine and worker foundation (no AI nodes).
 - [`adr/0009-google-auth-and-frontend-http-integration.md`](adr/0009-google-auth-and-frontend-http-integration.md): Google sign-in via Supabase Auth, the frontend HTTP API, request hardening.
+- [`adr/0010-non-ai-foundation-boundary-and-ai-handoff.md`](adr/0010-non-ai-foundation-boundary-and-ai-handoff.md): the non-AI foundation is complete; the boundary guard and the extension points.

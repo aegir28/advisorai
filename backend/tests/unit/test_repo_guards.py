@@ -1,0 +1,102 @@
+"""The repository guards (scripts/repo_guards.py): naming, secrets, and the temporary AI-scope boundary."""
+
+import base64
+import importlib.util
+import json
+from pathlib import Path
+from types import ModuleType
+
+import pytest
+
+SCRIPT = Path(__file__).resolve().parents[3] / "scripts" / "repo_guards.py"
+
+
+def load() -> ModuleType:
+    spec = importlib.util.spec_from_file_location("repo_guards", SCRIPT)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+guards = load()
+OLD_NAME = "Med" + "Clarity"
+
+
+def rules(files: dict[str, str]) -> set[str]:
+    return {f.rule for f in guards.scan(files)}
+
+
+def test_the_real_repository_is_clean() -> None:
+    assert guards.scan(guards.tracked_files()) == []
+
+
+@pytest.mark.parametrize("text", [OLD_NAME, OLD_NAME.lower(), "med-" + "clarity", "MED_" + "CLARITY"])
+def test_the_retired_project_name_is_refused_everywhere(text: str) -> None:
+    for path in (
+        "README.md",
+        "backend/app/x.py",
+        "frontend/src/a.tsx",
+        "supabase/migrations/1.sql",
+        "x.env.example",
+    ):
+        assert "naming" in rules({path: f"hello {text} world"})
+
+
+def test_secrets_are_refused() -> None:
+    def jwt(role: str) -> str:
+        def b(o: object) -> str:
+            return base64.urlsafe_b64encode(json.dumps(o).encode()).rstrip(b"=").decode()
+
+        return f"{b({'alg': 'HS256'})}.{b({'role': role})}.signaturesignature"
+
+    bad = [
+        "-----BEGIN " + "PRIVATE KEY-----",
+        "sb_secret_" + "abcdefghijkl",
+        "sk-" + "a" * 30,
+        "AIza" + "a" * 35,
+        "GOCSPX-" + "a" * 24,
+        "ghp_" + "a" * 36,
+        "AKIA" + "A" * 16,
+        "key = " + jwt("service_role"),
+    ]
+    for text in bad:
+        assert "secrets" in rules({"backend/app/x.py": text}), text
+    # An anon key is public by design.
+    assert rules({"frontend/.env.example": "KEY=" + jwt("anon")}) == set()
+
+
+def test_environment_files_cannot_be_committed_but_the_example_can() -> None:
+    assert "secrets" in rules({"backend/.env": "A=1"})
+    assert "secrets" in rules({"frontend/.env.local": "A=1"})
+    assert rules({"backend/.env.example": "A=1"}) == set()
+
+
+@pytest.mark.parametrize(
+    ("path", "text"),
+    [
+        ("backend/pyproject.toml", '  "openai>=1.0",'),
+        ("backend/pyproject.toml", '  "anthropic",'),
+        ("frontend/package.json", '    "@anthropic-ai/sdk": "^0.1",'),
+        ("frontend/package.json", '    "@ai-sdk/openai": "^1",'),
+        ("backend/pyproject.toml", '  "pgvector",'),
+        ("backend/app/ai/gateway.py", "import openai"),
+        ("backend/app/ai/gateway.py", "from anthropic import Anthropic"),
+        ("frontend/src/ai.ts", 'import OpenAI from "openai"'),
+        ("backend/.env.example", "OPENAI_API_KEY="),
+        ("backend/app/core/config.py", "gemini_key = os.environ['GEMINI_API_KEY']"),
+        ("supabase/migrations/9.sql", "create extension if not exists vector with schema extensions;"),
+        ("supabase/migrations/9.sql", "embedding vector(1536)"),
+    ],
+)
+def test_ai_scope_is_enforced_until_the_ai_phase(path: str, text: str) -> None:
+    assert "ai-scope" in rules({path: text}), (path, text)
+
+
+def test_docs_may_describe_the_future_ai_phase_and_the_supabase_cli_default_is_allowed() -> None:
+    assert (
+        rules({"docs/handoff-ai-phase.md": "The gateway will read OPENAI_API_KEY and use pgvector."}) == set()
+    )
+    assert rules({"supabase/config.toml": 'openai_api_key = "env(OPENAI_API_KEY)"'}) == set()
+    # Ordinary words are not flagged.
+    assert rules({"backend/pyproject.toml": '  "pydantic>=2",  "httpx"'}) == set()
