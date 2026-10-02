@@ -1,0 +1,387 @@
+[
+  {
+    "schema_version": "specialist_report.v1",
+    "run_id": "r_77",
+    "case_id": "c_9f2",
+    "questions": [
+      {
+        "id": "gq1",
+        "text": "Has a heart ultrasound (echocardiogram) been done, and could its result change the timing?",
+        "priority": 1,
+        "linked_to": [
+          "gmi1",
+          "gm2"
+        ]
+      },
+      {
+        "id": "gq2",
+        "text": "How will my blood sugar control affect the procedure and recovery?",
+        "priority": 3,
+        "linked_to": [
+          "gm1"
+        ]
+      }
+    ],
+    "evidence_refs": [
+      {
+        "source_id": "src_diab_2",
+        "title": "Sample summary: blood sugar control around procedures",
+        "section": "§1 Peri-procedure glucose"
+      }
+    ],
+    "id": "sr_gm",
+    "specialist": "general_medicine",
+    "name": "General Medicine",
+    "version": "1.0",
+    "tier": 2,
+    "priority": "mandatory",
+    "routing_reason": "Broad view of the whole case.",
+    "status": "complete",
+    "confidence": {
+      "overall": "moderate",
+      "reason": "Broad summary; some key tests are not in the records."
+    },
+    "findings": [
+      {
+        "id": "gm1",
+        "statement": "HbA1c is 8.9 %, above the usual target of about 7 %.",
+        "kind": "patient_fact",
+        "importance": "high",
+        "fact_refs": [
+          "f_hba1c"
+        ]
+      },
+      {
+        "id": "gm2",
+        "statement": "Whether the timing is urgent or can be planned depends on current symptoms and heart function, which the records do not fully show.",
+        "kind": "interpretation",
+        "importance": "high",
+        "fact_refs": [
+          "f_118",
+          "f_121"
+        ]
+      },
+      {
+        "id": "gm3",
+        "statement": "Six regular medicines are listed, including two antiplatelet medicines and a painkiller (NSAID).",
+        "kind": "patient_fact",
+        "importance": "medium",
+        "fact_refs": [
+          "f_m1",
+          "f_m2",
+          "f_m6"
+        ]
+      }
+    ],
+    "uncertainties": [
+      {
+        "id": "gu1",
+        "text": "How the person's symptoms have changed since May is not documented.",
+        "impact": "high",
+        "resolvable_by": "A recent symptom review with the treating doctor"
+      }
+    ],
+    "missing_info": [
+      {
+        "id": "gmi1",
+        "item": "Echocardiogram (heart ultrasound)",
+        "why_it_matters": "Shows how well the heart is pumping, which can shape timing decisions."
+      },
+      {
+        "id": "gmi2",
+        "item": "Recent kidney function test",
+        "why_it_matters": "Relevant to medicine choices around procedures."
+      }
+    ],
+    "contradictions": [],
+    "considerations": [],
+    "limitations": [
+      "Only written reports were available, not the original images."
+    ]
+  },
+  {
+    "schema_version": "specialist_report.v1",
+    "run_id": "r_77",
+    "case_id": "c_9f2",
+    "questions": [
+      {
+        "id": "cq1",
+        "text": "What specific findings support the need for angioplasty now?",
+        "priority": 1,
+        "linked_to": [
+          "cf3",
+          "cf4"
+        ]
+      },
+      {
+        "id": "cq2",
+        "text": "Are there reasonable alternatives, such as adjusting medicines first?",
+        "priority": 2,
+        "linked_to": [
+          "cc1",
+          "cf5"
+        ]
+      }
+    ],
+    "evidence_refs": [
+      {
+        "source_id": "src_cardio_12",
+        "title": "Sample summary: when invasive treatment is discussed in coronary artery disease",
+        "section": "§4 Discussing revascularisation"
+      },
+      {
+        "source_id": "src_cardio_14",
+        "title": "Sample summary: medicines as part of care for stable coronary disease",
+        "section": "§2 Medicines first"
+      }
+    ],
+    "extensions": {
+      "cardiology": {
+        "risk_scores_mentioned": []
+      }
+    },
+    "id": "sr_cardio",
+    "specialist": "cardiology",
+    "name": "Cardiology",
+    "version": "1.2",
+    "tier": 2,
+    "priority": "mandatory",
+    "routing_reason": "Troponin, ECG and angiography findings.",
+    "status": "complete",
+    "confidence": {
+      "overall": "moderate",
+      "reason": "No echocardiogram report is available."
+    },
+    "findings": [
+      {
+        "id": "cf1",
+        "statement": "High-sensitivity troponin was raised at 182 ng/L (reference below 34).",
+        "kind": "patient_fact",
+        "importance": "high",
+        "fact_refs": [
+          "f_118"
+        ]
+      },
+      {
+        "id": "cf2",
+        "statement": "The February ECG showed ST-segment changes in the lateral leads.",
+        "kind": "patient_fact",
+        "importance": "medium",
+        "fact_refs": [
+          "f_ecg1"
+        ]
+      },
+      {
+        "id": "cf3",
+        "statement": "The angiography report describes about 80 % narrowing in the LAD artery.",
+        "kind": "patient_fact",
+        "importance": "high",
+        "fact_refs": [
+          "f_140"
+        ]
+      },
+      {
+        "id": "cf4",
+        "statement": "These findings together are the type of picture in which angioplasty is commonly discussed.",
+        "kind": "external_evidence",
+        "importance": "high",
+        "fact_refs": [
+          "f_118",
+          "f_140"
+        ],
+        "source_ids": [
+          "src_cardio_12"
+        ]
+      },
+      {
+        "id": "cf5",
+        "statement": "For stable symptoms, medicines-first approaches are also sometimes discussed as an alternative.",
+        "kind": "external_evidence",
+        "importance": "medium",
+        "fact_refs": [],
+        "source_ids": [
+          "src_cardio_14"
+        ]
+      }
+    ],
+    "uncertainties": [
+      {
+        "id": "cu1",
+        "text": "Whether treatment should happen within weeks or be planned later is not settled by the documents.",
+        "impact": "high",
+        "resolvable_by": "Discussion with the treating cardiologist, plus an echocardiogram"
+      }
+    ],
+    "missing_info": [
+      {
+        "id": "cmi1",
+        "item": "Echocardiogram / LVEF",
+        "why_it_matters": "Heart pumping strength may influence timing and approach."
+      },
+      {
+        "id": "cmi2",
+        "item": "Stress test or functional assessment",
+        "why_it_matters": "Can help show how much the narrowing limits blood flow."
+      }
+    ],
+    "contradictions": [],
+    "considerations": [
+      {
+        "id": "cc1",
+        "statement": "A discussion of alternatives, including medicines first, may help the person understand why one path was preferred.",
+        "kind": "interpretation",
+        "importance": "medium",
+        "fact_refs": [
+          "f_121"
+        ]
+      }
+    ],
+    "limitations": [
+      "Angiography images were not available, only the written report."
+    ]
+  },
+  {
+    "schema_version": "specialist_report.v1",
+    "run_id": "r_77",
+    "case_id": "c_9f2",
+    "questions": [
+      {
+        "id": "iq1",
+        "text": "What symptoms would make this urgent rather than planned?",
+        "priority": 1,
+        "linked_to": [
+          "ic2",
+          "iu1"
+        ]
+      }
+    ],
+    "evidence_refs": [
+      {
+        "source_id": "src_cardio_14",
+        "title": "Sample summary: medicines as part of care for stable coronary disease",
+        "section": "§2 Medicines first"
+      }
+    ],
+    "id": "sr_ic",
+    "specialist": "interventional_cardiology",
+    "name": "Interventional Cardiology",
+    "version": "1.0",
+    "tier": 2,
+    "priority": "mandatory",
+    "routing_reason": "A procedure (PCI) is proposed.",
+    "status": "complete",
+    "confidence": {
+      "overall": "moderate",
+      "reason": "Timing depends on information not in the records."
+    },
+    "findings": [
+      {
+        "id": "ic1",
+        "statement": "The LAD narrowing described in the report is a typical target when angioplasty is discussed.",
+        "kind": "interpretation",
+        "importance": "high",
+        "fact_refs": [
+          "f_140"
+        ]
+      },
+      {
+        "id": "ic2",
+        "statement": "If symptoms have been stable, a planned timeline after optimising medicines and getting an echocardiogram may also be reasonable to discuss.",
+        "kind": "interpretation",
+        "importance": "high",
+        "fact_refs": [
+          "f_121",
+          "f_sym1"
+        ]
+      }
+    ],
+    "uncertainties": [
+      {
+        "id": "iu1",
+        "text": "Whether symptoms have been stable since the admission is not documented.",
+        "impact": "high"
+      }
+    ],
+    "missing_info": [
+      {
+        "id": "imi1",
+        "item": "Echocardiogram / LVEF",
+        "why_it_matters": "Part of planning a procedure."
+      }
+    ],
+    "contradictions": [],
+    "considerations": [],
+    "limitations": []
+  },
+  {
+    "schema_version": "specialist_report.v1",
+    "run_id": "r_77",
+    "case_id": "c_9f2",
+    "questions": [
+      {
+        "id": "mq1",
+        "text": "Is taking antiplatelet medicines together with diclofenac safe for me around the procedure?",
+        "priority": 2,
+        "linked_to": [
+          "ms2"
+        ]
+      }
+    ],
+    "evidence_refs": [
+      {
+        "source_id": "src_drug_3",
+        "title": "Sample summary: antiplatelet medicines and NSAIDs",
+        "section": "§3 Interactions"
+      }
+    ],
+    "id": "sr_ms",
+    "specialist": "medication_safety",
+    "name": "Medication Safety",
+    "version": "1.0",
+    "tier": 2,
+    "priority": "mandatory",
+    "routing_reason": "A medicine list is present.",
+    "status": "complete",
+    "confidence": {
+      "overall": "high",
+      "reason": "The medicine list is clear and legible."
+    },
+    "findings": [
+      {
+        "id": "ms1",
+        "statement": "Two antiplatelet medicines (aspirin and clopidogrel) are listed.",
+        "kind": "patient_fact",
+        "importance": "medium",
+        "fact_refs": [
+          "f_m1",
+          "f_m2"
+        ]
+      },
+      {
+        "id": "ms2",
+        "statement": "Diclofenac (an NSAID painkiller) is listed alongside antiplatelet medicines. This combination is associated with a higher chance of bleeding and is worth reviewing with the prescriber.",
+        "kind": "external_evidence",
+        "importance": "high",
+        "fact_refs": [
+          "f_m6",
+          "f_m1",
+          "f_m2"
+        ],
+        "source_ids": [
+          "src_drug_3"
+        ]
+      }
+    ],
+    "uncertainties": [],
+    "missing_info": [
+      {
+        "id": "msmi1",
+        "item": "Recent kidney function result",
+        "why_it_matters": "Relevant to medicine choices around contrast and procedures."
+      }
+    ],
+    "contradictions": [],
+    "considerations": [],
+    "limitations": []
+  }
+]

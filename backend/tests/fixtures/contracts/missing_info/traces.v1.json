@@ -1,0 +1,1999 @@
+[
+  {
+    "schema_version": "trace.v1",
+    "item_id": "f_km1",
+    "root": {
+      "id": "f_km1",
+      "level": "fact",
+      "text": "Ibuprofen: 400 mg, three times a day",
+      "kind": "patient_fact",
+      "label": "Fact from your records",
+      "source": {
+        "doc_id": "d_rx2",
+        "page": 1,
+        "section": "Medicines",
+        "snippet": "Tab. Ibuprofen 400 mg TDS x 3 months"
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "f_km2",
+    "root": {
+      "id": "f_km2",
+      "level": "fact",
+      "text": "Pantoprazole: 40 mg, once daily",
+      "kind": "patient_fact",
+      "label": "Fact from your records",
+      "source": {
+        "doc_id": "d_rx2",
+        "page": 1,
+        "section": "Medicines",
+        "snippet": "Tab. Pantoprazole 40 mg OD"
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "gap1",
+    "root": {
+      "id": "gap1",
+      "level": "timeline",
+      "text": "The consultation mentions an MRI, but no MRI report is on file.",
+      "kind": "interpretation",
+      "flag": "missing",
+      "label": "Timeline check",
+      "children": [
+        {
+          "id": "tl3",
+          "level": "timeline",
+          "text": "X-ray of the right knee. Mild medial narrowing, one value unclear.",
+          "kind": "patient_fact",
+          "flag": "disagreement",
+          "label": "Timeline event",
+          "children": [
+            {
+              "id": "f_xr1",
+              "level": "fact",
+              "text": "X-ray: medial joint space narrowing: Mild (value unclear)",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_xr",
+                "page": 1,
+                "section": "Findings",
+                "snippet": "Mild narrowing of the medial joint space, approx. 3.? mm (unclear in scan)."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "gk1",
+    "root": {
+      "id": "gk1",
+      "level": "specialist",
+      "text": "Only two physiotherapy sessions are recorded before surgery was suggested.",
+      "kind": "patient_fact",
+      "label": "General Medicine perspective",
+      "children": [
+        {
+          "id": "f_k3",
+          "level": "fact",
+          "text": "Physiotherapy: 2 sessions only",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_oc",
+            "page": 2,
+            "section": "Treatment so far",
+            "snippet": "Physiotherapy: 2 sessions in April, stopped due to schedule."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "gk2",
+    "root": {
+      "id": "gk2",
+      "level": "specialist",
+      "text": "Ibuprofen 400 mg three times a day for about three months is listed.",
+      "kind": "patient_fact",
+      "label": "General Medicine perspective",
+      "children": [
+        {
+          "id": "f_km1",
+          "level": "fact",
+          "text": "Ibuprofen: 400 mg, three times a day",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx2",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Ibuprofen 400 mg TDS x 3 months"
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "ok1",
+    "root": {
+      "id": "ok1",
+      "level": "specialist",
+      "text": "Pain on twisting with occasional catching is described since March.",
+      "kind": "patient_fact",
+      "label": "Orthopedics perspective",
+      "children": [
+        {
+          "id": "f_k1",
+          "level": "fact",
+          "text": "Right knee pain with twisting: Since March",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_oc",
+            "page": 1,
+            "section": "History",
+            "snippet": "Right knee pain on twisting for about three months, occasional catching."
+          },
+          "children": []
+        },
+        {
+          "id": "f_k2",
+          "level": "fact",
+          "text": "Occasional catching sensation: Not described as locking",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_oc",
+            "page": 1,
+            "section": "History",
+            "snippet": "Occasional catching. No true locking reported."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "ok2",
+    "root": {
+      "id": "ok2",
+      "level": "specialist",
+      "text": "The consultation suggests a meniscus tear, but this cannot be confirmed here because the MRI report is missing.",
+      "kind": "interpretation",
+      "label": "Orthopedics perspective",
+      "children": [
+        {
+          "id": "f_k4",
+          "level": "fact",
+          "text": "Medial meniscus tear (suspected): Suspected, not confirmed",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_oc",
+            "page": 2,
+            "section": "Impression",
+            "snippet": "Likely medial meniscus tear. MRI reviewed in clinic."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q1",
+    "root": {
+      "id": "q1",
+      "level": "question",
+      "text": "Can I have a copy of the written MRI report? Does it confirm a meniscus tear?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_10",
+          "level": "synthesis",
+          "text": "Your records do not include a written MRI report. The consultation mentions an MRI, but only a photo of films was uploaded and it could not be read. A clear copy of the report would help.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mxk1",
+              "level": "matrix",
+              "text": "A meniscus tear has been confirmed. Both perspectives note that the document that would confirm this (the MRI report) is missing.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "okm1",
+                  "level": "specialist",
+                  "text": "Written MRI report. Commonly used to confirm a suspected tear before surgery.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "Orthopedics perspective",
+                  "children": []
+                },
+                {
+                  "id": "ok2",
+                  "level": "specialist",
+                  "text": "The consultation suggests a meniscus tear, but this cannot be confirmed here because the MRI report is missing.",
+                  "kind": "interpretation",
+                  "label": "Orthopedics perspective",
+                  "children": [
+                    {
+                      "id": "f_k4",
+                      "level": "fact",
+                      "text": "Medial meniscus tear (suspected): Suspected, not confirmed",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_oc",
+                        "page": 2,
+                        "section": "Impression",
+                        "snippet": "Likely medial meniscus tear. MRI reviewed in clinic."
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "okm1",
+              "level": "specialist",
+              "text": "Written MRI report. Commonly used to confirm a suspected tear before surgery.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Orthopedics perspective",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "mxk1",
+          "level": "matrix",
+          "text": "A meniscus tear has been confirmed. Both perspectives note that the document that would confirm this (the MRI report) is missing.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "okm1",
+              "level": "specialist",
+              "text": "Written MRI report. Commonly used to confirm a suspected tear before surgery.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Orthopedics perspective",
+              "children": []
+            },
+            {
+              "id": "ok2",
+              "level": "specialist",
+              "text": "The consultation suggests a meniscus tear, but this cannot be confirmed here because the MRI report is missing.",
+              "kind": "interpretation",
+              "label": "Orthopedics perspective",
+              "children": [
+                {
+                  "id": "f_k4",
+                  "level": "fact",
+                  "text": "Medial meniscus tear (suspected): Suspected, not confirmed",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_oc",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "Likely medial meniscus tear. MRI reviewed in clinic."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q2",
+    "root": {
+      "id": "q2",
+      "level": "question",
+      "text": "How much non-surgical treatment do you usually try first, and would a longer physiotherapy trial be reasonable in my case?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_11",
+          "level": "synthesis",
+          "text": "Details of any non-surgical treatment (such as a longer physiotherapy trial) are not in your records.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mxk2",
+              "level": "matrix",
+              "text": "Non-surgical care has been tried for long enough. Only two physiotherapy sessions are recorded. Whether other approaches were tried is not documented.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "gk1",
+                  "level": "specialist",
+                  "text": "Only two physiotherapy sessions are recorded before surgery was suggested.",
+                  "kind": "patient_fact",
+                  "label": "General Medicine perspective",
+                  "children": [
+                    {
+                      "id": "f_k3",
+                      "level": "fact",
+                      "text": "Physiotherapy: 2 sessions only",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_oc",
+                        "page": 2,
+                        "section": "Treatment so far",
+                        "snippet": "Physiotherapy: 2 sessions in April, stopped due to schedule."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "gkm1",
+                  "level": "specialist",
+                  "text": "Details of non-surgical treatment so far. Surgery is usually discussed after a period of non-surgical care.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "General Medicine perspective",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "gkm1",
+              "level": "specialist",
+              "text": "Details of non-surgical treatment so far. Surgery is usually discussed after a period of non-surgical care.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "General Medicine perspective",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "syn_9",
+          "level": "synthesis",
+          "text": "How much non-surgical care has been tried is not clear. Only two physiotherapy sessions are recorded.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "gku1",
+              "level": "specialist",
+              "text": "How much non-surgical care has been tried is not clear from the records.",
+              "kind": "interpretation",
+              "flag": "uncertain",
+              "label": "General Medicine perspective",
+              "children": []
+            },
+            {
+              "id": "gk1",
+              "level": "specialist",
+              "text": "Only two physiotherapy sessions are recorded before surgery was suggested.",
+              "kind": "patient_fact",
+              "label": "General Medicine perspective",
+              "children": [
+                {
+                  "id": "f_k3",
+                  "level": "fact",
+                  "text": "Physiotherapy: 2 sessions only",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_oc",
+                    "page": 2,
+                    "section": "Treatment so far",
+                    "snippet": "Physiotherapy: 2 sessions in April, stopped due to schedule."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q3",
+    "root": {
+      "id": "q3",
+      "level": "question",
+      "text": "Is my pain more likely to come from a tear or from wear in the joint, and how can we tell?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_8",
+          "level": "synthesis",
+          "text": "It is not clear whether your pain comes mainly from a tear or from wear-related changes in the joint.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "oku2",
+              "level": "specialist",
+              "text": "Whether the pain comes mainly from a tear or from wear-related changes is not clear from the records.",
+              "kind": "interpretation",
+              "flag": "uncertain",
+              "label": "Orthopedics perspective",
+              "children": []
+            },
+            {
+              "id": "oku1",
+              "level": "specialist",
+              "text": "An X-ray measurement could not be read reliably, so the degree of joint narrowing is uncertain.",
+              "kind": "interpretation",
+              "flag": "uncertain",
+              "label": "Orthopedics perspective",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "oku2",
+          "level": "specialist",
+          "text": "Whether the pain comes mainly from a tear or from wear-related changes is not clear from the records.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "Orthopedics perspective",
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q4",
+    "root": {
+      "id": "q4",
+      "level": "question",
+      "text": "I've taken ibuprofen three times a day for about three months. Should we review that?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_15",
+          "level": "synthesis",
+          "text": "You have taken ibuprofen regularly for about three months. It may be worth reviewing this with your prescriber. Please do not change any medicine on your own.",
+          "kind": "interpretation",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "gk2",
+              "level": "specialist",
+              "text": "Ibuprofen 400 mg three times a day for about three months is listed.",
+              "kind": "patient_fact",
+              "label": "General Medicine perspective",
+              "children": [
+                {
+                  "id": "f_km1",
+                  "level": "fact",
+                  "text": "Ibuprofen: 400 mg, three times a day",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx2",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Ibuprofen 400 mg TDS x 3 months"
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "clk1",
+              "level": "verification",
+              "text": "Ibuprofen 400 mg three times a day is on the current medicine list.",
+              "kind": "patient_fact",
+              "status": "supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_km1",
+                  "level": "fact",
+                  "text": "Ibuprofen: 400 mg, three times a day",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx2",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Ibuprofen 400 mg TDS x 3 months"
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "gk2",
+          "level": "specialist",
+          "text": "Ibuprofen 400 mg three times a day for about three months is listed.",
+          "kind": "patient_fact",
+          "label": "General Medicine perspective",
+          "children": [
+            {
+              "id": "f_km1",
+              "level": "fact",
+              "text": "Ibuprofen: 400 mg, three times a day",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx2",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Ibuprofen 400 mg TDS x 3 months"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q5",
+    "root": {
+      "id": "q5",
+      "level": "question",
+      "text": "Having seen the MRI, do you see a tear that matches my symptoms of catching?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_10",
+          "level": "synthesis",
+          "text": "Your records do not include a written MRI report. The consultation mentions an MRI, but only a photo of films was uploaded and it could not be read. A clear copy of the report would help.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mxk1",
+              "level": "matrix",
+              "text": "A meniscus tear has been confirmed. Both perspectives note that the document that would confirm this (the MRI report) is missing.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "okm1",
+                  "level": "specialist",
+                  "text": "Written MRI report. Commonly used to confirm a suspected tear before surgery.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "Orthopedics perspective",
+                  "children": []
+                },
+                {
+                  "id": "ok2",
+                  "level": "specialist",
+                  "text": "The consultation suggests a meniscus tear, but this cannot be confirmed here because the MRI report is missing.",
+                  "kind": "interpretation",
+                  "label": "Orthopedics perspective",
+                  "children": [
+                    {
+                      "id": "f_k4",
+                      "level": "fact",
+                      "text": "Medial meniscus tear (suspected): Suspected, not confirmed",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_oc",
+                        "page": 2,
+                        "section": "Impression",
+                        "snippet": "Likely medial meniscus tear. MRI reviewed in clinic."
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "okm1",
+              "level": "specialist",
+              "text": "Written MRI report. Commonly used to confirm a suspected tear before surgery.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Orthopedics perspective",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "q6",
+    "root": {
+      "id": "q6",
+      "level": "question",
+      "text": "If I try non-surgical care first, what would tell us it is time to reconsider surgery?",
+      "kind": "interpretation",
+      "label": "Question",
+      "children": [
+        {
+          "id": "syn_16",
+          "level": "synthesis",
+          "text": "Before deciding, it may help to get the written MRI report and ask how much non-surgical care is usually tried first.",
+          "kind": "interpretation",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "syn_10",
+              "level": "synthesis",
+              "text": "Your records do not include a written MRI report. The consultation mentions an MRI, but only a photo of films was uploaded and it could not be read. A clear copy of the report would help.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "AI review summary item",
+              "children": [
+                {
+                  "id": "mxk1",
+                  "level": "matrix",
+                  "text": "A meniscus tear has been confirmed. Both perspectives note that the document that would confirm this (the MRI report) is missing.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "Cross-review",
+                  "children": [
+                    {
+                      "id": "okm1",
+                      "level": "specialist",
+                      "text": "Written MRI report. Commonly used to confirm a suspected tear before surgery.",
+                      "kind": "interpretation",
+                      "flag": "missing",
+                      "label": "Orthopedics perspective",
+                      "children": []
+                    },
+                    {
+                      "id": "ok2",
+                      "level": "specialist",
+                      "text": "The consultation suggests a meniscus tear, but this cannot be confirmed here because the MRI report is missing.",
+                      "kind": "interpretation",
+                      "label": "Orthopedics perspective",
+                      "children": [
+                        {
+                          "id": "f_k4",
+                          "level": "fact",
+                          "text": "Medial meniscus tear (suspected): Suspected, not confirmed",
+                          "kind": "patient_fact",
+                          "label": "Fact from your records",
+                          "source": {
+                            "doc_id": "d_oc",
+                            "page": 2,
+                            "section": "Impression",
+                            "snippet": "Likely medial meniscus tear. MRI reviewed in clinic."
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "okm1",
+                  "level": "specialist",
+                  "text": "Written MRI report. Commonly used to confirm a suspected tear before surgery.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "Orthopedics perspective",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "syn_11",
+              "level": "synthesis",
+              "text": "Details of any non-surgical treatment (such as a longer physiotherapy trial) are not in your records.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "AI review summary item",
+              "children": [
+                {
+                  "id": "mxk2",
+                  "level": "matrix",
+                  "text": "Non-surgical care has been tried for long enough. Only two physiotherapy sessions are recorded. Whether other approaches were tried is not documented.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "Cross-review",
+                  "children": [
+                    {
+                      "id": "gk1",
+                      "level": "specialist",
+                      "text": "Only two physiotherapy sessions are recorded before surgery was suggested.",
+                      "kind": "patient_fact",
+                      "label": "General Medicine perspective",
+                      "children": [
+                        {
+                          "id": "f_k3",
+                          "level": "fact",
+                          "text": "Physiotherapy: 2 sessions only",
+                          "kind": "patient_fact",
+                          "label": "Fact from your records",
+                          "source": {
+                            "doc_id": "d_oc",
+                            "page": 2,
+                            "section": "Treatment so far",
+                            "snippet": "Physiotherapy: 2 sessions in April, stopped due to schedule."
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "gkm1",
+                      "level": "specialist",
+                      "text": "Details of non-surgical treatment so far. Surgery is usually discussed after a period of non-surgical care.",
+                      "kind": "interpretation",
+                      "flag": "missing",
+                      "label": "General Medicine perspective",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "gkm1",
+                  "level": "specialist",
+                  "text": "Details of non-surgical treatment so far. Surgery is usually discussed after a period of non-surgical care.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "General Medicine perspective",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "syn_7",
+          "level": "synthesis",
+          "text": "General reference material says keyhole surgery is commonly discussed for a confirmed tear with catching, usually after a period of non-surgical care. Neither of those is fully documented in your records.",
+          "kind": "external_evidence",
+          "flag": "uncertain",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "clk2",
+              "level": "verification",
+              "text": "Keyhole surgery is commonly discussed for a confirmed tear with catching, after non-surgical care.",
+              "kind": "external_evidence",
+              "status": "partially_supported",
+              "label": "Claim check",
+              "children": [
+                {
+                  "id": "f_k1",
+                  "level": "fact",
+                  "text": "Right knee pain with twisting: Since March",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_oc",
+                    "page": 1,
+                    "section": "History",
+                    "snippet": "Right knee pain on twisting for about three months, occasional catching."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_k2",
+                  "level": "fact",
+                  "text": "Occasional catching sensation: Not described as locking",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_oc",
+                    "page": 1,
+                    "section": "History",
+                    "snippet": "Occasional catching. No true locking reported."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "f_k3",
+                  "level": "fact",
+                  "text": "Physiotherapy: 2 sessions only",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_oc",
+                    "page": 2,
+                    "section": "Treatment so far",
+                    "snippet": "Physiotherapy: 2 sessions in April, stopped due to schedule."
+                  },
+                  "children": []
+                },
+                {
+                  "id": "src_ortho_5",
+                  "level": "evidence_source",
+                  "text": "Sample summary: arthroscopy for meniscus symptoms",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_ortho_5",
+                    "title": "Sample summary: arthroscopy for meniscus symptoms",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2024,
+                    "licence": "Prototype placeholder, not a real guideline",
+                    "section": "§2 When surgery is discussed",
+                    "snippet": "Keyhole surgery is commonly discussed when a confirmed tear causes locking or catching, usually after a period of non-surgical care. It is generally less helpful for pain caused mainly by wear-related changes."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "ok3",
+              "level": "specialist",
+              "text": "Keyhole surgery is commonly discussed for a confirmed tear with catching or locking, usually after non-surgical care.",
+              "kind": "external_evidence",
+              "label": "Orthopedics perspective",
+              "children": [
+                {
+                  "id": "src_ortho_5",
+                  "level": "evidence_source",
+                  "text": "Sample summary: arthroscopy for meniscus symptoms",
+                  "kind": "external_evidence",
+                  "label": "Reference evidence",
+                  "external_source": {
+                    "id": "src_ortho_5",
+                    "title": "Sample summary: arthroscopy for meniscus symptoms",
+                    "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                    "year": 2024,
+                    "licence": "Prototype placeholder, not a real guideline",
+                    "section": "§2 When surgery is discussed",
+                    "snippet": "Keyhole surgery is commonly discussed when a confirmed tear causes locking or catching, usually after a period of non-surgical care. It is generally less helpful for pain caused mainly by wear-related changes."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "sr_ms",
+    "root": {
+      "id": "sr_ms",
+      "level": "specialist",
+      "text": "Medication Safety perspective (v1.0). The review did not finish.",
+      "kind": "interpretation",
+      "flag": "uncertain",
+      "label": "Medication Safety",
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "src_ortho_5",
+    "root": {
+      "id": "src_ortho_5",
+      "level": "evidence_source",
+      "text": "Sample summary: arthroscopy for meniscus symptoms",
+      "kind": "external_evidence",
+      "label": "Reference evidence",
+      "external_source": {
+        "id": "src_ortho_5",
+        "title": "Sample summary: arthroscopy for meniscus symptoms",
+        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+        "year": 2024,
+        "licence": "Prototype placeholder, not a real guideline",
+        "section": "§2 When surgery is discussed",
+        "snippet": "Keyhole surgery is commonly discussed when a confirmed tear causes locking or catching, usually after a period of non-surgical care. It is generally less helpful for pain caused mainly by wear-related changes."
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "src_ortho_6",
+    "root": {
+      "id": "src_ortho_6",
+      "level": "evidence_source",
+      "text": "Sample summary: role of imaging before knee surgery",
+      "kind": "external_evidence",
+      "label": "Reference evidence",
+      "external_source": {
+        "id": "src_ortho_6",
+        "title": "Sample summary: role of imaging before knee surgery",
+        "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+        "year": 2023,
+        "licence": "Prototype placeholder, not a real guideline",
+        "section": "§1 Imaging",
+        "snippet": "MRI is commonly used to confirm a suspected meniscus tear and to look for other causes of pain before surgery is planned."
+      },
+      "children": []
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_1",
+    "root": {
+      "id": "syn_1",
+      "level": "synthesis",
+      "text": "You are 47 and have had right knee pain with twisting since March, with an occasional catching feeling. You are asking whether surgery is really needed.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_k1",
+          "level": "fact",
+          "text": "Right knee pain with twisting: Since March",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_oc",
+            "page": 1,
+            "section": "History",
+            "snippet": "Right knee pain on twisting for about three months, occasional catching."
+          },
+          "children": []
+        },
+        {
+          "id": "f_k2",
+          "level": "fact",
+          "text": "Occasional catching sensation: Not described as locking",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_oc",
+            "page": 1,
+            "section": "History",
+            "snippet": "Occasional catching. No true locking reported."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_10",
+    "root": {
+      "id": "syn_10",
+      "level": "synthesis",
+      "text": "Your records do not include a written MRI report. The consultation mentions an MRI, but only a photo of films was uploaded and it could not be read. A clear copy of the report would help.",
+      "kind": "interpretation",
+      "flag": "missing",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "mxk1",
+          "level": "matrix",
+          "text": "A meniscus tear has been confirmed. Both perspectives note that the document that would confirm this (the MRI report) is missing.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "okm1",
+              "level": "specialist",
+              "text": "Written MRI report. Commonly used to confirm a suspected tear before surgery.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Orthopedics perspective",
+              "children": []
+            },
+            {
+              "id": "ok2",
+              "level": "specialist",
+              "text": "The consultation suggests a meniscus tear, but this cannot be confirmed here because the MRI report is missing.",
+              "kind": "interpretation",
+              "label": "Orthopedics perspective",
+              "children": [
+                {
+                  "id": "f_k4",
+                  "level": "fact",
+                  "text": "Medial meniscus tear (suspected): Suspected, not confirmed",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_oc",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "Likely medial meniscus tear. MRI reviewed in clinic."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "okm1",
+          "level": "specialist",
+          "text": "Written MRI report. Commonly used to confirm a suspected tear before surgery.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "Orthopedics perspective",
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_11",
+    "root": {
+      "id": "syn_11",
+      "level": "synthesis",
+      "text": "Details of any non-surgical treatment (such as a longer physiotherapy trial) are not in your records.",
+      "kind": "interpretation",
+      "flag": "missing",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "mxk2",
+          "level": "matrix",
+          "text": "Non-surgical care has been tried for long enough. Only two physiotherapy sessions are recorded. Whether other approaches were tried is not documented.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "gk1",
+              "level": "specialist",
+              "text": "Only two physiotherapy sessions are recorded before surgery was suggested.",
+              "kind": "patient_fact",
+              "label": "General Medicine perspective",
+              "children": [
+                {
+                  "id": "f_k3",
+                  "level": "fact",
+                  "text": "Physiotherapy: 2 sessions only",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_oc",
+                    "page": 2,
+                    "section": "Treatment so far",
+                    "snippet": "Physiotherapy: 2 sessions in April, stopped due to schedule."
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "gkm1",
+              "level": "specialist",
+              "text": "Details of non-surgical treatment so far. Surgery is usually discussed after a period of non-surgical care.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "General Medicine perspective",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "gkm1",
+          "level": "specialist",
+          "text": "Details of non-surgical treatment so far. Surgery is usually discussed after a period of non-surgical care.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "General Medicine perspective",
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_12",
+    "root": {
+      "id": "syn_12",
+      "level": "synthesis",
+      "text": "Weight-bearing X-ray views are not in your records. They help judge joint wear more reliably.",
+      "kind": "interpretation",
+      "flag": "missing",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "okm2",
+          "level": "specialist",
+          "text": "Weight-bearing X-ray views. Help judge joint wear more reliably.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "Orthopedics perspective",
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_13",
+    "root": {
+      "id": "syn_13",
+      "level": "synthesis",
+      "text": "The perspectives that reviewed your case agree that the missing MRI report is the most important gap.",
+      "kind": "interpretation",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "mxk1",
+          "level": "matrix",
+          "text": "A meniscus tear has been confirmed. Both perspectives note that the document that would confirm this (the MRI report) is missing.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "okm1",
+              "level": "specialist",
+              "text": "Written MRI report. Commonly used to confirm a suspected tear before surgery.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Orthopedics perspective",
+              "children": []
+            },
+            {
+              "id": "ok2",
+              "level": "specialist",
+              "text": "The consultation suggests a meniscus tear, but this cannot be confirmed here because the MRI report is missing.",
+              "kind": "interpretation",
+              "label": "Orthopedics perspective",
+              "children": [
+                {
+                  "id": "f_k4",
+                  "level": "fact",
+                  "text": "Medial meniscus tear (suspected): Suspected, not confirmed",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_oc",
+                    "page": 2,
+                    "section": "Impression",
+                    "snippet": "Likely medial meniscus tear. MRI reviewed in clinic."
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_14",
+    "root": {
+      "id": "syn_14",
+      "level": "synthesis",
+      "text": "The medicine-safety review could not be completed for this report. Your ibuprofen use was raised by General Medicine only, so it has not been double-checked.",
+      "kind": "interpretation",
+      "flag": "uncertain",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "sr_ms",
+          "level": "specialist",
+          "text": "Medication Safety perspective (v1.0). The review did not finish.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "Medication Safety",
+          "children": []
+        },
+        {
+          "id": "mxk3",
+          "level": "matrix",
+          "text": "Regular ibuprofen use is relevant. Raised by General Medicine. The Medication Safety perspective could not complete, so this was not cross-checked.",
+          "kind": "interpretation",
+          "label": "Cross-review",
+          "children": [
+            {
+              "id": "gk2",
+              "level": "specialist",
+              "text": "Ibuprofen 400 mg three times a day for about three months is listed.",
+              "kind": "patient_fact",
+              "label": "General Medicine perspective",
+              "children": [
+                {
+                  "id": "f_km1",
+                  "level": "fact",
+                  "text": "Ibuprofen: 400 mg, three times a day",
+                  "kind": "patient_fact",
+                  "label": "Fact from your records",
+                  "source": {
+                    "doc_id": "d_rx2",
+                    "page": 1,
+                    "section": "Medicines",
+                    "snippet": "Tab. Ibuprofen 400 mg TDS x 3 months"
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_15",
+    "root": {
+      "id": "syn_15",
+      "level": "synthesis",
+      "text": "You have taken ibuprofen regularly for about three months. It may be worth reviewing this with your prescriber. Please do not change any medicine on your own.",
+      "kind": "interpretation",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "gk2",
+          "level": "specialist",
+          "text": "Ibuprofen 400 mg three times a day for about three months is listed.",
+          "kind": "patient_fact",
+          "label": "General Medicine perspective",
+          "children": [
+            {
+              "id": "f_km1",
+              "level": "fact",
+              "text": "Ibuprofen: 400 mg, three times a day",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx2",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Ibuprofen 400 mg TDS x 3 months"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "clk1",
+          "level": "verification",
+          "text": "Ibuprofen 400 mg three times a day is on the current medicine list.",
+          "kind": "patient_fact",
+          "status": "supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_km1",
+              "level": "fact",
+              "text": "Ibuprofen: 400 mg, three times a day",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx2",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Ibuprofen 400 mg TDS x 3 months"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_16",
+    "root": {
+      "id": "syn_16",
+      "level": "synthesis",
+      "text": "Before deciding, it may help to get the written MRI report and ask how much non-surgical care is usually tried first.",
+      "kind": "interpretation",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "syn_10",
+          "level": "synthesis",
+          "text": "Your records do not include a written MRI report. The consultation mentions an MRI, but only a photo of films was uploaded and it could not be read. A clear copy of the report would help.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mxk1",
+              "level": "matrix",
+              "text": "A meniscus tear has been confirmed. Both perspectives note that the document that would confirm this (the MRI report) is missing.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "okm1",
+                  "level": "specialist",
+                  "text": "Written MRI report. Commonly used to confirm a suspected tear before surgery.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "Orthopedics perspective",
+                  "children": []
+                },
+                {
+                  "id": "ok2",
+                  "level": "specialist",
+                  "text": "The consultation suggests a meniscus tear, but this cannot be confirmed here because the MRI report is missing.",
+                  "kind": "interpretation",
+                  "label": "Orthopedics perspective",
+                  "children": [
+                    {
+                      "id": "f_k4",
+                      "level": "fact",
+                      "text": "Medial meniscus tear (suspected): Suspected, not confirmed",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_oc",
+                        "page": 2,
+                        "section": "Impression",
+                        "snippet": "Likely medial meniscus tear. MRI reviewed in clinic."
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "okm1",
+              "level": "specialist",
+              "text": "Written MRI report. Commonly used to confirm a suspected tear before surgery.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Orthopedics perspective",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "syn_11",
+          "level": "synthesis",
+          "text": "Details of any non-surgical treatment (such as a longer physiotherapy trial) are not in your records.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "label": "AI review summary item",
+          "children": [
+            {
+              "id": "mxk2",
+              "level": "matrix",
+              "text": "Non-surgical care has been tried for long enough. Only two physiotherapy sessions are recorded. Whether other approaches were tried is not documented.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "Cross-review",
+              "children": [
+                {
+                  "id": "gk1",
+                  "level": "specialist",
+                  "text": "Only two physiotherapy sessions are recorded before surgery was suggested.",
+                  "kind": "patient_fact",
+                  "label": "General Medicine perspective",
+                  "children": [
+                    {
+                      "id": "f_k3",
+                      "level": "fact",
+                      "text": "Physiotherapy: 2 sessions only",
+                      "kind": "patient_fact",
+                      "label": "Fact from your records",
+                      "source": {
+                        "doc_id": "d_oc",
+                        "page": 2,
+                        "section": "Treatment so far",
+                        "snippet": "Physiotherapy: 2 sessions in April, stopped due to schedule."
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "id": "gkm1",
+                  "level": "specialist",
+                  "text": "Details of non-surgical treatment so far. Surgery is usually discussed after a period of non-surgical care.",
+                  "kind": "interpretation",
+                  "flag": "missing",
+                  "label": "General Medicine perspective",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "gkm1",
+              "level": "specialist",
+              "text": "Details of non-surgical treatment so far. Surgery is usually discussed after a period of non-surgical care.",
+              "kind": "interpretation",
+              "flag": "missing",
+              "label": "General Medicine perspective",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_2",
+    "root": {
+      "id": "syn_2",
+      "level": "synthesis",
+      "text": "Your X-ray report mentions mild narrowing on the inner side of the knee. One measurement in the scan was hard to read, so we haven't guessed it.",
+      "kind": "patient_fact",
+      "flag": "uncertain",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_xr1",
+          "level": "fact",
+          "text": "X-ray: medial joint space narrowing: Mild (value unclear)",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_xr",
+            "page": 1,
+            "section": "Findings",
+            "snippet": "Mild narrowing of the medial joint space, approx. 3.? mm (unclear in scan)."
+          },
+          "children": []
+        },
+        {
+          "id": "clk4",
+          "level": "verification",
+          "text": "The X-ray shows medial joint space narrowing.",
+          "kind": "patient_fact",
+          "status": "unclear",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_xr1",
+              "level": "fact",
+              "text": "X-ray: medial joint space narrowing: Mild (value unclear)",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_xr",
+                "page": 1,
+                "section": "Findings",
+                "snippet": "Mild narrowing of the medial joint space, approx. 3.? mm (unclear in scan)."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_3",
+    "root": {
+      "id": "syn_3",
+      "level": "synthesis",
+      "text": "Your orthopaedic consultation suggests a torn cartilage pad (medial meniscus) and advises keyhole surgery.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_k4",
+          "level": "fact",
+          "text": "Medial meniscus tear (suspected): Suspected, not confirmed",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_oc",
+            "page": 2,
+            "section": "Impression",
+            "snippet": "Likely medial meniscus tear. MRI reviewed in clinic."
+          },
+          "children": []
+        },
+        {
+          "id": "f_k5",
+          "level": "fact",
+          "text": "Surgeon's suggestion: Arthroscopic partial meniscectomy",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_oc",
+            "page": 2,
+            "section": "Plan",
+            "snippet": "Advise arthroscopic partial meniscectomy, right knee."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_4",
+    "root": {
+      "id": "syn_4",
+      "level": "synthesis",
+      "text": "A medial meniscus tear is documented as suspected. It is not confirmed by a written report in your records.",
+      "kind": "patient_fact",
+      "flag": "uncertain",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_k4",
+          "level": "fact",
+          "text": "Medial meniscus tear (suspected): Suspected, not confirmed",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_oc",
+            "page": 2,
+            "section": "Impression",
+            "snippet": "Likely medial meniscus tear. MRI reviewed in clinic."
+          },
+          "children": []
+        },
+        {
+          "id": "clk3",
+          "level": "verification",
+          "text": "A meniscus tear is present.",
+          "kind": "interpretation",
+          "status": "insufficient_evidence",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_k4",
+              "level": "fact",
+              "text": "Medial meniscus tear (suspected): Suspected, not confirmed",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_oc",
+                "page": 2,
+                "section": "Impression",
+                "snippet": "Likely medial meniscus tear. MRI reviewed in clinic."
+              },
+              "children": []
+            },
+            {
+              "id": "src_ortho_6",
+              "level": "evidence_source",
+              "text": "Sample summary: role of imaging before knee surgery",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_ortho_6",
+                "title": "Sample summary: role of imaging before knee surgery",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2023,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§1 Imaging",
+                "snippet": "MRI is commonly used to confirm a suspected meniscus tear and to look for other causes of pain before surgery is planned."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_5",
+    "root": {
+      "id": "syn_5",
+      "level": "synthesis",
+      "text": "Your medicine list shows ibuprofen 400 mg three times a day, and pantoprazole once a day.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_km1",
+          "level": "fact",
+          "text": "Ibuprofen: 400 mg, three times a day",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx2",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Ibuprofen 400 mg TDS x 3 months"
+          },
+          "children": []
+        },
+        {
+          "id": "f_km2",
+          "level": "fact",
+          "text": "Pantoprazole: 40 mg, once daily",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_rx2",
+            "page": 1,
+            "section": "Medicines",
+            "snippet": "Tab. Pantoprazole 40 mg OD"
+          },
+          "children": []
+        },
+        {
+          "id": "clk1",
+          "level": "verification",
+          "text": "Ibuprofen 400 mg three times a day is on the current medicine list.",
+          "kind": "patient_fact",
+          "status": "supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_km1",
+              "level": "fact",
+              "text": "Ibuprofen: 400 mg, three times a day",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_rx2",
+                "page": 1,
+                "section": "Medicines",
+                "snippet": "Tab. Ibuprofen 400 mg TDS x 3 months"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_6",
+    "root": {
+      "id": "syn_6",
+      "level": "synthesis",
+      "text": "Your surgeon advised arthroscopic partial meniscectomy (keyhole surgery on the cartilage) of the right knee.",
+      "kind": "patient_fact",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "f_k5",
+          "level": "fact",
+          "text": "Surgeon's suggestion: Arthroscopic partial meniscectomy",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_oc",
+            "page": 2,
+            "section": "Plan",
+            "snippet": "Advise arthroscopic partial meniscectomy, right knee."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_7",
+    "root": {
+      "id": "syn_7",
+      "level": "synthesis",
+      "text": "General reference material says keyhole surgery is commonly discussed for a confirmed tear with catching, usually after a period of non-surgical care. Neither of those is fully documented in your records.",
+      "kind": "external_evidence",
+      "flag": "uncertain",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "clk2",
+          "level": "verification",
+          "text": "Keyhole surgery is commonly discussed for a confirmed tear with catching, after non-surgical care.",
+          "kind": "external_evidence",
+          "status": "partially_supported",
+          "label": "Claim check",
+          "children": [
+            {
+              "id": "f_k1",
+              "level": "fact",
+              "text": "Right knee pain with twisting: Since March",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_oc",
+                "page": 1,
+                "section": "History",
+                "snippet": "Right knee pain on twisting for about three months, occasional catching."
+              },
+              "children": []
+            },
+            {
+              "id": "f_k2",
+              "level": "fact",
+              "text": "Occasional catching sensation: Not described as locking",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_oc",
+                "page": 1,
+                "section": "History",
+                "snippet": "Occasional catching. No true locking reported."
+              },
+              "children": []
+            },
+            {
+              "id": "f_k3",
+              "level": "fact",
+              "text": "Physiotherapy: 2 sessions only",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_oc",
+                "page": 2,
+                "section": "Treatment so far",
+                "snippet": "Physiotherapy: 2 sessions in April, stopped due to schedule."
+              },
+              "children": []
+            },
+            {
+              "id": "src_ortho_5",
+              "level": "evidence_source",
+              "text": "Sample summary: arthroscopy for meniscus symptoms",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_ortho_5",
+                "title": "Sample summary: arthroscopy for meniscus symptoms",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2024,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§2 When surgery is discussed",
+                "snippet": "Keyhole surgery is commonly discussed when a confirmed tear causes locking or catching, usually after a period of non-surgical care. It is generally less helpful for pain caused mainly by wear-related changes."
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "ok3",
+          "level": "specialist",
+          "text": "Keyhole surgery is commonly discussed for a confirmed tear with catching or locking, usually after non-surgical care.",
+          "kind": "external_evidence",
+          "label": "Orthopedics perspective",
+          "children": [
+            {
+              "id": "src_ortho_5",
+              "level": "evidence_source",
+              "text": "Sample summary: arthroscopy for meniscus symptoms",
+              "kind": "external_evidence",
+              "label": "Reference evidence",
+              "external_source": {
+                "id": "src_ortho_5",
+                "title": "Sample summary: arthroscopy for meniscus symptoms",
+                "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+                "year": 2024,
+                "licence": "Prototype placeholder, not a real guideline",
+                "section": "§2 When surgery is discussed",
+                "snippet": "Keyhole surgery is commonly discussed when a confirmed tear causes locking or catching, usually after a period of non-surgical care. It is generally less helpful for pain caused mainly by wear-related changes."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_8",
+    "root": {
+      "id": "syn_8",
+      "level": "synthesis",
+      "text": "It is not clear whether your pain comes mainly from a tear or from wear-related changes in the joint.",
+      "kind": "interpretation",
+      "flag": "uncertain",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "oku2",
+          "level": "specialist",
+          "text": "Whether the pain comes mainly from a tear or from wear-related changes is not clear from the records.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "Orthopedics perspective",
+          "children": []
+        },
+        {
+          "id": "oku1",
+          "level": "specialist",
+          "text": "An X-ray measurement could not be read reliably, so the degree of joint narrowing is uncertain.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "Orthopedics perspective",
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "syn_9",
+    "root": {
+      "id": "syn_9",
+      "level": "synthesis",
+      "text": "How much non-surgical care has been tried is not clear. Only two physiotherapy sessions are recorded.",
+      "kind": "interpretation",
+      "flag": "uncertain",
+      "label": "AI review summary item",
+      "children": [
+        {
+          "id": "gku1",
+          "level": "specialist",
+          "text": "How much non-surgical care has been tried is not clear from the records.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "label": "General Medicine perspective",
+          "children": []
+        },
+        {
+          "id": "gk1",
+          "level": "specialist",
+          "text": "Only two physiotherapy sessions are recorded before surgery was suggested.",
+          "kind": "patient_fact",
+          "label": "General Medicine perspective",
+          "children": [
+            {
+              "id": "f_k3",
+              "level": "fact",
+              "text": "Physiotherapy: 2 sessions only",
+              "kind": "patient_fact",
+              "label": "Fact from your records",
+              "source": {
+                "doc_id": "d_oc",
+                "page": 2,
+                "section": "Treatment so far",
+                "snippet": "Physiotherapy: 2 sessions in April, stopped due to schedule."
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl1",
+    "root": {
+      "id": "tl1",
+      "level": "timeline",
+      "text": "Knee pain begins. Pain on twisting, occasional catching.",
+      "kind": "patient_fact",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_k1",
+          "level": "fact",
+          "text": "Right knee pain with twisting: Since March",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_oc",
+            "page": 1,
+            "section": "History",
+            "snippet": "Right knee pain on twisting for about three months, occasional catching."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl2",
+    "root": {
+      "id": "tl2",
+      "level": "timeline",
+      "text": "Physiotherapy: two sessions. Stopped after two sessions.",
+      "kind": "patient_fact",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_k3",
+          "level": "fact",
+          "text": "Physiotherapy: 2 sessions only",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_oc",
+            "page": 2,
+            "section": "Treatment so far",
+            "snippet": "Physiotherapy: 2 sessions in April, stopped due to schedule."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl3",
+    "root": {
+      "id": "tl3",
+      "level": "timeline",
+      "text": "X-ray of the right knee. Mild medial narrowing, one value unclear.",
+      "kind": "patient_fact",
+      "flag": "disagreement",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_xr1",
+          "level": "fact",
+          "text": "X-ray: medial joint space narrowing: Mild (value unclear)",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_xr",
+            "page": 1,
+            "section": "Findings",
+            "snippet": "Mild narrowing of the medial joint space, approx. 3.? mm (unclear in scan)."
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": "trace.v1",
+    "item_id": "tl4",
+    "root": {
+      "id": "tl4",
+      "level": "timeline",
+      "text": "Orthopaedic consultation. Keyhole surgery suggested.",
+      "kind": "patient_fact",
+      "label": "Timeline event",
+      "children": [
+        {
+          "id": "f_k5",
+          "level": "fact",
+          "text": "Surgeon's suggestion: Arthroscopic partial meniscectomy",
+          "kind": "patient_fact",
+          "label": "Fact from your records",
+          "source": {
+            "doc_id": "d_oc",
+            "page": 2,
+            "section": "Plan",
+            "snippet": "Advise arthroscopic partial meniscectomy, right knee."
+          },
+          "children": []
+        }
+      ]
+    }
+  }
+]

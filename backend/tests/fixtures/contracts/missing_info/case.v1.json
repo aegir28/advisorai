@@ -1,0 +1,109 @@
+{
+  "schema_version": "case.v1",
+  "case_id": "c_k21",
+  "demographics": {
+    "age": 47,
+    "sex": "F"
+  },
+  "chief_concern": "Do I really need knee surgery, or is there something missing from my records?",
+  "symptoms": [
+    {
+      "text": "Right knee pain with twisting: Since March",
+      "onset": "2026-03-10",
+      "fact_ref": "f_k1"
+    },
+    {
+      "text": "Occasional catching sensation: Not described as locking",
+      "onset": "2026-06-18",
+      "fact_ref": "f_k2"
+    }
+  ],
+  "diagnoses": [
+    {
+      "name": "Medial meniscus tear (suspected)",
+      "status": "suspected",
+      "fact_ref": "f_k4"
+    }
+  ],
+  "history": [],
+  "allergies": [],
+  "medications": [
+    {
+      "name": "Ibuprofen",
+      "dose": "400 mg, three times a day",
+      "start": "2026-06-18",
+      "fact_ref": "f_km1"
+    },
+    {
+      "name": "Pantoprazole",
+      "dose": "40 mg, once daily",
+      "start": "2026-06-18",
+      "fact_ref": "f_km2"
+    }
+  ],
+  "investigations": {
+    "labs": [],
+    "imaging": [
+      {
+        "name": "X-ray: medial joint space narrowing",
+        "value": "Mild (value unclear)",
+        "flag": "abnormal",
+        "date": "2026-05-22",
+        "fact_ref": "f_xr1"
+      }
+    ],
+    "ecg": [],
+    "pathology": []
+  },
+  "procedures": [],
+  "surgeries": [],
+  "treatment_history": [
+    {
+      "text": "Physiotherapy: 2 sessions only",
+      "fact_ref": "f_k3"
+    }
+  ],
+  "recommendations": [
+    {
+      "by": "treating clinician",
+      "text": "Surgeon's suggestion: Arthroscopic partial meniscectomy",
+      "fact_ref": "f_k5"
+    }
+  ],
+  "proposed": {
+    "treatment": [],
+    "procedure": [
+      "Arthroscopic partial meniscectomy (right knee)"
+    ]
+  },
+  "timeline_ref": "tl_c_k21",
+  "unresolved_questions": [
+    "It is not clear whether your pain comes mainly from a tear or from wear-related changes in the joint.",
+    "How much non-surgical care has been tried is not clear. Only two physiotherapy sessions are recorded."
+  ],
+  "missing_information": [
+    {
+      "item": "Details of non-surgical treatment so far",
+      "why_matters": "Surgery is usually discussed after a period of non-surgical care."
+    },
+    {
+      "item": "Written MRI report",
+      "why_matters": "Commonly used to confirm a suspected tear before surgery."
+    },
+    {
+      "item": "Weight-bearing X-ray views",
+      "why_matters": "Help judge joint wear more reliably."
+    }
+  ],
+  "evidence_refs": [
+    "f_k1",
+    "f_k2",
+    "f_k3",
+    "f_xr1",
+    "f_k4",
+    "f_k5",
+    "f_km1",
+    "f_km2"
+  ],
+  "extensions": {}
+}

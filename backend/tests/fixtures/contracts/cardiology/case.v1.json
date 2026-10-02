@@ -1,0 +1,186 @@
+{
+  "schema_version": "case.v1",
+  "case_id": "c_9f2",
+  "demographics": {
+    "age": 52,
+    "sex": "M"
+  },
+  "chief_concern": "Is angioplasty necessary now?",
+  "symptoms": [
+    {
+      "text": "Chest tightness on exertion: Climbing stairs, since January",
+      "onset": "2026-01-15",
+      "fact_ref": "f_sym1"
+    }
+  ],
+  "diagnoses": [
+    {
+      "name": "Type 2 diabetes mellitus",
+      "status": "documented",
+      "fact_ref": "f_dx1"
+    },
+    {
+      "name": "Coronary artery disease (LAD)",
+      "status": "documented",
+      "fact_ref": "f_dx2"
+    }
+  ],
+  "history": [],
+  "allergies": [],
+  "medications": [
+    {
+      "name": "Aspirin",
+      "dose": "75 mg, once daily",
+      "start": "2026-06-10",
+      "fact_ref": "f_m1"
+    },
+    {
+      "name": "Clopidogrel",
+      "dose": "75 mg, once daily",
+      "start": "2026-06-10",
+      "fact_ref": "f_m2"
+    },
+    {
+      "name": "Metformin",
+      "dose": "1000 mg, twice daily",
+      "start": "2026-06-10",
+      "fact_ref": "f_m3"
+    },
+    {
+      "name": "Atorvastatin",
+      "dose": "40 mg, at night",
+      "start": "2026-06-10",
+      "fact_ref": "f_m4"
+    },
+    {
+      "name": "Metoprolol",
+      "dose": "25 mg, twice daily",
+      "start": "2026-06-10",
+      "fact_ref": "f_m5"
+    },
+    {
+      "name": "Diclofenac (painkiller, NSAID)",
+      "dose": "50 mg, when needed",
+      "start": "2026-06-10",
+      "fact_ref": "f_m6"
+    }
+  ],
+  "investigations": {
+    "labs": [
+      {
+        "name": "HbA1c",
+        "value": "8.9 %",
+        "flag": "high",
+        "date": "2026-03-05",
+        "fact_ref": "f_hba1c"
+      },
+      {
+        "name": "LDL cholesterol",
+        "value": "142 mg/dL",
+        "flag": "high",
+        "date": "2026-03-05",
+        "fact_ref": "f_ldl"
+      },
+      {
+        "name": "Troponin I (high-sensitivity)",
+        "value": "182 ng/L",
+        "flag": "high",
+        "date": "2026-04-12",
+        "fact_ref": "f_118"
+      }
+    ],
+    "imaging": [
+      {
+        "name": "LAD artery narrowing",
+        "value": "About 80 %",
+        "flag": "abnormal",
+        "date": "2026-04-28",
+        "fact_ref": "f_140"
+      },
+      {
+        "name": "Other arteries",
+        "value": "No significant narrowing",
+        "date": "2026-04-28",
+        "fact_ref": "f_150"
+      }
+    ],
+    "ecg": [
+      {
+        "name": "ECG: ST-segment changes",
+        "value": "ST depression, lateral leads",
+        "flag": "abnormal",
+        "date": "2026-02-10",
+        "fact_ref": "f_ecg1"
+      }
+    ],
+    "pathology": []
+  },
+  "procedures": [],
+  "surgeries": [],
+  "treatment_history": [],
+  "recommendations": [
+    {
+      "by": "treating clinician",
+      "text": "Admitted with chest pain: 12 April 2026",
+      "fact_ref": "f_adm"
+    },
+    {
+      "by": "treating clinician",
+      "text": "Treating cardiologist's recommendation: Angioplasty (PCI) to LAD within 1–2 weeks",
+      "fact_ref": "f_121"
+    }
+  ],
+  "proposed": {
+    "treatment": [],
+    "procedure": [
+      "Angioplasty (PCI) to the LAD artery"
+    ]
+  },
+  "timeline_ref": "tl_c_9f2",
+  "unresolved_questions": [
+    "It is not possible to tell from the documents alone whether this is urgent or can be planned, because current symptoms and heart function are not documented.",
+    "How your blood sugar level might affect the procedure and recovery is uncertain. General references say it can matter, but cannot say how much for you."
+  ],
+  "missing_information": [
+    {
+      "item": "Echocardiogram (heart ultrasound)",
+      "why_matters": "Shows how well the heart is pumping, which can shape timing decisions."
+    },
+    {
+      "item": "Recent kidney function test",
+      "why_matters": "Relevant to medicine choices around procedures."
+    },
+    {
+      "item": "Echocardiogram / LVEF",
+      "why_matters": "Heart pumping strength may influence timing and approach."
+    },
+    {
+      "item": "Stress test or functional assessment",
+      "why_matters": "Can help show how much the narrowing limits blood flow."
+    },
+    {
+      "item": "Recent kidney function result",
+      "why_matters": "Relevant to medicine choices around contrast and procedures."
+    }
+  ],
+  "evidence_refs": [
+    "f_sym1",
+    "f_ecg1",
+    "f_hba1c",
+    "f_ldl",
+    "f_adm",
+    "f_118",
+    "f_140",
+    "f_150",
+    "f_121",
+    "f_dx1",
+    "f_dx2",
+    "f_m1",
+    "f_m2",
+    "f_m3",
+    "f_m4",
+    "f_m5",
+    "f_m6"
+  ],
+  "extensions": {}
+}

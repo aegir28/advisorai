@@ -1,0 +1,702 @@
+{
+  "schema_version": "report.v1",
+  "id": "rep_r_77",
+  "case_id": "c_9f2",
+  "run_id": "r_77",
+  "generated_at": "2026-10-02T09:12:00Z",
+  "sections": [
+    {
+      "number": 1,
+      "type": "prose",
+      "items": [
+        {
+          "id": "syn_18",
+          "text": "You are 52 and have type 2 diabetes. Since January you have had chest tightness when climbing stairs. You are asking whether angioplasty is necessary now.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_18"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_1",
+          "text": "A blood test during your April admission showed troponin (a marker of heart-muscle strain) at 182 ng/L. The lab's reference is below 34.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_1"
+          ]
+        },
+        {
+          "id": "syn_2",
+          "text": "Your February ECG noted ST-segment changes, which are a type of change in the heart's electrical trace.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_2"
+          ]
+        },
+        {
+          "id": "syn_3",
+          "text": "Your angiography report describes about 80 % narrowing in one heart artery (the LAD), with no significant narrowing in the other arteries.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_3"
+          ]
+        },
+        {
+          "id": "syn_4",
+          "text": "Your HbA1c, a measure of average blood sugar, was 8.9 %. The usual target in the report is below 7 %.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_4"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "type": "timeline",
+      "items": [
+        {
+          "id": "tl1",
+          "text": "Chest tightness on exertion begins. Noticed when climbing stairs.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "tl1"
+          ],
+          "meta": {
+            "date": "2026-01-15",
+            "precision": "approx"
+          }
+        },
+        {
+          "id": "tl2",
+          "text": "GP visit and ECG. ST-segment changes noted on the ECG.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "tl2"
+          ],
+          "meta": {
+            "date": "2026-02-10",
+            "precision": "day"
+          }
+        },
+        {
+          "id": "tl3",
+          "text": "Blood sugar and cholesterol tests. HbA1c 8.9 %, LDL 142 mg/dL.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "tl3"
+          ],
+          "meta": {
+            "date": "2026-03-05",
+            "precision": "day"
+          }
+        },
+        {
+          "id": "tl4",
+          "text": "Hospital admission. Troponin I 182 ng/L (reference below 34).",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "tl4"
+          ],
+          "meta": {
+            "date": "2026-04-12",
+            "precision": "day"
+          }
+        },
+        {
+          "id": "tl5",
+          "text": "Coronary angiography. About 80 % narrowing in the LAD artery.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "tl5"
+          ],
+          "meta": {
+            "date": "2026-04-28",
+            "precision": "day"
+          }
+        },
+        {
+          "id": "tl6",
+          "text": "Cardiology consultation. Coronary artery disease documented.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "tl6"
+          ],
+          "meta": {
+            "date": "2026-05-20",
+            "precision": "day"
+          }
+        },
+        {
+          "id": "tl7",
+          "text": "Angioplasty (PCI) recommended. Within 1–2 weeks, per the treating cardiologist.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "tl7"
+          ],
+          "meta": {
+            "date": "2026-06-10",
+            "precision": "day"
+          }
+        },
+        {
+          "id": "gap1",
+          "text": "No heart ultrasound (echocardiogram) is on file between the admission and the angioplasty recommendation.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "evidence_ids": [
+            "gap1"
+          ],
+          "meta": {
+            "gap": "true"
+          }
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_17",
+          "text": "Your records document type 2 diabetes and coronary artery disease affecting the LAD artery.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_17"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "type": "medicines",
+      "items": [
+        {
+          "id": "f_m1",
+          "text": "Aspirin",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "f_m1"
+          ],
+          "meta": {
+            "dose": "75 mg, once daily"
+          }
+        },
+        {
+          "id": "f_m2",
+          "text": "Clopidogrel",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "f_m2"
+          ],
+          "meta": {
+            "dose": "75 mg, once daily"
+          }
+        },
+        {
+          "id": "f_m3",
+          "text": "Metformin",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "f_m3"
+          ],
+          "meta": {
+            "dose": "1000 mg, twice daily"
+          }
+        },
+        {
+          "id": "f_m4",
+          "text": "Atorvastatin",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "f_m4"
+          ],
+          "meta": {
+            "dose": "40 mg, at night"
+          }
+        },
+        {
+          "id": "f_m5",
+          "text": "Metoprolol",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "f_m5"
+          ],
+          "meta": {
+            "dose": "25 mg, twice daily"
+          }
+        },
+        {
+          "id": "f_m6",
+          "text": "Diclofenac (painkiller, NSAID)",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "f_m6"
+          ],
+          "meta": {
+            "dose": "50 mg, when needed"
+          }
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_16",
+          "text": "Your current prescription list has six medicines: aspirin, clopidogrel, metformin, atorvastatin, metoprolol and diclofenac (as needed).",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_16"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_15",
+          "text": "Your treating cardiologist recommended angioplasty (PCI) to the LAD artery within 1–2 weeks.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_15"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_5",
+          "text": "A raised troponin together with a significant artery narrowing is the type of picture in which angioplasty is commonly discussed. This is general reference information, not a judgement about your doctor's advice.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "syn_5"
+          ]
+        },
+        {
+          "id": "syn_1",
+          "text": "A blood test during your April admission showed troponin (a marker of heart-muscle strain) at 182 ng/L. The lab's reference is below 34.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_1"
+          ]
+        },
+        {
+          "id": "syn_3",
+          "text": "Your angiography report describes about 80 % narrowing in one heart artery (the LAD), with no significant narrowing in the other arteries.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_3"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_11",
+          "text": "It is not possible to tell from the documents alone whether this is urgent or can be planned, because current symptoms and heart function are not documented.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "evidence_ids": [
+            "syn_11"
+          ]
+        },
+        {
+          "id": "syn_12",
+          "text": "How your blood sugar level might affect the procedure and recovery is uncertain. General references say it can matter, but cannot say how much for you.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "evidence_ids": [
+            "syn_12"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_9",
+          "text": "Your records do not include a heart ultrasound (echocardiogram). This test shows how well the heart is pumping. You may want to ask whether it has been done, or whether it is needed before deciding on timing.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "evidence_ids": [
+            "syn_9"
+          ]
+        },
+        {
+          "id": "syn_10",
+          "text": "No recent kidney function result was found. It is relevant to medicine choices around procedures.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "evidence_ids": [
+            "syn_10"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_13",
+          "text": "Your list includes two antiplatelet medicines and diclofenac, a painkiller. Taking these together is associated with a higher chance of bleeding. This is worth reviewing with your prescriber. Please do not change any medicine on your own.",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "syn_13"
+          ]
+        },
+        {
+          "id": "syn_14",
+          "text": "For people whose symptoms are stable, doctors sometimes also discuss optimising medicines first. You may want to ask why one path was preferred in your case.",
+          "kind": "external_evidence",
+          "flag": "uncertain",
+          "evidence_ids": [
+            "syn_14"
+          ]
+        },
+        {
+          "id": "syn_19",
+          "text": "Your blood sugar control and kidney function may be part of how the team plans around a procedure.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "syn_19"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "type": "perspectives",
+      "items": [
+        {
+          "id": "gm1",
+          "text": "HbA1c is 8.9 %, above the usual target of about 7 %.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "gm1"
+          ],
+          "meta": {
+            "specialist": "General Medicine",
+            "confidence": "moderate"
+          }
+        },
+        {
+          "id": "gm2",
+          "text": "Whether the timing is urgent or can be planned depends on current symptoms and heart function, which the records do not fully show.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "gm2"
+          ],
+          "meta": {
+            "specialist": "General Medicine",
+            "confidence": "moderate"
+          }
+        },
+        {
+          "id": "cf1",
+          "text": "High-sensitivity troponin was raised at 182 ng/L (reference below 34).",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "cf1"
+          ],
+          "meta": {
+            "specialist": "Cardiology",
+            "confidence": "moderate"
+          }
+        },
+        {
+          "id": "cf3",
+          "text": "The angiography report describes about 80 % narrowing in the LAD artery.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "cf3"
+          ],
+          "meta": {
+            "specialist": "Cardiology",
+            "confidence": "moderate"
+          }
+        },
+        {
+          "id": "ic1",
+          "text": "The LAD narrowing described in the report is a typical target when angioplasty is discussed.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "ic1"
+          ],
+          "meta": {
+            "specialist": "Interventional Cardiology",
+            "confidence": "moderate"
+          }
+        },
+        {
+          "id": "ic2",
+          "text": "If symptoms have been stable, a planned timeline after optimising medicines and getting an echocardiogram may also be reasonable to discuss.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "ic2"
+          ],
+          "meta": {
+            "specialist": "Interventional Cardiology",
+            "confidence": "moderate"
+          }
+        },
+        {
+          "id": "ms2",
+          "text": "Diclofenac (an NSAID painkiller) is listed alongside antiplatelet medicines. This combination is associated with a higher chance of bleeding and is worth reviewing with the prescriber.",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "ms2"
+          ],
+          "meta": {
+            "specialist": "Medication Safety",
+            "confidence": "high"
+          }
+        },
+        {
+          "id": "ms1",
+          "text": "Two antiplatelet medicines (aspirin and clopidogrel) are listed.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "ms1"
+          ],
+          "meta": {
+            "specialist": "Medication Safety",
+            "confidence": "high"
+          }
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "type": "agreements",
+      "items": [
+        {
+          "id": "syn_7",
+          "text": "The perspectives that reviewed it agree that the troponin rise is significant.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "syn_7"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "type": "disagreements",
+      "items": [
+        {
+          "id": "syn_8",
+          "text": "Perspectives differ on timing. Your cardiologist recommended 1–2 weeks. Another perspective notes that if symptoms have been stable, a planned timeline may also be reasonable to discuss. Both views are kept.",
+          "kind": "interpretation",
+          "flag": "disagreement",
+          "evidence_ids": [
+            "syn_8"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "type": "questions",
+      "question_audience": "current_doctor",
+      "items": [
+        {
+          "id": "q1",
+          "text": "What specific findings in my angiography and blood tests support the need for angioplasty now?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q1"
+          ],
+          "meta": {
+            "priority": "1",
+            "category": "Diagnosis"
+          }
+        },
+        {
+          "id": "q2",
+          "text": "Has an echocardiogram been done? Could its result change the decision or the timing?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q2"
+          ],
+          "meta": {
+            "priority": "1",
+            "category": "Testing"
+          }
+        },
+        {
+          "id": "q3",
+          "text": "What happens if I take a few weeks to decide? Is there a risk in waiting in my case?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q3"
+          ],
+          "meta": {
+            "priority": "1",
+            "category": "Timing"
+          }
+        },
+        {
+          "id": "q4",
+          "text": "Are there reasonable alternatives for my situation, such as adjusting medicines first? Why were they not preferred?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q4"
+          ],
+          "meta": {
+            "priority": "2",
+            "category": "Alternatives"
+          }
+        },
+        {
+          "id": "q5",
+          "text": "I take two antiplatelet medicines and a painkiller (diclofenac). Is that combination safe for me around the procedure?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q5"
+          ],
+          "meta": {
+            "priority": "2",
+            "category": "Medicines"
+          }
+        },
+        {
+          "id": "q6",
+          "text": "How will my diabetes control affect the procedure and recovery?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q6"
+          ],
+          "meta": {
+            "priority": "3",
+            "category": "Recovery"
+          }
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "type": "questions",
+      "question_audience": "second_opinion_doctor",
+      "items": [
+        {
+          "id": "q7",
+          "text": "Having seen my angiography report, do you see the same reasons for considering angioplasty?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q7"
+          ],
+          "meta": {
+            "priority": "1",
+            "category": "Diagnosis"
+          }
+        },
+        {
+          "id": "q8",
+          "text": "What symptoms would make this urgent rather than planned?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q8"
+          ],
+          "meta": {
+            "priority": "1",
+            "category": "Timing"
+          }
+        },
+        {
+          "id": "q9",
+          "text": "Which additional tests, if any, would you want before advising on timing?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q9"
+          ],
+          "meta": {
+            "priority": "2",
+            "category": "Testing"
+          }
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_20",
+          "text": "Before deciding, it may help to clarify three things with your doctors: heart pumping strength, how much risk there is in waiting, and the medicine combination.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "syn_20"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "type": "references",
+      "items": [
+        {
+          "id": "src_cardio_12",
+          "text": "Sample summary: when invasive treatment is discussed in coronary artery disease. AdvisorAI sample evidence library (synthetic placeholder), 2024",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "src_cardio_12"
+          ]
+        },
+        {
+          "id": "src_cardio_14",
+          "text": "Sample summary: medicines as part of care for stable coronary disease. AdvisorAI sample evidence library (synthetic placeholder), 2024",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "src_cardio_14"
+          ]
+        },
+        {
+          "id": "src_drug_3",
+          "text": "Sample summary: antiplatelet medicines and NSAIDs. AdvisorAI sample evidence library (synthetic placeholder), 2023",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "src_drug_3"
+          ]
+        },
+        {
+          "id": "src_diab_2",
+          "text": "Sample summary: blood sugar control around procedures. AdvisorAI sample evidence library (synthetic placeholder), 2024",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "src_diab_2"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "type": "disclaimer",
+      "items": [
+        {
+          "text": "AI assists understanding and preparation. Qualified healthcare professionals make medical decisions. AdvisorAI is not a substitute for professional medical care, diagnosis or treatment.",
+          "kind": "template",
+          "evidence_ids": []
+        }
+      ]
+    }
+  ]
+}

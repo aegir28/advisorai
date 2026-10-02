@@ -1,0 +1,69 @@
+{
+  "schema_version": "run.v1",
+  "id": "r_80",
+  "case_id": "c_m77",
+  "status": "complete",
+  "progress": 1,
+  "steps": [
+    {
+      "n": 1,
+      "status": "done"
+    },
+    {
+      "n": 2,
+      "status": "done"
+    },
+    {
+      "n": 3,
+      "status": "done"
+    },
+    {
+      "n": 4,
+      "status": "done"
+    },
+    {
+      "n": 5,
+      "status": "done"
+    },
+    {
+      "n": 6,
+      "status": "done"
+    },
+    {
+      "n": 7,
+      "status": "done"
+    },
+    {
+      "n": 8,
+      "status": "done"
+    },
+    {
+      "n": 9,
+      "status": "done"
+    },
+    {
+      "n": 10,
+      "status": "warning",
+      "note": "Two documents conflict. Both are kept."
+    },
+    {
+      "n": 11,
+      "status": "done"
+    },
+    {
+      "n": 12,
+      "status": "done"
+    },
+    {
+      "n": 13,
+      "status": "done"
+    },
+    {
+      "n": 14,
+      "status": "done"
+    }
+  ],
+  "started_at": "2026-09-30T11:21:00.000Z",
+  "finished_at": "2026-09-30T11:25:00Z",
+  "warnings": []
+}

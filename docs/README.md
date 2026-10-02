@@ -6,4 +6,8 @@
 The architecture blueprint (product scope, agentic workflow, verification, security and build plan)
 is the source of truth for the product. It is maintained outside this repository for now.
 
-Future: architecture decision records live in `docs/adr/`.
+## Architecture decision records
+
+- [`adr/0001-wire-casing.md`](adr/0001-wire-casing.md): the wire format is snake_case; conversion is explicit at the frontend adapter.
+- [`adr/0002-error-contract.md`](adr/0002-error-contract.md): the error envelope and request IDs.
+- [`adr/0003-python-target-and-lockfile.md`](adr/0003-python-target-and-lockfile.md): Python 3.12+ and the committed `uv.lock`.

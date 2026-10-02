@@ -1,0 +1,2 @@
+# Generated contract fixtures must keep LF endings so the drift check compares equal on every OS.
+backend/tests/fixtures/** text eol=lf

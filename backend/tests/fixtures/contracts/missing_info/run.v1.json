@@ -1,0 +1,74 @@
+{
+  "schema_version": "run.v1",
+  "id": "r_78",
+  "case_id": "c_k21",
+  "status": "partial",
+  "progress": 1,
+  "steps": [
+    {
+      "n": 1,
+      "status": "done"
+    },
+    {
+      "n": 2,
+      "status": "warning",
+      "note": "One file couldn't be read clearly."
+    },
+    {
+      "n": 3,
+      "status": "done"
+    },
+    {
+      "n": 4,
+      "status": "warning",
+      "note": "One X-ray value is marked uncertain."
+    },
+    {
+      "n": 5,
+      "status": "done"
+    },
+    {
+      "n": 6,
+      "status": "done"
+    },
+    {
+      "n": 7,
+      "status": "warning",
+      "note": "Medication Safety didn't finish; continuing without it."
+    },
+    {
+      "n": 8,
+      "status": "done"
+    },
+    {
+      "n": 9,
+      "status": "done"
+    },
+    {
+      "n": 10,
+      "status": "done"
+    },
+    {
+      "n": 11,
+      "status": "done"
+    },
+    {
+      "n": 12,
+      "status": "done"
+    },
+    {
+      "n": 13,
+      "status": "done"
+    },
+    {
+      "n": 14,
+      "status": "done"
+    }
+  ],
+  "started_at": "2026-10-01T16:36:00.000Z",
+  "finished_at": "2026-10-01T16:40:00Z",
+  "warnings": [
+    "One document (the MRI photo) could not be read. A clear copy of the written MRI report would help.",
+    "The Medication Safety perspective did not finish. The report continues without it and says so."
+  ]
+}

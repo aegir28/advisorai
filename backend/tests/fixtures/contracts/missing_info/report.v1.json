@@ -1,0 +1,504 @@
+{
+  "schema_version": "report.v1",
+  "id": "rep_r_78",
+  "case_id": "c_k21",
+  "run_id": "r_78",
+  "generated_at": "2026-10-01T16:40:00Z",
+  "sections": [
+    {
+      "number": 1,
+      "type": "prose",
+      "items": [
+        {
+          "id": "syn_1",
+          "text": "You are 47 and have had right knee pain with twisting since March, with an occasional catching feeling. You are asking whether surgery is really needed.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_1"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_2",
+          "text": "Your X-ray report mentions mild narrowing on the inner side of the knee. One measurement in the scan was hard to read, so we haven't guessed it.",
+          "kind": "patient_fact",
+          "flag": "uncertain",
+          "evidence_ids": [
+            "syn_2"
+          ]
+        },
+        {
+          "id": "syn_3",
+          "text": "Your orthopaedic consultation suggests a torn cartilage pad (medial meniscus) and advises keyhole surgery.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_3"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "type": "timeline",
+      "items": [
+        {
+          "id": "tl1",
+          "text": "Knee pain begins. Pain on twisting, occasional catching.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "tl1"
+          ],
+          "meta": {
+            "date": "2026-03-10",
+            "precision": "approx"
+          }
+        },
+        {
+          "id": "tl2",
+          "text": "Physiotherapy: two sessions. Stopped after two sessions.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "tl2"
+          ],
+          "meta": {
+            "date": "2026-04-14",
+            "precision": "day"
+          }
+        },
+        {
+          "id": "tl3",
+          "text": "X-ray of the right knee. Mild medial narrowing, one value unclear.",
+          "kind": "patient_fact",
+          "flag": "disagreement",
+          "evidence_ids": [
+            "tl3"
+          ],
+          "meta": {
+            "date": "2026-05-22",
+            "precision": "day"
+          }
+        },
+        {
+          "id": "tl4",
+          "text": "Orthopaedic consultation. Keyhole surgery suggested.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "tl4"
+          ],
+          "meta": {
+            "date": "2026-06-18",
+            "precision": "day"
+          }
+        },
+        {
+          "id": "gap1",
+          "text": "The consultation mentions an MRI, but no MRI report is on file.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "evidence_ids": [
+            "gap1"
+          ],
+          "meta": {
+            "gap": "true"
+          }
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_4",
+          "text": "A medial meniscus tear is documented as suspected. It is not confirmed by a written report in your records.",
+          "kind": "patient_fact",
+          "flag": "uncertain",
+          "evidence_ids": [
+            "syn_4"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "type": "medicines",
+      "items": [
+        {
+          "id": "f_km1",
+          "text": "Ibuprofen",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "f_km1"
+          ],
+          "meta": {
+            "dose": "400 mg, three times a day"
+          }
+        },
+        {
+          "id": "f_km2",
+          "text": "Pantoprazole",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "f_km2"
+          ],
+          "meta": {
+            "dose": "40 mg, once daily"
+          }
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_5",
+          "text": "Your medicine list shows ibuprofen 400 mg three times a day, and pantoprazole once a day.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_5"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_6",
+          "text": "Your surgeon advised arthroscopic partial meniscectomy (keyhole surgery on the cartilage) of the right knee.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "syn_6"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_7",
+          "text": "General reference material says keyhole surgery is commonly discussed for a confirmed tear with catching, usually after a period of non-surgical care. Neither of those is fully documented in your records.",
+          "kind": "external_evidence",
+          "flag": "uncertain",
+          "evidence_ids": [
+            "syn_7"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_8",
+          "text": "It is not clear whether your pain comes mainly from a tear or from wear-related changes in the joint.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "evidence_ids": [
+            "syn_8"
+          ]
+        },
+        {
+          "id": "syn_9",
+          "text": "How much non-surgical care has been tried is not clear. Only two physiotherapy sessions are recorded.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "evidence_ids": [
+            "syn_9"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_10",
+          "text": "Your records do not include a written MRI report. The consultation mentions an MRI, but only a photo of films was uploaded and it could not be read. A clear copy of the report would help.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "evidence_ids": [
+            "syn_10"
+          ]
+        },
+        {
+          "id": "syn_11",
+          "text": "Details of any non-surgical treatment (such as a longer physiotherapy trial) are not in your records.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "evidence_ids": [
+            "syn_11"
+          ]
+        },
+        {
+          "id": "syn_12",
+          "text": "Weight-bearing X-ray views are not in your records. They help judge joint wear more reliably.",
+          "kind": "interpretation",
+          "flag": "missing",
+          "evidence_ids": [
+            "syn_12"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_14",
+          "text": "The medicine-safety review could not be completed for this report. Your ibuprofen use was raised by General Medicine only, so it has not been double-checked.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "evidence_ids": [
+            "syn_14"
+          ]
+        },
+        {
+          "id": "syn_15",
+          "text": "You have taken ibuprofen regularly for about three months. It may be worth reviewing this with your prescriber. Please do not change any medicine on your own.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "syn_15"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "type": "perspectives",
+      "items": [
+        {
+          "id": "gk1",
+          "text": "Only two physiotherapy sessions are recorded before surgery was suggested.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "gk1"
+          ],
+          "meta": {
+            "specialist": "General Medicine",
+            "confidence": "low"
+          }
+        },
+        {
+          "id": "gk2",
+          "text": "Ibuprofen 400 mg three times a day for about three months is listed.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "gk2"
+          ],
+          "meta": {
+            "specialist": "General Medicine",
+            "confidence": "low"
+          }
+        },
+        {
+          "id": "ok1",
+          "text": "Pain on twisting with occasional catching is described since March.",
+          "kind": "patient_fact",
+          "evidence_ids": [
+            "ok1"
+          ],
+          "meta": {
+            "specialist": "Orthopedics",
+            "confidence": "low"
+          }
+        },
+        {
+          "id": "ok2",
+          "text": "The consultation suggests a meniscus tear, but this cannot be confirmed here because the MRI report is missing.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "ok2"
+          ],
+          "meta": {
+            "specialist": "Orthopedics",
+            "confidence": "low"
+          }
+        },
+        {
+          "id": "sr_ms",
+          "text": "This perspective could not be completed. The report continues without it and says so.",
+          "kind": "interpretation",
+          "flag": "uncertain",
+          "evidence_ids": [
+            "sr_ms"
+          ],
+          "meta": {
+            "specialist": "Medication Safety",
+            "confidence": "low"
+          }
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "type": "agreements",
+      "items": [
+        {
+          "id": "syn_13",
+          "text": "The perspectives that reviewed your case agree that the missing MRI report is the most important gap.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "syn_13"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "type": "disagreements",
+      "items": [
+        {
+          "text": "No disagreements between the perspectives were found. Perspectives that could not finish are listed in the section on specialist perspectives.",
+          "kind": "template",
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "type": "questions",
+      "question_audience": "current_doctor",
+      "items": [
+        {
+          "id": "q1",
+          "text": "Can I have a copy of the written MRI report? Does it confirm a meniscus tear?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q1"
+          ],
+          "meta": {
+            "priority": "1",
+            "category": "Testing"
+          }
+        },
+        {
+          "id": "q2",
+          "text": "How much non-surgical treatment do you usually try first, and would a longer physiotherapy trial be reasonable in my case?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q2"
+          ],
+          "meta": {
+            "priority": "1",
+            "category": "Alternatives"
+          }
+        },
+        {
+          "id": "q3",
+          "text": "Is my pain more likely to come from a tear or from wear in the joint, and how can we tell?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q3"
+          ],
+          "meta": {
+            "priority": "2",
+            "category": "Diagnosis"
+          }
+        },
+        {
+          "id": "q4",
+          "text": "I've taken ibuprofen three times a day for about three months. Should we review that?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q4"
+          ],
+          "meta": {
+            "priority": "3",
+            "category": "Medicines"
+          }
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "type": "questions",
+      "question_audience": "second_opinion_doctor",
+      "items": [
+        {
+          "id": "q5",
+          "text": "Having seen the MRI, do you see a tear that matches my symptoms of catching?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q5"
+          ],
+          "meta": {
+            "priority": "1",
+            "category": "Testing"
+          }
+        },
+        {
+          "id": "q6",
+          "text": "If I try non-surgical care first, what would tell us it is time to reconsider surgery?",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "q6"
+          ],
+          "meta": {
+            "priority": "2",
+            "category": "Timing"
+          }
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "type": "bullets",
+      "items": [
+        {
+          "id": "syn_16",
+          "text": "Before deciding, it may help to get the written MRI report and ask how much non-surgical care is usually tried first.",
+          "kind": "interpretation",
+          "evidence_ids": [
+            "syn_16"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "type": "references",
+      "items": [
+        {
+          "id": "src_ortho_5",
+          "text": "Sample summary: arthroscopy for meniscus symptoms. AdvisorAI sample evidence library (synthetic placeholder), 2024",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "src_ortho_5"
+          ]
+        },
+        {
+          "id": "src_ortho_6",
+          "text": "Sample summary: role of imaging before knee surgery. AdvisorAI sample evidence library (synthetic placeholder), 2023",
+          "kind": "external_evidence",
+          "evidence_ids": [
+            "src_ortho_6"
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "type": "disclaimer",
+      "items": [
+        {
+          "text": "AI assists understanding and preparation. Qualified healthcare professionals make medical decisions. AdvisorAI is not a substitute for professional medical care, diagnosis or treatment.",
+          "kind": "template",
+          "evidence_ids": []
+        }
+      ]
+    }
+  ]
+}
