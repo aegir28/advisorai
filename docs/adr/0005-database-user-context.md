@@ -47,8 +47,9 @@ The backend builds the context itself, explicitly, per request, and only from a 
    cannot become `app_system`, whatever SQL it runs, including after `RESET ROLE`. The system session also
    checks that it really is logged in as `app_system` and refuses to run otherwise, and with no system
    connection configured it fails closed instead of borrowing the user connection. It accepts only an
-   enumerated operation. In this phase the single operation is `audit.append`, and `app_system` holds
-   `INSERT` on `audit_logs` and nothing else. It is not `service_role` and has no `BYPASSRLS`. Each new system
+   enumerated operation. In Phase 2B the single operation was `audit.append` (`INSERT` on `audit_logs`). Phase 2D adds
+   `workflow.enqueue` and `workflow.run`: `app_system` also holds `SELECT, INSERT` and column-limited `UPDATE` on
+   `workflow_runs` / `workflow_steps` and nothing else ([ADR 0008](0008-workflow-persistence-and-worker.md)). It is not `service_role` and has no `BYPASSRLS`. Each new system
    operation must be added to the enum, to the role's grants and to this ADR.
 7. **Defence in depth.** RLS policies use `(select auth.uid())`. `owner_user_id` defaults to
    `auth.uid()`, is checked by `WITH CHECK`, and is immutable by trigger.

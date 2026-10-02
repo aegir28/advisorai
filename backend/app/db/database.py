@@ -6,7 +6,7 @@ Two completely separate paths, each with its OWN login role and connection pool:
   transaction, becomes `authenticated` and sets the claims that make `auth.uid()` return the VERIFIED
   user. RLS applies to everything run inside it. Every setting is `SET LOCAL`, so commit or rollback
   restores the unprivileged login role and nothing leaks to the next request on a pooled connection.
-* SYSTEM path, login `app_system` (a narrow role: this phase it can only INSERT into `audit_logs`).
+* SYSTEM path, login `app_system` (a narrow role: INSERT into `audit_logs`, and the workflow run/step tables).
   `system_session(operation)` connects as that role directly. There is NO `SET ROLE` between the two
   paths: `app_backend` is not a member of `app_system`, so nothing running on the user path can become
   it, whatever SQL it runs.
@@ -42,6 +42,10 @@ class SystemOperation(StrEnum):
     """The only system operations. A new one needs a grant on `app_system` and an update to ADR 0005."""
 
     AUDIT_APPEND = "audit.append"
+    # Phase 2D: the job queue. `app_system` holds SELECT/INSERT/UPDATE(some columns) on workflow_runs and
+    # workflow_steps (migration 20261005000001) and nothing else beyond the audit INSERT.
+    WORKFLOW_ENQUEUE = "workflow.enqueue"
+    WORKFLOW_RUN = "workflow.run"
 
 
 def create_engine(database_url: SecretStr) -> AsyncEngine:
