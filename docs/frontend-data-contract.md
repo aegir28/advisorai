@@ -57,14 +57,19 @@ boundary: `backend wire -> Pydantic -> httpApi adapter -> domain model -> UI`.
 - A run has exactly the 14 workflow steps, numbered 1..14. A `failed` run must carry `failure`.
 - `case.v1` contains no identity fields: names, phone and email never appear in it.
 
-## Backend (Phase 2A and 2B)
+## Backend (Phase 2A to 2E)
 
 [`backend/`](../backend/README.md) is a FastAPI service on a Supabase Postgres foundation (RLS, private storage,
 audit log; [ADR 0004](adr/0004-phase-2b-supabase-foundation.md)). So far it serves `GET /api/v1/health`,
 `GET /api/v1/health/ready`, `GET /api/v1/me` (Bearer token; the caller's own profile, never an ID from the client),
 OpenAPI at `/api/v1/docs`, the error contract and request IDs, and carries Pydantic v2 models for the
-five versioned contracts (`backend/app/schemas/`). The data endpoints in the table below are **not
-built yet**; the frontend's `httpApi` reports them as "not available yet".
+five versioned contracts (`backend/app/schemas/`). Served since Phase 2C-2E: cases (create, list, get, delete), the
+red-flag check, documents (secure upload, library, remove) and run status (`GET /analysis/{run_id}`); see
+[ADR 0007](adr/0007-case-and-document-lifecycle.md), [ADR 0008](adr/0008-workflow-persistence-and-worker.md) and
+[ADR 0009](adr/0009-google-auth-and-frontend-http-integration.md). Everything that needs the AI pipeline (start an
+analysis, timeline, perspectives, report, questions, trace, second opinion, comparison) is **not built**: the
+frontend's `httpApi` answers "no results" or `ApiNotAvailableError`, never fake data. The red-flag check is
+`POST /cases/safety-check` (no case id: it runs before a case exists).
 
 ### Optional means absent, never null
 

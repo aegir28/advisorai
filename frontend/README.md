@@ -2,8 +2,9 @@
 
 Next.js 15 (App Router) · TypeScript · Tailwind CSS v4 · shadcn/ui · Lucide icons.
 
-A complete clickable prototype of the AdvisorAI journey on **mocked, fictional data**. Nothing leaves
-the browser: there is no backend, no AI call and no real authentication.
+A complete clickable prototype of the AdvisorAI journey on **mocked, fictional data**. By default nothing
+leaves the browser: no backend, no AI call, no real authentication. Two switches connect it to the real
+backend (see below); neither is needed to run the prototype.
 
 ## Run
 
@@ -18,6 +19,22 @@ npm run build
 
 Sign in with **Continue with Google** (simulated: it opens a fake account chooser), then confirm the
 consent step once.
+
+## Talking to the real backend (optional)
+
+```bash
+# frontend/.env.local (public values only; see .env.example)
+NEXT_PUBLIC_API_MODE=http
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+NEXT_PUBLIC_AUTH_MODE=supabase
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<the PUBLIC anon key from `supabase status`>
+```
+
+Cases, documents (secure upload), the red-flag check and run status then come from the backend; everything that
+needs the AI pipeline reports "not available" instead of showing made-up results. Real Google sign-in needs a
+Google OAuth client configured in Supabase Auth ([ADR 0009](../docs/adr/0009-google-auth-and-frontend-http-integration.md)).
+Still **synthetic data only**: never enter real medical information.
 
 ## Experience
 

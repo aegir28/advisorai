@@ -54,6 +54,35 @@ describe("http client", () => {
     await expect(client.request("GET", "/x")).rejects.toMatchObject({ status: 0, code: "NETWORK_ERROR", requestId: "req_sent" });
   });
 
+  it("sends the user's access token as a Bearer header, and nothing when signed out", async () => {
+    let token: string | null = "tok_123";
+    const calls: RequestInit[] = [];
+    const client = createHttpClient({
+      baseUrl: "http://api.test",
+      getAccessToken: async () => token,
+      fetchImpl: (async (_u: string, init: RequestInit) => {
+        calls.push(init);
+        return json(200, {});
+      }) as typeof fetch,
+    });
+    await client.request("GET", "/x");
+    token = null;
+    await client.request("GET", "/x");
+    expect((calls[0].headers as Record<string, string>).Authorization).toBe("Bearer tok_123");
+    expect(calls[1].headers as Record<string, string>).not.toHaveProperty("Authorization");
+  });
+
+  it("treats a failing token getter as signed out instead of failing the call", async () => {
+    const calls: RequestInit[] = [];
+    const client = createHttpClient({
+      baseUrl: "http://api.test",
+      getAccessToken: async () => { throw new Error("boom"); },
+      fetchImpl: (async (_u: string, init: RequestInit) => { calls.push(init); return json(200, {}); }) as typeof fetch,
+    });
+    await client.request("GET", "/x");
+    expect(calls[0].headers as Record<string, string>).not.toHaveProperty("Authorization");
+  });
+
   it("sends JSON bodies with a content type", async () => {
     const { client, calls } = clientWith(() => json(200, {}));
     await client.request("POST", "/x", { body: { a: 1 } });
@@ -67,9 +96,10 @@ describe("httpApi", () => {
     expect([...ADVISOR_API_METHODS].sort()).toEqual(Object.keys(mockApi).sort());
   });
 
-  it("reports, rather than fakes, data the backend does not serve yet", async () => {
-    const api = createHttpApi();
-    await expect(api.listCases()).rejects.toBeInstanceOf(ApiNotAvailableError);
-    await expect(api.getReport("c_1")).rejects.toThrow(/not available from the backend yet/);
+  it("reports, rather than fakes, what needs the AI pipeline", async () => {
+    const api = createHttpApi(clientWith(() => json(200, {})).client);
+    await expect(api.startAnalysis("c_1")).rejects.toBeInstanceOf(ApiNotAvailableError);
+    await expect(api.updateQuestion("c_1", "q", {})).rejects.toThrow(/not available from the backend yet/);
+    await expect(api.submitSecondOpinion("c_1", { name: "x.pdf" })).rejects.toBeInstanceOf(ApiNotAvailableError);
   });
 });

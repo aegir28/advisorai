@@ -328,3 +328,46 @@ def test_httpx_request_logging_is_silenced() -> None:
 
     configure_logging("INFO")
     assert logging.getLogger("httpx").level >= logging.WARNING
+
+
+# ── read_object (used to validate an upload) ────────────────────────────────────────────────────
+async def test_read_object_returns_the_bytes_from_the_authenticated_object_route() -> None:
+    gw, seen = gateway(lambda request: httpx.Response(200, content=b"%PDF-1.7 data"))
+    assert await gw.read_object(PATH, max_bytes=100) == b"%PDF-1.7 data"
+    assert seen[0].method == "GET"
+    assert str(seen[0].url).endswith(f"/storage/v1/object/authenticated/case-documents/{PATH}")
+    assert seen[0].headers["Authorization"].startswith("Bearer ")  # the service key, backend-only
+
+
+@pytest.mark.parametrize("status", [400, 404])
+async def test_read_object_maps_a_missing_object_to_not_found(status: int) -> None:
+    from app.storage.gateway import ObjectNotFoundError
+
+    gw, _ = gateway(lambda request: httpx.Response(status, json={"error": "not_found"}))
+    with pytest.raises(ObjectNotFoundError):
+        await gw.read_object(PATH, max_bytes=100)
+
+
+async def test_read_object_stops_at_the_size_limit() -> None:
+    from app.storage.gateway import ObjectTooLargeError
+
+    gw, _ = gateway(lambda request: httpx.Response(200, content=b"x" * 101))
+    with pytest.raises(ObjectTooLargeError):
+        await gw.read_object(PATH, max_bytes=100)
+    gw2, _ = gateway(lambda request: httpx.Response(200, content=b"x" * 100))
+    assert len(await gw2.read_object(PATH, max_bytes=100)) == 100
+
+
+async def test_read_object_errors_never_contain_the_url_or_key() -> None:
+    def boom(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("could not connect to http://127.0.0.1:54321/?token=SECRET-TOKEN")
+
+    gw, _ = gateway(boom)
+    with pytest.raises(StorageError) as network:
+        await gw.read_object(PATH, max_bytes=100)
+    gw2, _ = gateway(lambda request: httpx.Response(500, text="internal"))
+    with pytest.raises(StorageError) as server:
+        await gw2.read_object(PATH, max_bytes=100)
+    for exc in (network.value, server.value):
+        assert "SECRET" not in str(exc) and "127.0.0.1" not in str(exc) and str(PATH) not in str(exc)
+    assert "500" in str(server.value)

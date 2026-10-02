@@ -56,7 +56,11 @@ export interface AdvisorApi {
   safetyCheck(input: SafetyCheckInput): Promise<SafetyCheckResult>;
 
   getDocuments(caseId: string): Promise<DocumentItem[]>;
-  uploadDocument(caseId: string, file: { name: string; sizeKb: number }): Promise<DocumentItem>;
+  /**
+   * `blob` is the real file. The mock ignores it; the HTTP implementation requires it (it uploads straight to
+   * private storage through a short-lived signed URL, then asks the backend to validate it).
+   */
+  uploadDocument(caseId: string, file: { name: string; sizeKb: number; blob?: Blob }): Promise<DocumentItem>;
   removeDocument(caseId: string, docId: string): Promise<void>;
 
   startAnalysis(caseId: string): Promise<{ runId: string }>;
