@@ -54,6 +54,7 @@ export const conflicting: ScenarioData = {
     documentCount: 5,
     updatedAt: "2026-09-30T11:25:00Z",
     runId: "r_80",
+    title: "Head scan reports",
     specialtyLabel: "Head and nerves",
   },
   documents: [

@@ -3,180 +3,165 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import {
-  ArrowRight,
-  ClipboardList,
-  FileText,
-  GitCompareArrows,
-  Layers,
-  ListChecks,
-  Route,
-  ScanSearch,
-  Trash2,
-  Upload,
-} from "lucide-react";
-import { PageHeader } from "@/components/layout/page-header";
+import { ArrowRight, Upload } from "lucide-react";
 import { EvidenceChip } from "@/components/medical/evidence-chip";
-import { Legend } from "@/components/medical/legend";
-import { FlagMarker, flagSurface } from "@/components/medical/markers";
+import { FlagMarker } from "@/components/medical/markers";
 import { ErrorState, LoadingState, PartialNotice } from "@/components/medical/states";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useCaseOverview, useRun } from "@/features/case/hooks";
+import type { ReportItem } from "@/domain/types";
+import { useCaseOverview, useQuestions, useReport, useRun } from "@/features/case/hooks";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
-const QUICK_LINKS = [
-  { path: "/report", icon: FileText, title: "Your report", body: "The full plain-language report, in 19 sections." },
-  { path: "/questions", icon: ListChecks, title: "Your questions", body: "Prioritised questions to take to your doctors." },
-  { path: "/timeline", icon: Route, title: "Medical timeline", body: "Your history in order, with gaps marked." },
-  { path: "/perspectives", icon: Layers, title: "Specialist perspectives", body: "Each specialist view, kept separate." },
-  { path: "/evidence", icon: ScanSearch, title: "Evidence and verification", body: "How each claim was checked." },
-  { path: "/second-opinion", icon: GitCompareArrows, title: "Second opinion", body: "Add it later and compare side by side." },
-];
+const bigCta = "h-14 rounded-2xl px-8 text-base";
+
+/** One quiet block: a heading with a count, a few sentences, nothing else. */
+function Block({ title, count, children, empty }: { title: string; count: string; children: React.ReactNode; empty?: boolean }) {
+  return (
+    <section className="space-y-4" aria-label={title}>
+      <div>
+        <h2 className="text-2xl">{title}</h2>
+        {!empty && <p className="text-muted-foreground">{count}</p>}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function Sentence({ item }: { item: ReportItem }) {
+  return (
+    <li className="space-y-1.5">
+      <p className="text-lg leading-relaxed">{item.text}</p>
+      <div className="flex flex-wrap items-center gap-2">
+        {item.flag && <FlagMarker flag={item.flag} />}
+        {item.evidenceIds.map((id) => <EvidenceChip key={id} itemId={id} />)}
+      </div>
+    </li>
+  );
+}
+
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
 export default function CaseOverviewPage() {
   const { caseId } = useParams<{ caseId: string }>();
   const router = useRouter();
   const overview = useCaseOverview(caseId);
   const run = useRun(overview.data?.summary.runId);
+  const report = useReport(caseId);
+  const questions = useQuestions(caseId);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  if (overview.status === "loading") return <LoadingState rows={3} />;
+  if (overview.status === "loading") return <LoadingState rows={2} />;
   if (overview.status === "error") return <ErrorState onRetry={overview.reload} />;
   const o = overview.data;
   if (!o) return null;
   const { summary: c } = o;
-  const attention = o.documents.filter((d) => d.status === "needs_attention").length;
+
+  const section = (n: number) => report.data?.sections.find((s) => s.number === n)?.items.filter((i) => i.kind !== "template") ?? [];
+  const found = section(2);
+  const unclear = [...section(9), ...section(10)];
+  const asked = questions.data ?? [];
+  const priority = asked.filter((q) => q.priority === 1);
 
   return (
-    <>
-      <PageHeader eyebrow={`Case ${c.code}`} title={c.concern} description={c.proposedTreatment && <>Proposed: <span className="text-foreground">{c.proposedTreatment}</span></>} />
-
+    <div className="space-y-14">
       {(c.status === "draft" || c.status === "awaiting_upload") && (
-        <div className="paper mb-8 flex flex-wrap items-center justify-between gap-4 p-5">
-          <div>
-            <h2 className="text-xl">Next: add your records</h2>
-            <p className="text-muted-foreground">We need documents before we can prepare anything for you.</p>
-          </div>
-          <Link href={`/cases/${caseId}/upload`} className={cn(buttonVariants({ size: "lg" }))}>
-            <Upload aria-hidden data-icon="inline-start" /> Add records
+        <section className="space-y-4">
+          <h2 className="text-2xl">Next, add your reports</h2>
+          <p className="text-lg text-muted-foreground">We need at least one report before we can review your case.</p>
+          <Link href={`/cases/${caseId}/upload`} className={cn(buttonVariants({ size: "lg" }), bigCta)}>
+            <Upload aria-hidden data-icon="inline-start" /> Add reports
           </Link>
-        </div>
+        </section>
       )}
 
       {c.status === "processing" && (
-        <div className="paper mb-8 flex flex-wrap items-center justify-between gap-4 p-5">
-          <div>
-            <h2 className="text-xl">We’re reading your records</h2>
-            <p className="text-muted-foreground">Follow along as each step finishes.</p>
-          </div>
-          <Link href={`/cases/${caseId}/analysis`} className={cn(buttonVariants({ size: "lg" }))}>
-            View progress <ArrowRight aria-hidden data-icon="inline-end" />
+        <section className="space-y-4">
+          <h2 className="text-2xl">We’re reviewing your case</h2>
+          <p className="text-lg text-muted-foreground">You can leave this page. We’ll keep going.</p>
+          <Link href={`/cases/${caseId}/analysis`} className={cn(buttonVariants({ size: "lg" }), bigCta)}>
+            See progress <ArrowRight aria-hidden data-icon="inline-end" />
           </Link>
-        </div>
+        </section>
       )}
 
       {c.status === "failed" && (
-        <div role="alert" className="mb-8 rounded-2xl border border-urgent/30 bg-urgent-soft p-5">
-          <h2 className="text-xl">The analysis couldn’t be finished</h2>
-          <p className="mb-3 text-muted-foreground">One document needs a clearer copy. See exactly what happened and try again.</p>
-          <Link href={`/cases/${caseId}/analysis`} className={cn(buttonVariants())}>See what happened</Link>
-        </div>
-      )}
-
-      {c.status === "partial" && (
-        <div className="mb-8">
-          <PartialNotice title="Your analysis is ready, with some gaps">
-            {run.data?.warnings.length ? (
-              <ul className="mt-1 list-disc space-y-1 pl-4">{run.data.warnings.map((w) => <li key={w}>{w}</li>)}</ul>
-            ) : (
-              "Some parts could not be completed. The report says so wherever it matters."
-            )}
-          </PartialNotice>
-        </div>
-      )}
-
-      {o.highlights.length > 0 && (
-        <section aria-labelledby="stands-out" className="mb-10 space-y-4">
-          <h2 id="stands-out" className="text-2xl">What stands out</h2>
-          <ul className="space-y-3">
-            {o.highlights.map((h) => (
-              <li
-                key={h.id}
-                className={cn("flex flex-wrap items-start gap-x-3 gap-y-2 rounded-2xl border p-4", h.flag ? flagSurface[h.flag] : "bg-card")}
-              >
-                <p className="min-w-0 flex-1 basis-60 leading-relaxed">{h.text}</p>
-                <div className="flex items-center gap-2">
-                  {h.flag && <FlagMarker flag={h.flag} />}
-                  <EvidenceChip itemId={h.id} />
-                </div>
-              </li>
-            ))}
-          </ul>
+        <section role="alert" className="space-y-4 rounded-3xl bg-urgent-soft p-6">
+          <h2 className="text-2xl">We couldn’t finish your review</h2>
+          <p className="text-lg">One of your reports was too hard to read safely. Nothing was lost. A clearer copy would help.</p>
+          <Link href={`/cases/${caseId}/analysis`} className={cn(buttonVariants({ size: "lg" }), bigCta)}>See what happened</Link>
         </section>
       )}
 
       {o.analysisAvailable && (
-        <section aria-labelledby="explore" className="mb-10 space-y-4">
-          <h2 id="explore" className="text-2xl">Explore your results</h2>
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {QUICK_LINKS.map((q) => (
-              <li key={q.path}>
-                <Link href={`/cases/${caseId}${q.path}`} className="paper group flex h-full flex-col gap-2 p-4 transition-shadow hover:shadow-lg">
-                  <span className="grid size-9 place-items-center rounded-lg bg-secondary text-secondary-foreground">
-                    <q.icon aria-hidden className="size-4.5" />
-                  </span>
-                  <span className="font-medium">{q.title}</span>
-                  <span className="text-sm text-muted-foreground">{q.body}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <>
+          {c.status === "partial" && (
+            <PartialNotice title="Some information was missing, so parts of this summary are less complete.">
+              {run.data?.warnings.length ? (
+                <ul className="mt-1 list-disc space-y-1 pl-4">{run.data.warnings.map((w) => <li key={w}>{w}</li>)}</ul>
+              ) : null}
+            </PartialNotice>
+          )}
+
+          <Block title="Your case" count="" empty>
+            {report.status === "loading" ? <LoadingState rows={1} /> : (
+              <ul className="space-y-4">{section(1).map((i) => <Sentence key={i.id} item={i} />)}</ul>
+            )}
+          </Block>
+
+          <Block title="What we found" count={plural(found.length, "important finding", "important findings")} empty={!found.length}>
+            <ul className="space-y-5">{found.slice(0, 3).map((i) => <Sentence key={i.id} item={i} />)}</ul>
+          </Block>
+
+          <Block title="What is still unclear" count={plural(unclear.length, "thing needs", "things need") + " clarification"} empty={!unclear.length}>
+            <ul className="space-y-5">{unclear.slice(0, 3).map((i) => <Sentence key={i.id} item={i} />)}</ul>
+          </Block>
+
+          <Block title="Questions worth asking" count={plural(asked.length, "question", "questions") + (priority.length ? `, ${priority.length} to start with` : "")} empty={!asked.length}>
+            <ul className="space-y-3">
+              {priority.slice(0, 3).map((q) => (
+                <li key={q.id} className="border-l-2 border-primary/40 pl-4 text-lg leading-relaxed">{q.text}</li>
+              ))}
+            </ul>
+            <Link href={`/cases/${caseId}/questions`} className="inline-flex items-center gap-1 font-medium text-primary underline-offset-4 hover:underline">
+              See all questions <ArrowRight aria-hidden className="size-4" />
+            </Link>
+          </Block>
+
+          <div className="space-y-4 border-t pt-10">
+            <Link href={`/cases/${caseId}/analysis`} className={cn(buttonVariants({ size: "lg" }), bigCta)}>
+              View full analysis <ArrowRight aria-hidden data-icon="inline-end" />
+            </Link>
+            <p className="text-muted-foreground">
+              Or <Link href={`/cases/${caseId}/report`} className="font-medium text-primary underline underline-offset-4">read your full report</Link>.
+            </p>
+          </div>
+        </>
       )}
 
-      <section aria-labelledby="docs-summary" className="mb-10 space-y-3">
-        <h2 id="docs-summary" className="text-2xl">Documents</h2>
-        <div className="paper flex flex-wrap items-center justify-between gap-4 p-4">
-          <p className="flex items-center gap-2">
-            <ClipboardList aria-hidden className="size-5 text-muted-foreground" />
-            {o.documents.length} {o.documents.length === 1 ? "document" : "documents"}
-            {attention > 0 && <span className="text-uncertain"> · {attention} need attention</span>}
+      <details className="no-print text-sm">
+        <summary className="cursor-pointer text-muted-foreground hover:text-foreground">More about this case</summary>
+        <div className="mt-4 space-y-3">
+          <p>
+            <Link href={`/cases/${caseId}/documents`} className="text-primary underline underline-offset-4">Your reports ({o.documents.length})</Link>
           </p>
-          <Link href={`/cases/${caseId}/documents`} className={cn(buttonVariants({ variant: "outline" }))}>View documents</Link>
+          <Button variant="outline" size="sm" onClick={() => setConfirmDelete(true)}>Delete this case</Button>
         </div>
-      </section>
-
-      <Legend className="mb-10" />
-
-      <section aria-labelledby="privacy" className="paper space-y-3 p-5 no-print">
-        <h2 id="privacy" className="text-xl">Your data</h2>
-        <p className="text-sm text-muted-foreground">
-          You can delete this case and everything linked to it at any time. In the real product this also removes stored documents and cached outputs.
-        </p>
-        <Button variant="destructive" onClick={() => setConfirmDelete(true)}>
-          <Trash2 aria-hidden data-icon="inline-start" /> Delete this case
-        </Button>
-      </section>
+      </details>
 
       <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-heading text-xl">Delete case {c.code}?</DialogTitle>
-            <DialogDescription>This removes the case, its documents and all generated results from this prototype. This can’t be undone.</DialogDescription>
+            <DialogTitle className="font-heading text-xl">Delete this case?</DialogTitle>
+            <DialogDescription>This removes the case, its reports and everything we prepared from this prototype. It can’t be undone.</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setConfirmDelete(false)}>Keep it</Button>
-            <Button
-              variant="destructive"
-              onClick={async () => { await api.deleteCase(caseId); router.push("/dashboard"); }}
-            >
-              Delete everything
-            </Button>
+            <Button variant="destructive" onClick={async () => { await api.deleteCase(caseId); router.push("/cases"); }}>Delete everything</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

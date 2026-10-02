@@ -34,10 +34,24 @@ const kindStyle: Record<ContentKind, { icon: LucideIcon; cls: string; accent: st
 
 export const kindAccent = (kind: ContentKind) => kindStyle[kind].accent;
 
-export function KindTag({ kind, className, iconOnly }: { kind: ContentKind; className?: string; iconOnly?: boolean }) {
+const kindText: Record<ContentKind, string> = {
+  patient_fact: "text-fact",
+  interpretation: "text-interp",
+  external_evidence: "text-evidence",
+  template: "text-muted-foreground",
+};
+
+/**
+ * Where a statement comes from. `plain` is the quiet inline form used inside
+ * reading text (icon + words, no pill), so documents stay calm to read.
+ */
+export function KindTag({ kind, className, iconOnly, plain }: { kind: ContentKind; className?: string; iconOnly?: boolean; plain?: boolean }) {
   const { icon: Icon, cls } = kindStyle[kind];
   return (
-    <span className={cn(pill, cls, className)} title={tk(`kind.${kind}.long`)}>
+    <span
+      className={cn(plain ? cn("inline-flex shrink-0 items-center gap-1 text-xs font-medium", kindText[kind]) : cn(pill, cls), className)}
+      title={tk(`kind.${kind}.long`)}
+    >
       <Icon aria-hidden className="size-3.5" />
       <span className={iconOnly ? "sr-only" : undefined}>{tk(`kind.${kind}`)}</span>
     </span>

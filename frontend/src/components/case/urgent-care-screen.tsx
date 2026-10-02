@@ -36,8 +36,8 @@ export function UrgentCareScreen({ result }: { result: SafetyCheckResult }) {
             <Phone aria-hidden data-icon="inline-start" /> Call {n}
           </a>
         ))}
-        <Link href="/dashboard" className={cn(buttonVariants({ size: "lg", variant: "outline" }))}>
-          Back to my dashboard
+        <Link href="/home" className={cn(buttonVariants({ size: "lg", variant: "outline" }))}>
+          Back to home
         </Link>
       </div>
       <p className="border-t border-urgent/20 pt-4 text-sm text-muted-foreground">{t("urgent.note")}</p>

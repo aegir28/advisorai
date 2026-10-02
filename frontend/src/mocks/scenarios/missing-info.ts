@@ -45,6 +45,7 @@ export const missingInfo: ScenarioData = {
     documentCount: 5,
     updatedAt: "2026-10-01T16:40:00Z",
     runId: "r_78",
+    title: "Knee pain",
     specialtyLabel: "Knee and bones",
   },
   documents: [

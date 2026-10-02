@@ -64,6 +64,7 @@ export const cardiology: ScenarioData = {
     documentCount: 7,
     updatedAt: "2026-10-02T09:12:00Z",
     runId: "r_77",
+    title: "Heart treatment",
     specialtyLabel: "Heart and diabetes",
   },
   documents: [

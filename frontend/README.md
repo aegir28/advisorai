@@ -14,62 +14,81 @@ npm run lint
 npm run build
 ```
 
-Sign in with **"Skip ahead as a demo user"**, or use any email and the demo code `123456`.
+Sign in with **Continue with Google** (simulated: it opens a fake account chooser), then confirm the
+consent step once.
 
-## Journey and routes
+## Experience
 
-| Step | Route |
+The product is designed so the complexity lives in the system, not the interface. A patient sees a
+few calm screens; the detail is there when they choose to open it.
+
+**Main navigation (three places):** Home · Cases · Profile
+(a top bar on desktop, a bottom bar on mobile).
+
+**Inside a case (five places):** Overview · Analysis · Report · Questions · Second opinion.
+
+| Screen | Route |
 | --- | --- |
 | Landing | `/` |
-| Sign in / Sign up (email code, consent checkbox) | `/login`, `/signup` |
-| Dashboard | `/dashboard` |
-| Create case + **safety gate** (urgent-care screen) | `/cases/new` |
-| Upload documents | `/cases/[caseId]/upload`, `/documents` |
-| Processing (progress, partial and failed states) | `/cases/[caseId]/analysis` |
-| Case overview | `/cases/[caseId]` |
-| Timeline | `/cases/[caseId]/timeline` |
-| Specialist perspectives | `/cases/[caseId]/perspectives` |
-| Evidence and verification | `/cases/[caseId]/evidence` |
-| Cross-agent review | `/cases/[caseId]/review` |
-| AI synthesis | `/cases/[caseId]/synthesis` |
-| 19-section patient report (print-friendly) | `/cases/[caseId]/report` |
-| Questions (trackable) | `/cases/[caseId]/questions` |
-| Second opinion and comparison | `/cases/[caseId]/second-opinion`, `/comparison` |
-| Profile, settings | `/profile`, `/settings` |
+| Sign in / Create your space (Google, consent) | `/login`, `/signup`, `/welcome` |
+| Home | `/home` |
+| All cases | `/cases` |
+| New case: intent → what your doctor said → urgent-symptom check | `/cases/new` |
+| Add reports | `/cases/[caseId]/upload` |
+| Overview (short summary, one primary action) | `/cases/[caseId]` |
+| Analysis: calm 5-stage progress, then a hub | `/cases/[caseId]/analysis` |
+| ... timeline, specialist perspectives, supporting evidence, where information differs, how we pulled it together | `/cases/[caseId]/analysis/{timeline,perspectives,evidence,differences,summary}` |
+| Report (8 groups that expand; 19 sections underneath) | `/cases/[caseId]/report` |
+| Questions (current doctor / second-opinion doctor, trackable) | `/cases/[caseId]/questions` |
+| Second opinion: upload → we're reviewing it → your comparison | `/cases/[caseId]/second-opinion` |
+| Profile (account, reading comfort, prototype data) | `/profile` |
 
 Every case screen can open the traceability drawer through a deep link: `?evidence=<itemId>`.
 For example `/cases/c_9f2/report?evidence=syn_8`.
 
 ## Demo cases (all fictional)
 
-- `c_9f2`: **Heart and diabetes.** A full case; perspectives differ on timing.
-- `c_k21`: **Missing information.** The MRI report is missing, one file is unreadable, one value is
-  uncertain, and one perspective did not finish.
-- `c_m77`: **Conflicting reports.** An MRI report and a discharge summary describe the same scan
-  differently. Both stay visible; nothing is resolved for the reader.
+- `c_9f2`: **Heart treatment.** A full case; perspectives differ on timing.
+- `c_k21`: **Knee pain (missing information).** The MRI report is missing, one file is unreadable,
+  one value is uncertain, and one perspective did not finish.
+- `c_m77`: **Head scan reports (conflicting reports).** An MRI report and a discharge summary
+  describe the same scan differently. Both stay visible; nothing is resolved for the reader.
 
-On the upload step, *Prototype controls* lets you force a partial or failed analysis. On the
-new-case form, *Demo: show me the urgent-care screen* shows the safety gate.
+On the Add reports step, the *sample case* panel lets you pick a case and force a partial or failed
+analysis. In *new case*, the last step has a *Demo: show me the urgent-care screen* button.
 
 ## Architecture
 
 ```
 src/
-  app/            routes (App Router): (public), (app), cases/[caseId]/...
+  app/            routes (App Router): (public), (app), cases/[caseId]/..., welcome
   components/
     ui/           shadcn/ui primitives
-    layout/       shell, banner, disclaimer bar, header
-    case/         case frame, status, documents, urgent-care screen, results gate
+    layout/       app shell, banner, disclaimer bar, page headings
+    case/         case frame (title + 5 tabs), case row, documents, urgent-care screen, results gate
     medical/      EvidenceChip, TraceDrawer, TimelineView, DisagreementMatrix,
                   PerspectiveCard, ClaimRow, QuestionList, RunProgress, ComparisonView, markers
-    report/       SectionRenderer (renders any report section from JSON)
+    report/       SectionRenderer (any section from JSON) and ReportView (the 8 patient groups)
   config/brand.ts the product name, in one place
   domain/types.ts typed domain models (mirror case.v1, specialist_report.v1, ...)
-  features/       auth (mock), case data hooks, trace context, settings
+  features/       auth (mock Google + consent), case data hooks, trace context, settings
   i18n/           typed message catalogue (English; ready for Hindi/Hinglish)
   lib/api/        the AdvisorApi interface and the single switch point
+  lib/analysis-groups.ts  maps the 14 internal steps to 5 patient-facing stages
   mocks/          synthetic scenarios, builders and the in-browser mock API
 ```
+
+### What changed in the patient experience, and what did not
+
+The **experience** is simple; the **architecture** is untouched. The internal 14-step workflow, the
+specialist agents, verification, cross-review and traceability all still exist in the data. The UI
+only decides how much of it to show:
+
+- The report keeps all 19 blueprint sections in its JSON. `ReportView` groups them into eight
+  patient-friendly sections, and `SectionRenderer` still renders each one.
+- `RunProgress` shows five stages (via `groupRun`) instead of the internal steps.
+- The traceability drawer shows document, page, original text, related finding and verification
+  status first, with the complete trail one click away.
 
 ### Mock data behind an API-shaped abstraction
 
@@ -81,12 +100,14 @@ interface replaces it in **one file** (`src/lib/api/index.ts`). See
 
 ### Principles baked in
 
+- One primary action per screen; details only when asked for.
 - Every report sentence carries an item ID and a **Source** chip that opens the traceability drawer.
 - Statements are labelled **from your records / AI interpretation / reference evidence**.
 - Uncertainty, missing information and disagreement always stay visible, with icon **and** text.
 - No majority vote, no winner, no scores, and no red/green "right or wrong" colouring.
-- The safety gate runs before any case or analysis exists.
-- A persistent prototype banner and safety disclaimer appear on every screen.
+- The urgent-symptom check runs before any case or analysis exists.
+- A persistent prototype banner and safety disclaimer (a bottom bar on desktop; the banner plus a
+  page footer on mobile).
 - Mobile-first, keyboard-accessible, reduced-motion aware, with print styles for the report.
 
 ## Naming

@@ -3,116 +3,79 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, ArrowRight, ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { EmptyState, LoadingState } from "@/components/medical/states";
-import { SyntheticTag } from "@/components/medical/markers";
-import { buttonVariants } from "@/components/ui/button";
 import { useCase } from "@/features/case/hooks";
-import { STAGES, stageIndexFor } from "@/features/case/stages";
-import { sexLabel } from "@/lib/format";
+import { CASE_TABS, activeTabKey } from "@/features/case/stages";
 import { t } from "@/i18n";
 import { cn } from "@/lib/utils";
-import { CaseStatusBadge } from "./case-status";
+import { caseStatusLine, caseTitle } from "./case-row";
 
-/** Header, stage navigation and next/back footer shared by every case screen. */
+/** Title and the five-place case navigation shared by every case screen. */
 export function CaseFrame({ caseId, children }: { caseId: string; children: React.ReactNode }) {
   const pathname = usePathname();
   const { data: c, status } = useCase(caseId);
   const navRef = useRef<HTMLOListElement>(null);
+  const active = activeTabKey(pathname, caseId);
 
-  // Keep the current stage visible in the horizontally scrolling journey nav.
+  // Keep the current tab visible in the horizontally scrolling nav on small screens.
   useEffect(() => {
     const list = navRef.current;
-    const active = list?.querySelector<HTMLElement>('[aria-current="page"]');
-    if (list && active) list.scrollLeft = active.offsetLeft - list.clientWidth / 2 + active.clientWidth / 2;
+    const el = list?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (list && el) list.scrollLeft = el.offsetLeft - list.clientWidth / 2 + el.clientWidth / 2;
   }, [pathname, status]);
 
-  if (status === "loading") return <div className="mx-auto max-w-5xl"><LoadingState rows={2} /></div>;
+  if (status === "loading") return <LoadingState rows={2} />;
   if (!c) {
     return (
-      <div className="mx-auto max-w-3xl">
-        <EmptyState title="We couldn't find that case" body="It may have been deleted, or the link is out of date." action={{ label: "Back to dashboard", href: "/dashboard" }} />
-      </div>
+      <EmptyState
+        title="We couldn’t find that case"
+        body="It may have been deleted, or the link is out of date."
+        action={{ label: "Back to your cases", href: "/cases" }}
+      />
     );
   }
 
-  const hasResults = c.status === "complete" || c.status === "partial";
-  const idx = stageIndexFor(pathname, caseId);
-  const prev = idx > 0 ? STAGES[idx - 1] : null;
-  const next = idx >= 0 && idx < STAGES.length - 1 ? STAGES[idx + 1] : null;
+  const started = c.status !== "draft" && c.status !== "awaiting_upload";
   const href = (path: string) => `/cases/${caseId}${path}`;
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <div data-no-print className="no-print mb-4 flex flex-wrap items-center justify-between gap-3">
-        <Link href="/dashboard" className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground">
-          <ChevronLeft aria-hidden className="size-4" /> All cases
+    <div>
+      <div data-no-print className="no-print mb-6 space-y-2">
+        <Link href="/cases" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+          <ChevronLeft aria-hidden className="size-4" /> Cases
         </Link>
-        <div className="flex flex-wrap items-center gap-2">
-          <SyntheticTag />
-          <CaseStatusBadge status={c.status} />
-        </div>
-      </div>
-
-      <div className="mb-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-        <p className="font-heading text-lg text-ink">Case {c.code}</p>
+        <h1 className="text-3xl sm:text-4xl">{caseTitle(c)}</h1>
         <p className="text-sm text-muted-foreground">
-          {c.ageYears} · {sexLabel(c.sex)} · {c.specialtyLabel}
+          Case {c.code} · {caseStatusLine[c.status]}
         </p>
       </div>
 
-      <nav
-        aria-label="Case journey"
-        data-no-print
-        className="no-print sticky top-[5.5rem] z-20 -mx-4 mb-8 border-b bg-background/95 px-4 backdrop-blur sm:-mx-8 sm:px-8 lg:top-8"
-      >
-        <ol ref={navRef} className="relative flex gap-1 overflow-x-auto py-2 [scrollbar-width:thin]">
-          {STAGES.map((s, i) => {
-            const active = i === idx;
-            const dim = s.needsResults && !hasResults;
-            return (
-              <li key={s.key} className="shrink-0">
-                <Link
-                  href={href(s.path)}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors",
-                    active ? "bg-primary text-primary-foreground" : dim ? "text-muted-foreground/70 hover:bg-secondary" : "text-foreground/80 hover:bg-secondary",
-                  )}
-                >
-                  <span
-                    aria-hidden
+      {started && (
+        <nav aria-label="This case" data-no-print className="no-print sticky top-[4.4rem] z-20 -mx-5 mb-10 border-b bg-background/95 px-5 backdrop-blur">
+          <ol ref={navRef} className="flex gap-6 overflow-x-auto [scrollbar-width:none]">
+            {CASE_TABS.map((tab) => {
+              const on = tab.key === active;
+              return (
+                <li key={tab.key} className="shrink-0">
+                  <Link
+                    href={href(tab.path)}
+                    aria-current={on ? "page" : undefined}
                     className={cn(
-                      "grid size-5 place-items-center rounded-full text-[0.7rem]",
-                      active ? "bg-primary-foreground/20" : "bg-muted text-muted-foreground",
+                      "block border-b-2 py-3 text-[0.95rem] font-medium whitespace-nowrap transition-colors",
+                      on ? "border-primary text-ink" : "border-transparent text-muted-foreground hover:text-foreground",
                     )}
                   >
-                    {i + 1}
-                  </span>
-                  {t(s.label)}
-                </Link>
-              </li>
-            );
-          })}
-        </ol>
-      </nav>
+                    {t(tab.label)}
+                  </Link>
+                </li>
+              );
+            })}
+          </ol>
+        </nav>
+      )}
 
       {children}
-
-      {idx >= 0 && (
-        <div data-no-print className="no-print mt-12 flex flex-wrap items-center justify-between gap-3 border-t pt-6">
-          {prev ? (
-            <Link href={href(prev.path)} className={cn(buttonVariants({ variant: "outline", size: "lg" }))}>
-              <ArrowLeft aria-hidden data-icon="inline-start" /> {t(prev.label)}
-            </Link>
-          ) : <span />}
-          {next && (
-            <Link href={href(next.path)} className={cn(buttonVariants({ size: "lg" }))}>
-              {t(next.label)} <ArrowRight aria-hidden data-icon="inline-end" />
-            </Link>
-          )}
-        </div>
-      )}
     </div>
   );
 }

@@ -2,16 +2,15 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowRight, FlaskConical, ShieldCheck } from "lucide-react";
-import { PageHeader } from "@/components/layout/page-header";
+import { ArrowRight, FlaskConical } from "lucide-react";
 import { DocumentList, UploadDropzone, type FileCheck } from "@/components/case/documents";
-import { EmptyState, ErrorState, LoadingState, PartialNotice } from "@/components/medical/states";
+import { PageIntro } from "@/components/layout/page-intro";
+import { ErrorState, LoadingState } from "@/components/medical/states";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import type { RunOutcome, ScenarioId } from "@/domain/types";
 import { useCase, useDocuments } from "@/features/case/hooks";
 import { api } from "@/lib/api";
-import { cn } from "@/lib/utils";
 import { scenarioBlurbs, scenarioList } from "@/mocks/scenarios";
 
 export default function UploadPage() {
@@ -24,7 +23,7 @@ export default function UploadPage() {
   const [errors, setErrors] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
 
-  if (c.status === "loading" || docs.status === "loading") return <LoadingState rows={3} />;
+  if (c.status === "loading" || docs.status === "loading") return <LoadingState rows={2} />;
   if (c.status === "error" || docs.status === "error") return <ErrorState onRetry={() => { c.reload(); docs.reload(); }} />;
   if (!c.data) return null;
 
@@ -32,22 +31,21 @@ export default function UploadPage() {
   const selected = scenario ?? c.data.scenario;
   const documents = docs.data ?? [];
 
+  if (done) {
+    return (
+      <>
+        <PageIntro title="Your reports">These are the documents your results are based on.</PageIntro>
+        <DocumentList documents={documents} />
+      </>
+    );
+  }
+
   const addFiles = async ({ valid, errors: errs }: FileCheck) => {
     setErrors(errs);
     if (!valid.length) return;
     setBusy(true);
     for (const f of valid) await api.uploadDocument(caseId, { name: f.name, sizeKb: Math.max(1, Math.round(f.size / 1024)) });
     setBusy(false);
-    docs.reload();
-    c.reload();
-  };
-
-  const useSample = async () => {
-    setBusy(true);
-    await api.attachSampleRecords(caseId, selected);
-    setBusy(false);
-    docs.reload();
-    c.reload();
   };
 
   const start = async () => {
@@ -57,104 +55,65 @@ export default function UploadPage() {
     router.push(`/cases/${caseId}/analysis`);
   };
 
-  if (done) {
-    return (
-      <>
-        <PageHeader eyebrow="Records" title="Your records were analysed" description="These are the documents behind your results." />
-        <DocumentList documents={documents} />
-      </>
-    );
-  }
-
   return (
-    <>
-      <PageHeader
-        eyebrow="New case · step 2 of 3"
-        title="Add your records"
-        description="Reports, prescriptions, scans, discharge notes. Files stay private to your case."
-      />
+    <div className="space-y-10">
+      <PageIntro title="Add your reports">Reports, scans, prescriptions or discharge notes. Add whatever you have.</PageIntro>
 
-      <div className="space-y-8">
-        <p className="flex items-center gap-2 rounded-xl bg-secondary/70 px-4 py-3 text-sm">
-          <ShieldCheck aria-hidden className="size-4 shrink-0 text-primary" />
-          Safety check passed. Nothing urgent was found, so you can continue.
-        </p>
+      <UploadDropzone onFiles={addFiles} busy={busy} />
+      {errors.length > 0 && (
+        <ul role="alert" className="space-y-1 rounded-2xl bg-uncertain-soft/70 p-4 text-sm">
+          {errors.map((e) => <li key={e}>{e}</li>)}
+        </ul>
+      )}
 
-        <PartialNotice title="Prototype: your files are not read">
-          This demo can’t read real files, and it should never receive real medical information. Choose a synthetic sample case below; the
-          analysis will use it. You can still try the upload box to see file checks.
-        </PartialNotice>
+      {documents.length > 0 && (
+        <section aria-labelledby="added" className="space-y-3">
+          <h3 id="added" className="text-lg">Added so far</h3>
+          <DocumentList documents={documents} onRemove={async (id) => { await api.removeDocument(caseId, id); }} />
+        </section>
+      )}
 
-        <section aria-labelledby="sample-h" className="space-y-4">
-          <h2 id="sample-h" className="text-xl">Use synthetic sample records</h2>
-          <RadioGroup value={selected} onValueChange={(v) => setScenario(v as ScenarioId)} className="grid gap-3 md:grid-cols-3" aria-label="Sample case">
-            {scenarioList.map((s) => {
-              const meta = scenarioBlurbs[s.id];
-              return (
-                <label
-                  key={s.id}
-                  className={cn("paper flex cursor-pointer flex-col gap-2 p-4 transition-colors has-data-checked:border-primary has-data-checked:bg-accent/50")}
-                >
-                  <span className="flex items-center gap-2">
-                    <RadioGroupItem value={s.id} />
-                    <span className="font-medium">{meta.title}</span>
-                  </span>
-                  <span className="text-sm text-muted-foreground">{meta.blurb}</span>
-                  <span className="mt-auto text-xs text-muted-foreground">
-                    {s.seedCase.ageYears}, {s.seedCase.sex === "F" ? "female" : "male"} · {s.documents.length} documents · fictional
-                  </span>
-                </label>
-              );
-            })}
+      <details className="no-print rounded-2xl border border-dashed p-4 text-sm" open={documents.length === 0}>
+        <summary className="flex cursor-pointer items-center gap-2 font-medium">
+          <FlaskConical aria-hidden className="size-4" /> No reports handy? Try a sample case (prototype)
+        </summary>
+        <div className="mt-4 space-y-4">
+          <p className="text-muted-foreground">
+            This prototype can’t read real files, and should never receive real medical information. Pick a fictional sample; your case will
+            use it.
+          </p>
+          <RadioGroup value={selected} onValueChange={(v) => setScenario(v as ScenarioId)} className="grid gap-2" aria-label="Sample case">
+            {scenarioList.map((s) => (
+              <label key={s.id} className="flex cursor-pointer items-start gap-3 rounded-xl border bg-card p-3.5 has-data-checked:border-primary has-data-checked:bg-accent/40">
+                <RadioGroupItem value={s.id} className="mt-1" />
+                <span>
+                  <span className="block font-medium">{scenarioBlurbs[s.id].title}</span>
+                  <span className="block text-muted-foreground">{scenarioBlurbs[s.id].blurb}</span>
+                </span>
+              </label>
+            ))}
           </RadioGroup>
-          <Button variant="outline" size="lg" onClick={useSample} disabled={busy}>
-            Add these sample records
+          <Button variant="outline" disabled={busy} onClick={async () => { setBusy(true); await api.attachSampleRecords(caseId, selected); setBusy(false); }}>
+            Add these sample reports
           </Button>
-        </section>
 
-        <section aria-labelledby="up-h" className="space-y-4">
-          <h2 id="up-h" className="text-xl">Or try the upload box</h2>
-          <UploadDropzone onFiles={addFiles} busy={busy} />
-          {errors.length > 0 && (
-            <ul role="alert" className="space-y-1 rounded-xl border border-uncertain/30 bg-uncertain-soft/60 p-3 text-sm">
-              {errors.map((e) => <li key={e}>{e}</li>)}
-            </ul>
-          )}
-        </section>
-
-        <section aria-labelledby="list-h" className="space-y-4">
-          <h2 id="list-h" className="text-xl">Your documents ({documents.length})</h2>
-          {documents.length === 0 ? (
-            <EmptyState title="No documents yet" body="Add the sample records above, or choose files, to continue." />
-          ) : (
-            <DocumentList
-              documents={documents}
-              onRemove={async (id) => { await api.removeDocument(caseId, id); docs.reload(); c.reload(); }}
-            />
-          )}
-        </section>
-
-        <details className="no-print rounded-xl border border-dashed p-4 text-sm">
-          <summary className="flex cursor-pointer items-center gap-2 font-medium">
-            <FlaskConical aria-hidden className="size-4" /> Prototype controls
-          </summary>
-          <div className="mt-3 space-y-2">
-            <p className="text-muted-foreground">Choose how the simulated analysis should end, to experience partial and failed states.</p>
+          <div className="space-y-2 border-t pt-4">
+            <p className="font-medium">How should the simulated review end?</p>
             <RadioGroup value={simulate} onValueChange={(v) => setSimulate(v as RunOutcome | "auto")} className="flex flex-wrap gap-x-5 gap-y-2" aria-label="Simulated outcome">
-              {([["auto", "As the sample case would"], ["complete", "Everything works"], ["partial", "Finishes with gaps"], ["failed", "A critical step fails"]] as const).map(([v, l]) => (
+              {([["auto", "As the sample would"], ["complete", "All goes well"], ["partial", "Finishes with gaps"], ["failed", "Something fails"]] as const).map(([v, l]) => (
                 <label key={v} className="flex cursor-pointer items-center gap-2"><RadioGroupItem value={v} /> {l}</label>
               ))}
             </RadioGroup>
           </div>
-        </details>
-
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t pt-6">
-          <p className="text-sm text-muted-foreground">Next: we read your records. In this prototype that takes about 20 seconds.</p>
-          <Button size="lg" onClick={start} disabled={busy || documents.length === 0}>
-            Start analysis <ArrowRight aria-hidden data-icon="inline-end" />
-          </Button>
         </div>
+      </details>
+
+      <div className="space-y-3">
+        <Button size="lg" className="h-14 w-full rounded-2xl text-base sm:w-auto sm:px-8" onClick={start} disabled={busy || documents.length === 0}>
+          Review my case <ArrowRight aria-hidden data-icon="inline-end" />
+        </Button>
+        <p className="text-sm text-muted-foreground">We’ll review your reports and prepare a clear summary. It usually takes a few minutes.</p>
       </div>
-    </>
+    </div>
   );
 }

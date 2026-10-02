@@ -2,32 +2,42 @@
 
 import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ShieldCheck, Siren } from "lucide-react";
-import { PageHeader } from "@/components/layout/page-header";
+import { ArrowRight, ChevronLeft } from "lucide-react";
 import { UrgentCareScreen } from "@/components/case/urgent-care-screen";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import { BRAND } from "@/config/brand";
 import type { SafetyCheckResult, Sex } from "@/domain/types";
 import { api } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import { t } from "@/i18n";
 
-const RED_FLAG_OPTIONS = [
+const INTENTS = [
+  "Understanding my diagnosis",
+  "Understanding my treatment",
+  "Preparing for a second opinion",
+  "Understanding my reports",
+  "Something else",
+];
+
+const RED_FLAGS = [
   { id: "chest_pain_now", label: "Chest pain happening right now" },
-  { id: "stroke_signs", label: "Signs of a stroke (face drooping, slurred speech, sudden weakness)" },
+  { id: "stroke_signs", label: "Signs of a stroke: face drooping, slurred speech, sudden weakness" },
   { id: "breathless_rest", label: "Struggling to breathe, even at rest" },
-  { id: "heavy_bleeding", label: "Heavy bleeding that won't stop" },
+  { id: "heavy_bleeding", label: "Heavy bleeding that won’t stop" },
   { id: "self_harm", label: "Thoughts of harming myself" },
 ];
 
+/** Three short questions, one at a time. Never a form. */
 export default function NewCasePage() {
   const router = useRouter();
-  const ids = { concern: useId(), treatment: useId(), age: useId(), err: useId() };
-  const [concern, setConcern] = useState("");
-  const [treatment, setTreatment] = useState("");
+  const ids = { story: useId(), age: useId(), err: useId() };
+  const [step, setStep] = useState(0);
+  const [intent, setIntent] = useState<string>("");
+  const [story, setStory] = useState("");
   const [age, setAge] = useState("");
   const [sex, setSex] = useState<Sex>("F");
   const [flags, setFlags] = useState<string[]>([]);
@@ -35,120 +45,145 @@ export default function NewCasePage() {
   const [busy, setBusy] = useState(false);
   const [urgent, setUrgent] = useState<SafetyCheckResult | null>(null);
 
-  const toggleFlag = (id: string, on: boolean) => setFlags((prev) => (on ? [...prev, id] : prev.filter((f) => f !== id)));
+  if (urgent) return <UrgentCareScreen result={urgent} />;
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const ageNum = Number(age);
-    if (concern.trim().length < 8) return setError("Please describe your main question in a sentence or two.");
-    if (!Number.isFinite(ageNum) || ageNum < 1 || ageNum > 120) return setError("Please enter an age between 1 and 120.");
+  const toggleFlag = (id: string, on: boolean) => setFlags((p) => (on ? [...p, id] : p.filter((f) => f !== id)));
+
+  const next = () => {
+    if (step === 1) {
+      const ageNum = Number(age);
+      if (story.trim().length < 8) return setError("Tell us a little more, in your own words. A sentence or two is plenty.");
+      if (!Number.isFinite(ageNum) || ageNum < 1 || ageNum > 120) return setError("Please add your age (or the patient’s age).");
+    }
     setError(null);
+    setStep((s) => s + 1);
+  };
+
+  const finish = async () => {
     setBusy(true);
+    setError(null);
     try {
       // The safety gate always runs BEFORE a case or analysis exists.
-      const result = await api.safetyCheck({ text: `${concern} ${treatment}`, currentSymptoms: flags });
+      const result = await api.safetyCheck({ text: story, currentSymptoms: flags });
       if (result.redFlag) {
         setUrgent(result);
         window.scrollTo({ top: 0 });
         return;
       }
-      const created = await api.createCase({ concern: concern.trim(), proposedTreatment: treatment.trim() || undefined, ageYears: ageNum, sex });
+      const created = await api.createCase({ intent: intent || "My case", concern: story.trim(), ageYears: Number(age), sex });
       router.push(`/cases/${created.id}/upload`);
     } catch {
-      setError("We couldn't save this case. Please try again.");
+      setError("We couldn’t save this. Please try again.");
     } finally {
       setBusy(false);
     }
   };
 
-  if (urgent) return <UrgentCareScreen result={urgent} />;
-
   return (
-    <div className="mx-auto max-w-2xl">
-      <PageHeader
-        eyebrow="New case · step 1 of 3"
-        title="What would you like to prepare for?"
-        description="Tell us your main question. Next you'll add your records, then we'll analyse them."
-      />
+    <div className="mx-auto max-w-xl">
+      <title>{`New case · ${BRAND.name}`}</title>
+      <div className="mb-10 flex items-center justify-between">
+        {step > 0 ? (
+          <button type="button" onClick={() => { setError(null); setStep(step - 1); }} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+            <ChevronLeft aria-hidden className="size-4" /> Back
+          </button>
+        ) : <span />}
+        <p className="text-sm text-muted-foreground" aria-live="polite">Step {step + 1} of 3</p>
+      </div>
 
-      <form onSubmit={submit} noValidate className="space-y-8">
-        <section className="paper space-y-5 p-5 sm:p-6" aria-labelledby="about-heading">
-          <h2 id="about-heading" className="text-xl">About your case</h2>
+      {step === 0 && (
+        <section aria-labelledby="q0" className="space-y-8">
+          <h1 id="q0" className="text-3xl sm:text-4xl">What would you like help understanding?</h1>
+          <ul className="space-y-3">
+            {INTENTS.map((label) => (
+              <li key={label}>
+                <button
+                  type="button"
+                  onClick={() => { setIntent(label); setStep(1); }}
+                  className={cn(
+                    "flex w-full items-center justify-between gap-3 rounded-2xl border bg-card px-5 py-4 text-left text-lg transition-colors hover:border-primary/50 hover:bg-accent/40",
+                    intent === label && "border-primary bg-accent/50",
+                  )}
+                >
+                  {label}
+                  <ArrowRight aria-hidden className="size-5 text-muted-foreground" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {step === 1 && (
+        <section aria-labelledby="q1" className="space-y-8">
+          <h1 id="q1" className="text-3xl sm:text-4xl">What did your doctor tell you?</h1>
           <div className="space-y-2">
-            <Label htmlFor={ids.concern}>Your main question or concern</Label>
+            <Label htmlFor={ids.story} className="sr-only">What did your doctor tell you?</Label>
             <Textarea
-              id={ids.concern} rows={3} value={concern} onChange={(e) => setConcern(e.target.value)}
-              placeholder="For example: Is this procedure necessary now, or are there other options to ask about?"
-              aria-describedby={error ? ids.err : undefined} className="min-h-24 bg-card px-3"
+              id={ids.story} rows={5} value={story} onChange={(e) => setStory(e.target.value)} autoFocus
+              placeholder="Write in your own words… for example, what was recommended, and what you’re unsure about."
+              aria-describedby={error ? ids.err : undefined}
+              className="min-h-40 rounded-2xl bg-card px-4 py-3 text-lg"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor={ids.treatment}>
-              Treatment or procedure being proposed <span className="font-normal text-muted-foreground">(optional)</span>
-            </Label>
-            <Input id={ids.treatment} value={treatment} onChange={(e) => setTreatment(e.target.value)} placeholder="For example: angioplasty, knee arthroscopy" />
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="flex flex-wrap items-end gap-x-8 gap-y-5">
             <div className="space-y-2">
               <Label htmlFor={ids.age}>Age</Label>
-              <Input id={ids.age} type="number" inputMode="numeric" min={1} max={120} value={age} onChange={(e) => setAge(e.target.value)} placeholder="e.g. 52" />
+              <Input id={ids.age} type="number" inputMode="numeric" min={1} max={120} value={age} onChange={(e) => setAge(e.target.value)} placeholder="e.g. 52" className="w-28" />
             </div>
             <fieldset className="space-y-2">
               <legend className="mb-2 text-sm font-medium">Sex</legend>
-              <RadioGroup value={sex} onValueChange={(v) => setSex(v as Sex)} className="flex flex-wrap gap-4" aria-label="Sex">
+              <div role="radiogroup" aria-label="Sex" className="flex gap-2">
                 {([["F", "Female"], ["M", "Male"], ["X", "Other"]] as const).map(([v, label]) => (
-                  <Label key={v} className="flex cursor-pointer items-center gap-2 font-normal">
-                    <RadioGroupItem value={v} /> {label}
-                  </Label>
+                  <button
+                    key={v} type="button" role="radio" aria-checked={sex === v} onClick={() => setSex(v)}
+                    className={cn("rounded-full border px-4 py-2 text-sm font-medium transition-colors", sex === v ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:bg-secondary")}
+                  >
+                    {label}
+                  </button>
                 ))}
-              </RadioGroup>
+              </div>
             </fieldset>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Only age and sex are used to understand your records. Your name is never part of an analysis, and cases show a code, not a name.
-          </p>
+          <p className="text-sm text-muted-foreground">We use your age and sex only to understand your reports. Your name is never part of an analysis.</p>
+          {error && <p id={ids.err} role="alert" className="text-sm font-medium text-destructive">{error}</p>}
+          <Button size="lg" className="h-14 w-full rounded-2xl text-base sm:w-auto sm:px-8" onClick={next}>
+            Continue <ArrowRight aria-hidden data-icon="inline-end" />
+          </Button>
         </section>
+      )}
 
-        <section className="paper space-y-4 border-urgent/20 p-5 sm:p-6" aria-labelledby="gate-heading">
-          <div className="flex items-start gap-3">
-            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-urgent-soft text-urgent">
-              <Siren aria-hidden className="size-5" />
-            </span>
-            <div>
-              <h2 id="gate-heading" className="text-xl">{t("gate.title")}</h2>
-              <p className="text-sm text-muted-foreground">{t("gate.body")}</p>
-            </div>
+      {step === 2 && (
+        <section aria-labelledby="q2" className="space-y-8">
+          <div className="space-y-3">
+            <h1 id="q2" className="text-3xl sm:text-4xl">{t("gate.title")}</h1>
+            <p className="text-lg text-muted-foreground">{t("gate.body")} Tick anything that is happening to you right now.</p>
           </div>
           <fieldset className="space-y-3">
             <legend className="sr-only">Symptoms happening right now</legend>
-            {RED_FLAG_OPTIONS.map((o) => (
-              <Label key={o.id} className="flex cursor-pointer items-start gap-3 rounded-xl border p-3 font-normal has-data-checked:border-urgent/40 has-data-checked:bg-urgent-soft">
-                <Checkbox checked={flags.includes(o.id)} onCheckedChange={(v) => toggleFlag(o.id, v === true)} className="mt-0.5" />
+            {RED_FLAGS.map((o) => (
+              <Label key={o.id} className="flex cursor-pointer items-start gap-3 rounded-2xl border bg-card p-4 text-base font-normal has-data-checked:border-urgent/50 has-data-checked:bg-urgent-soft">
+                <Checkbox checked={flags.includes(o.id)} onCheckedChange={(v) => toggleFlag(o.id, v === true)} className="mt-1" />
                 <span>{o.label}</span>
               </Label>
             ))}
           </fieldset>
-          <p className="flex items-center gap-2 text-sm text-muted-foreground">
-            <ShieldCheck aria-hidden className="size-4 shrink-0 text-primary" />
-            Nothing here? You can leave these empty. We also scan your description for the same warning signs.
-          </p>
-          <Button
-            type="button" variant="ghost" size="sm" className="no-print"
-            onClick={() => { setConcern("I have crushing chest pain right now"); setFlags(["chest_pain_now"]); if (!age) setAge("52"); }}
-          >
-            Demo: show me the urgent-care screen
-          </Button>
+          {error && <p role="alert" className="text-sm font-medium text-destructive">{error}</p>}
+          <div className="space-y-3">
+            <Button size="lg" className="h-14 w-full rounded-2xl text-base sm:w-auto sm:px-8" onClick={finish} disabled={busy}>
+              {busy ? "Checking…" : flags.length ? "Continue" : "None of these. Continue"} <ArrowRight aria-hidden data-icon="inline-end" />
+            </Button>
+            <div>
+              <Button
+                type="button" variant="ghost" size="sm" className="no-print text-muted-foreground"
+                onClick={() => { setFlags(["chest_pain_now"]); }}
+              >
+                Demo: show me the urgent-care screen
+              </Button>
+            </div>
+          </div>
         </section>
-
-        {error && <p id={ids.err} role="alert" className="text-sm font-medium text-destructive">{error}</p>}
-
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-muted-foreground">Next: add your records.</p>
-          <Button type="submit" size="lg" disabled={busy}>
-            {busy ? "Checking…" : "Check and continue"} <ArrowRight aria-hidden data-icon="inline-end" />
-          </Button>
-        </div>
-      </form>
+      )}
     </div>
   );
 }

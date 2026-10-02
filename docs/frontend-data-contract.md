@@ -30,11 +30,14 @@ To swap in the real backend, write an `httpApi` that implements `AdvisorApi` and
 
 ## Data the UI needs
 
-- **Case**: pseudonymous `code`, age, sex, concern, proposed treatment, status. Names never appear
-  on case screens.
+- **Case**: pseudonymous `code`, optional short `title` ("Knee pain"), age, sex, concern, proposed
+  treatment, status. Names never appear on case screens. New-case input may carry an optional
+  `intent` ("Understanding my treatment"). Both are additive and optional.
 - **Run**: `status` (`running | complete | partial | failed`) and 14 steps, each
   `pending | running | done | warning | failed | skipped` with an optional plain-language note.
-  A critical failure must come with `failure.title/body`; gaps with `warnings[]`.
+  A critical failure must come with `failure.title/body`; gaps with `warnings[]`. The UI groups the
+  14 steps into five patient-facing stages (`frontend/src/lib/analysis-groups.ts`); the step list
+  itself must stay stable.
 - **Facts** carry provenance: `source = { docId, page, section, snippet }`.
 - **Report**: 19 fixed sections; each non-template item has a stable `id` and `evidenceIds`.
   `kind` is `patient_fact | interpretation | external_evidence | template`.

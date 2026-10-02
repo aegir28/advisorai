@@ -36,8 +36,8 @@ npm install
 npm run dev
 ```
 
-Then open <http://localhost:3000>. On the sign-up or sign-in screen choose
-**"Skip ahead as a demo user"** (or use the demo code `123456`).
+Then open <http://localhost:3000>. Choose **Continue with Google** (simulated: it opens a fake
+account chooser), confirm the consent step, and you are in.
 
 Three fictional cases are included: a full cardiology case, a **missing-information** case and a
 **conflicting-reports** case. See [`frontend/README.md`](frontend/README.md) for details.

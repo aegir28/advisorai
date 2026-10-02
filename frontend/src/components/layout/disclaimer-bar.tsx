@@ -15,7 +15,7 @@ export function DisclaimerBar() {
       <div
         role="region"
         aria-label="Medical safety disclaimer"
-        className="no-print fixed inset-x-0 bottom-0 z-40 border-t bg-card/95 px-3 py-2 text-xs text-muted-foreground backdrop-blur-sm"
+        className="no-print fixed inset-x-0 bottom-0 z-40 hidden border-t bg-card/95 px-3 py-2 text-xs text-muted-foreground backdrop-blur-sm sm:block"
       >
         <div className="mx-auto flex max-w-6xl items-center gap-2">
           <ShieldCheck aria-hidden className="size-4 shrink-0 text-primary" />

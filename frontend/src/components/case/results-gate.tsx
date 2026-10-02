@@ -23,9 +23,9 @@ export function ResultsGate<T>({
     return (
       <EmptyState
         icon={FileSearch}
-        title="Results aren't ready yet"
-        body="This screen fills in once your records have been analysed. Check the analysis page to see where things stand."
-        action={{ label: "Go to analysis", href: `/cases/${caseId}/analysis` }}
+        title="This isn’t ready yet"
+        body="This fills in once we’ve reviewed your reports. You can see where things stand on the Analysis page."
+        action={{ label: "See progress", href: `/cases/${caseId}/analysis` }}
       />
     );
   }

@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, MessageSquarePlus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Check, Copy } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import type { Question, QuestionAudience, QuestionStatus } from "@/domain/types";
 import { tk } from "@/i18n";
@@ -17,7 +15,7 @@ export type QuestionPatch = { status?: QuestionStatus; note?: string };
 
 function StatusControl({ question, onChange }: { question: Question; onChange: (patch: QuestionPatch) => void }) {
   return (
-    <div role="radiogroup" aria-label={`Status of question: ${question.text}`} className="inline-flex flex-wrap gap-1 rounded-full bg-muted p-1">
+    <div role="radiogroup" aria-label={`Status: ${question.text}`} className="inline-flex flex-wrap gap-1.5">
       {STATUSES.map((s) => {
         const on = question.status === s;
         return (
@@ -28,11 +26,11 @@ function StatusControl({ question, onChange }: { question: Question; onChange: (
             aria-checked={on}
             onClick={() => onChange({ status: s })}
             className={cn(
-              "flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-              on ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-card",
+              "flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm transition-colors",
+              on ? "border-primary bg-primary text-primary-foreground" : "bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground",
             )}
           >
-            {on && <Check aria-hidden className="size-3" />}
+            {on && <Check aria-hidden className="size-3.5" />}
             {tk(`q.status.${s}`)}
           </button>
         );
@@ -41,8 +39,10 @@ function StatusControl({ question, onChange }: { question: Question; onChange: (
   );
 }
 
-export function QuestionItem({ question, onChange, index }: { question: Question; onChange: (patch: QuestionPatch) => void; index: number }) {
+/** One question: big readable text, a three-way tracker, details only on request. */
+export function QuestionItem({ question, onChange, index, startHere }: { question: Question; onChange: (patch: QuestionPatch) => void; index: number; startHere?: boolean }) {
   const [copied, setCopied] = useState(false);
+  const [why, setWhy] = useState(false);
   const [noteOpen, setNoteOpen] = useState(!!question.note);
   const [note, setNote] = useState(question.note ?? "");
 
@@ -57,87 +57,81 @@ export function QuestionItem({ question, onChange, index }: { question: Question
   };
 
   return (
-    <li className={cn("paper space-y-4 p-4 sm:p-5", question.status === "answered" && "bg-muted/40")}>
-      <div className="flex items-start gap-3">
-        <span aria-hidden className="grid size-8 shrink-0 place-items-center rounded-full bg-secondary font-heading text-secondary-foreground">{index}</span>
+    <li className="space-y-4 py-7">
+      <div className="flex items-start gap-4">
+        <span aria-hidden className="mt-1 grid size-8 shrink-0 place-items-center rounded-full bg-secondary font-heading text-secondary-foreground">{index}</span>
         <div className="min-w-0 flex-1 space-y-1.5">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{question.category}</p>
-          <p className={cn("text-lg leading-snug", question.status === "answered" && "text-muted-foreground")}>{question.text}</p>
+          {startHere && <p className="text-xs font-medium uppercase tracking-wide text-primary">Start here</p>}
+          <p className={cn("text-xl leading-snug", question.status === "answered" && "text-muted-foreground")}>{question.text}</p>
         </div>
-        <Button variant="ghost" size="icon" aria-label="Copy this question" onClick={copy} data-no-print>
-          {copied ? <Check aria-hidden /> : <Copy aria-hidden />}
-        </Button>
+        <button type="button" onClick={copy} aria-label="Copy this question" data-no-print className="no-print mt-1 text-muted-foreground hover:text-foreground">
+          {copied ? <Check aria-hidden className="size-4" /> : <Copy aria-hidden className="size-4" />}
+        </button>
       </div>
 
-      <details className="rounded-xl bg-muted/50 px-3 py-2 text-sm">
-        <summary className="cursor-pointer list-none font-medium">Why this question?</summary>
-        <div className="mt-2 space-y-2">
-          <p className="text-muted-foreground">{question.trigger}</p>
-          <div className="flex flex-wrap gap-2">
-            {question.linkedItemIds.map((id) => <EvidenceChip key={id} itemId={id} label={`Trigger · ${id}`} />)}
-          </div>
-        </div>
-      </details>
-
-      <div data-no-print className="no-print flex flex-wrap items-center justify-between gap-3">
+      <div data-no-print className="no-print space-y-4 pl-12">
         <StatusControl question={question} onChange={onChange} />
-        <Button variant="ghost" size="sm" onClick={() => setNoteOpen((o) => !o)}>
-          <MessageSquarePlus aria-hidden data-icon="inline-start" /> {noteOpen ? "Hide note" : "Add a note"}
-        </Button>
+        <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm">
+          <button type="button" aria-expanded={why} onClick={() => setWhy((w) => !w)} className="text-primary underline-offset-4 hover:underline">
+            {why ? "Hide why" : "Why this question?"}
+          </button>
+          <button type="button" aria-expanded={noteOpen} onClick={() => setNoteOpen((o) => !o)} className="text-primary underline-offset-4 hover:underline">
+            {noteOpen ? "Hide note" : question.note ? "Your note" : "Add a note"}
+          </button>
+        </div>
+        {why && (
+          <div className="space-y-2 text-muted-foreground">
+            <p>{question.trigger}</p>
+            <div className="flex flex-wrap gap-2">
+              {question.linkedItemIds.map((id) => <EvidenceChip key={id} itemId={id} />)}
+            </div>
+          </div>
+        )}
+        {noteOpen && (
+          <Textarea
+            aria-label="Your note about this question"
+            placeholder="What did the doctor say? (saved only on this device in the prototype)"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            onBlur={() => note !== (question.note ?? "") && onChange({ note })}
+            className="min-h-20 rounded-2xl bg-card px-3"
+          />
+        )}
       </div>
-      {noteOpen && (
-        <Textarea
-          aria-label="Your note about this question"
-          placeholder="What did the doctor say? (saved on your device only in this prototype)"
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          onBlur={() => note !== (question.note ?? "") && onChange({ note })}
-          className="min-h-20 bg-card px-3"
-        />
-      )}
-      {question.note && !noteOpen && <p className="rounded-lg bg-secondary/60 px-3 py-2 text-sm">Your note: {question.note}</p>}
     </li>
   );
 }
 
 export function QuestionList({ questions, onChange }: { questions: Question[]; onChange: (id: string, patch: QuestionPatch) => void }) {
+  const [audience, setAudience] = useState<QuestionAudience>("current_doctor");
+  const list = questions.filter((q) => q.audience === audience).sort((a, b) => a.priority - b.priority);
+
   return (
-    <Tabs defaultValue="current_doctor" className="gap-5">
-      <TabsList className="h-auto w-full flex-wrap justify-start gap-1 sm:w-auto" data-no-print>
+    <div className="space-y-8">
+      <div role="tablist" aria-label="Who are these questions for?" data-no-print className="no-print grid grid-cols-2 gap-1 rounded-2xl bg-muted p-1 sm:inline-grid">
         {AUDIENCES.map((a) => {
-          const list = questions.filter((q) => q.audience === a);
-          const answered = list.filter((q) => q.status === "answered").length;
+          const on = a === audience;
+          const mine = questions.filter((q) => q.audience === a);
           return (
-            <TabsTrigger key={a} value={a} className="h-auto px-4 py-2">
+            <button
+              key={a}
+              type="button"
+              role="tab"
+              aria-selected={on}
+              onClick={() => setAudience(a)}
+              className={cn("rounded-xl px-4 py-2.5 text-sm font-medium transition-colors sm:px-6", on ? "bg-card text-ink shadow-sm" : "text-muted-foreground hover:text-foreground")}
+            >
               {tk(`q.audience.${a}`)}
-              <span className="ml-1.5 text-xs text-muted-foreground">{answered}/{list.length}</span>
-            </TabsTrigger>
+              <span className="ml-1.5 text-xs text-muted-foreground">{mine.filter((q) => q.status === "answered").length}/{mine.length}</span>
+            </button>
           );
         })}
-      </TabsList>
-      {AUDIENCES.map((a) => {
-        const list = questions.filter((q) => q.audience === a);
-        let n = 0;
-        return (
-          <TabsContent key={a} value={a} className="space-y-8">
-            {([1, 2, 3] as const).map((p) => {
-              const group = list.filter((q) => q.priority === p);
-              if (!group.length) return null;
-              return (
-                <section key={p} aria-labelledby={`prio-${a}-${p}`} className="space-y-3">
-                  <h2 id={`prio-${a}-${p}`} className="flex items-center gap-2 text-lg">
-                    <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-medium text-primary-foreground">P{p}</span>
-                    {tk(`q.priority.${p}`)}
-                  </h2>
-                  <ol className="space-y-3">
-                    {group.map((q) => <QuestionItem key={q.id} question={q} index={++n} onChange={(patch) => onChange(q.id, patch)} />)}
-                  </ol>
-                </section>
-              );
-            })}
-          </TabsContent>
-        );
-      })}
-    </Tabs>
+      </div>
+      <ol className="divide-y border-y" aria-label={tk(`q.audience.${audience}`)}>
+        {list.map((q, i) => (
+          <QuestionItem key={q.id} question={q} index={i + 1} startHere={i === 0 && q.priority === 1} onChange={(patch) => onChange(q.id, patch)} />
+        ))}
+      </ol>
+    </div>
   );
 }

@@ -1,18 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Database, ShieldCheck } from "lucide-react";
-import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { PageHeader } from "@/components/layout/page-header";
 import { useAuth } from "@/features/auth/auth-context";
+import { readTextSize, saveTextSize, type TextSize } from "@/features/settings/preferences";
 import { formatDate } from "@/lib/format";
+
+const SIZES: { value: TextSize; label: string }[] = [
+  { value: "normal", label: "Standard" },
+  { value: "large", label: "Large" },
+  { value: "xlarge", label: "Extra large" },
+];
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
   const router = useRouter();
   const [confirm, setConfirm] = useState(false);
+  const [size, setSize] = useState<TextSize>("normal");
+  // Read the stored preference after mount to avoid a hydration mismatch.
+  useEffect(() => setSize(readTextSize()), []);
+
+  const leave = () => {
+    signOut();
+    router.push("/");
+  };
 
   const resetPrototype = () => {
     try {
@@ -26,33 +41,50 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl space-y-8">
-      <PageHeader eyebrow="Profile" title="Your profile" description="Only what’s needed to keep your cases private to you." />
+    <div className="space-y-12">
+      <PageHeader title="Profile" />
 
-      <section className="paper space-y-4 p-5" aria-labelledby="acct">
-        <h2 id="acct" className="text-xl">Account</h2>
-        <dl className="grid gap-4 sm:grid-cols-2">
-          <div><dt className="eyebrow">Name shown here</dt><dd className="mt-1">{user?.displayName}</dd></div>
-          <div><dt className="eyebrow">Email</dt><dd className="mt-1 break-all">{user?.email}</dd></div>
-          <div className="sm:col-span-2">
-            <dt className="eyebrow">Consent given</dt>
-            <dd className="mt-1">{user ? formatDate(user.consentedAt) : "—"} · prototype use, fictional data only</dd>
+      <section aria-labelledby="acct" className="space-y-4">
+        <h2 id="acct" className="text-xl">Your account</h2>
+        <div className="flex items-center gap-4">
+          <span aria-hidden className="grid size-14 place-items-center rounded-full bg-secondary font-heading text-2xl text-secondary-foreground">
+            {(user?.displayName ?? "D").slice(0, 1).toUpperCase()}
+          </span>
+          <div className="min-w-0">
+            <p className="font-medium">{user?.displayName}</p>
+            <p className="truncate text-muted-foreground">{user?.email}</p>
+            <p className="text-sm text-muted-foreground">Signed in with Google (simulated). Consent given {user?.consentedAt ? formatDate(user.consentedAt) : "—"}.</p>
           </div>
-        </dl>
-        <p className="flex items-start gap-2 text-sm text-muted-foreground">
-          <ShieldCheck aria-hidden className="mt-0.5 size-4 shrink-0 text-primary" />
-          Your name and email stay in your account. They are never placed in an analysis, and cases are shown by code.
+        </div>
+        <p className="max-w-lg text-sm text-muted-foreground">
+          Your name and email stay with your account. They are never part of an analysis, and cases are shown by name you chose, not by your identity.
         </p>
+        <Button variant="outline" onClick={leave}>Sign out</Button>
       </section>
 
-      <section className="paper space-y-3 p-5" aria-labelledby="data">
+      <section aria-labelledby="read" className="space-y-4">
+        <h2 id="read" className="text-xl">Reading comfort</h2>
+        <RadioGroup
+          value={size}
+          onValueChange={(v) => { setSize(v as TextSize); saveTextSize(v as TextSize); }}
+          className="flex flex-wrap gap-3"
+          aria-label="Text size"
+        >
+          {SIZES.map((s) => (
+            <label key={s.value} className="flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 has-data-checked:border-primary has-data-checked:bg-accent/50">
+              <RadioGroupItem value={s.value} /> {s.label}
+            </label>
+          ))}
+        </RadioGroup>
+        <p className="text-sm text-muted-foreground">Language: English. Hindi and Hinglish can be added later without changing the screens.</p>
+      </section>
+
+      <section aria-labelledby="data" className="space-y-3">
         <h2 id="data" className="text-xl">Prototype data</h2>
-        <p className="text-sm text-muted-foreground">
-          Everything in this prototype lives only in this browser. Reset to remove cases you created, notes, and sign-in, and restore the three demo cases.
+        <p className="max-w-lg text-sm text-muted-foreground">
+          Everything here lives only in this browser. Reset to remove cases you created, notes and sign-in, and bring back the three demo cases.
         </p>
-        <Button variant="destructive" onClick={() => setConfirm(true)}>
-          <Database aria-hidden data-icon="inline-start" /> Reset prototype data
-        </Button>
+        <Button variant="destructive" onClick={() => setConfirm(true)}>Reset prototype data</Button>
       </section>
 
       <Dialog open={confirm} onOpenChange={setConfirm}>

@@ -194,6 +194,10 @@
   .report-section {
     break-inside: avoid-page;
   }
+  /* Collapsed report groups still print */
+  .report-group-body[hidden] {
+    display: block !important;
+  }
   main {
     padding: 0 !important;
     margin: 0 !important;

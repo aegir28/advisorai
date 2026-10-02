@@ -6,7 +6,7 @@
 export const en = {
   // ── Global ─────────────────────────────────────────────
   "banner.demo": "Demo / Prototype — do not upload real medical information. All data shown is fictional.",
-  "banner.short": "Demo / Prototype · fictional data only",
+  "banner.short": "Demo · fictional data · not medical advice",
   "disclaimer.short": "{brand} helps you prepare for a conversation with a doctor. It is not a doctor and does not diagnose, prescribe or give treatment advice.",
   "disclaimer.long": "AI assists understanding and preparation. Qualified healthcare professionals make medical decisions. {brand} is not a substitute for professional medical care, diagnosis or treatment.",
   "disclaimer.learnMore": "Read more",
@@ -25,6 +25,8 @@ export const en = {
   "common.somethingWrongBody": "This is a prototype, so this is most likely a mock-data problem. Try again, or go back to your dashboard.",
 
   // ── Navigation ─────────────────────────────────────
+  "nav.home": "Home",
+  "nav.cases": "Cases",
   "nav.dashboard": "Dashboard",
   "nav.newCase": "New case",
   "nav.profile": "Profile",
@@ -49,6 +51,13 @@ export const en = {
   "stage.questions": "Questions",
   "stage.secondOpinion": "Second opinion",
   "stage.comparison": "Comparison",
+
+  // ── Case tabs ──────────────────────────────────────
+  "tab.overview": "Overview",
+  "tab.analysis": "Analysis",
+  "tab.report": "Report",
+  "tab.questions": "Questions",
+  "tab.secondOpinion": "Second opinion",
 
   // ── Statuses ─────────────────────────────────────
   "caseStatus.draft": "Draft",
@@ -152,6 +161,14 @@ export const en = {
   "report.s17": "Worth clarifying before deciding",
   "report.s18": "Evidence and references",
   "report.s19": "Medical safety notice",
+  "reportGroup.1": "Your case, simplified",
+  "reportGroup.2": "What your reports show",
+  "reportGroup.3": "What your doctors have documented",
+  "reportGroup.4": "What is uncertain",
+  "reportGroup.5": "Where information differs",
+  "reportGroup.6": "What to ask your doctors",
+  "reportGroup.7": "Evidence and sources",
+  "reportGroup.8": "Safety information",
   "report.title": "Your preparation report",
   "report.generated": "Generated {date} · analysis run {run}",
   "report.whereFrom": "Where did this come from?",

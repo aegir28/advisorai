@@ -1,22 +1,10 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
-import {
-  CircleAlert,
-  CircleCheck,
-  Copy,
-  File,
-  FileImage,
-  FileText,
-  LoaderCircle,
-  Trash2,
-  Upload,
-  type LucideIcon,
-} from "lucide-react";
+import { ChevronDown, FileText, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { DocumentItem, DocumentStatus, DocumentType } from "@/domain/types";
+import type { DocumentItem, DocumentStatus } from "@/domain/types";
 import { formatSize } from "@/lib/format";
-import { tk } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 export const MAX_FILE_MB = 20;
@@ -33,14 +21,14 @@ export function validateFiles(files: File[]): FileCheck {
   const valid: File[] = [];
   const errors: string[] = [];
   for (const f of files) {
-    if (!(ALLOWED.includes(f.type) || ALLOWED_EXT.test(f.name))) errors.push(`“${f.name}” isn't a PDF, JPG or PNG, so it was skipped.`);
+    if (!(ALLOWED.includes(f.type) || ALLOWED_EXT.test(f.name))) errors.push(`“${f.name}” isn’t a PDF, JPG or PNG, so it was skipped.`);
     else if (f.size > MAX_FILE_MB * 1024 * 1024) errors.push(`“${f.name}” is larger than ${MAX_FILE_MB} MB, so it was skipped.`);
     else valid.push(f);
   }
   return { valid, errors };
 }
 
-export function UploadDropzone({ onFiles, busy }: { onFiles: (check: FileCheck) => void; busy?: boolean }) {
+export function UploadDropzone({ onFiles, busy, prompt = "Drop files here" }: { onFiles: (check: FileCheck) => void; busy?: boolean; prompt?: string }) {
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
@@ -56,71 +44,70 @@ export function UploadDropzone({ onFiles, busy }: { onFiles: (check: FileCheck) 
       onDragLeave={() => setOver(false)}
       onDrop={(e) => { e.preventDefault(); setOver(false); handle(e.dataTransfer.files); }}
       className={cn(
-        "flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed bg-card px-6 py-10 text-center transition-colors",
-        over ? "border-primary bg-accent" : "border-input",
+        "flex flex-col items-center gap-4 rounded-3xl border-2 border-dashed px-6 py-12 text-center transition-colors",
+        over ? "border-primary bg-accent" : "border-input bg-card/60",
       )}
     >
-      <span className="grid size-12 place-items-center rounded-full bg-secondary text-secondary-foreground">
-        <Upload aria-hidden className="size-6" />
-      </span>
+      <Upload aria-hidden className="size-7 text-primary" />
       <div className="space-y-1">
-        <p className="font-medium">Drag your files here, or choose them</p>
-        <p className="text-sm text-muted-foreground">PDF, JPG or PNG · up to {MAX_FILE_MB} MB each</p>
+        <p className="text-xl font-heading text-ink">{prompt}</p>
+        <p className="text-sm text-muted-foreground">PDF, JPG or PNG · Up to {MAX_FILE_MB} MB</p>
       </div>
       <input
         ref={inputRef} id={inputId} type="file" multiple accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
         className="sr-only" onChange={(e) => handle(e.target.files)}
       />
-      <Button type="button" variant="outline" size="lg" disabled={busy} onClick={() => inputRef.current?.click()}>
+      <Button type="button" size="lg" className="rounded-2xl px-6" disabled={busy} onClick={() => inputRef.current?.click()}>
         {busy ? "Adding…" : "Choose files"}
       </Button>
     </div>
   );
 }
 
-const typeIcon: Record<DocumentType, LucideIcon> = {
-  lab: FileText, ecg: FileText, prescription: FileImage, discharge: FileText, imaging: FileImage, consult: FileText, other: File,
+/** Plain-language document status. */
+export const docStatusText: Record<DocumentStatus, string> = {
+  ready: "Ready ✓",
+  processing: "Processing…",
+  needs_attention: "Needs a clearer copy",
+  duplicate: "Already added",
 };
 
-const statusStyle: Record<DocumentStatus, { icon: LucideIcon; cls: string; spin?: boolean }> = {
-  ready: { icon: CircleCheck, cls: "text-evidence" },
-  processing: { icon: LoaderCircle, cls: "text-fact", spin: true },
-  needs_attention: { icon: CircleAlert, cls: "text-uncertain" },
-  duplicate: { icon: Copy, cls: "text-muted-foreground" },
+const docStatusCls: Record<DocumentStatus, string> = {
+  ready: "text-primary",
+  processing: "text-fact",
+  needs_attention: "text-uncertain",
+  duplicate: "text-muted-foreground",
 };
 
+/** Simple document rows. Technical details stay behind a disclosure. */
 export function DocumentList({ documents, onRemove }: { documents: DocumentItem[]; onRemove?: (id: string) => void }) {
   return (
-    <ul className="space-y-3">
-      {documents.map((d) => {
-        const Icon = typeIcon[d.type];
-        const s = statusStyle[d.status];
-        const SIcon = s.icon;
-        return (
-          <li key={d.id} className={cn("paper flex flex-wrap items-start gap-4 p-4", d.status === "needs_attention" && "border-uncertain/40", d.status === "duplicate" && "border-dashed")}>
-            <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-secondary text-secondary-foreground">
-              <Icon aria-hidden className="size-5" />
-            </span>
-            <div className="min-w-0 flex-1 space-y-1">
-              <p className="break-words font-medium">{d.name}</p>
-              <p className="text-xs text-muted-foreground">
-                {d.pages} {d.pages === 1 ? "page" : "pages"} · {formatSize(d.sizeKb)}
-                {d.ocrConfidence !== undefined && ` · reading confidence ${Math.round(d.ocrConfidence * 100)}%`}
-              </p>
-              <p className={cn("flex items-center gap-1.5 text-sm font-medium", s.cls)}>
-                <SIcon aria-hidden className={cn("size-4", s.spin && "animate-spin motion-reduce:animate-none")} />
-                {tk(`doc.${d.status}`)}
-              </p>
-              {d.note && <p className="text-sm text-muted-foreground">{d.note}</p>}
-            </div>
-            {onRemove && (
-              <Button variant="ghost" size="icon" aria-label={`Remove ${d.name}`} onClick={() => onRemove(d.id)}>
-                <Trash2 aria-hidden />
-              </Button>
-            )}
-          </li>
-        );
-      })}
+    <ul className="divide-y rounded-2xl border bg-card">
+      {documents.map((d) => (
+        <li key={d.id} className="flex items-start gap-2 px-4 py-3.5">
+          <details className="group min-w-0 flex-1">
+            <summary className="flex cursor-pointer list-none items-center gap-3">
+              <FileText aria-hidden className="size-5 shrink-0 text-muted-foreground" />
+              <span className="min-w-0 flex-1 truncate font-medium">{d.name.replace(/\.(pdf|jpe?g|png)$/i, "")}</span>
+              <span className={cn("shrink-0 text-sm", docStatusCls[d.status])}>{docStatusText[d.status]}</span>
+              <ChevronDown aria-hidden className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+            </summary>
+            <dl className="mt-3 space-y-1 pl-8 text-sm text-muted-foreground">
+              <div className="flex gap-2"><dt>File</dt><dd className="break-all text-foreground">{d.name}</dd></div>
+              <div className="flex gap-2"><dt>Size</dt><dd className="text-foreground">{d.pages} {d.pages === 1 ? "page" : "pages"} · {formatSize(d.sizeKb)}</dd></div>
+              {d.ocrConfidence !== undefined && (
+                <div className="flex gap-2"><dt>How clearly we could read it</dt><dd className="text-foreground">{Math.round(d.ocrConfidence * 100)}%</dd></div>
+              )}
+              {d.note && <p className="pt-1">{d.note}</p>}
+            </dl>
+          </details>
+          {onRemove && (
+            <Button variant="ghost" size="icon-sm" aria-label={`Remove ${d.name}`} onClick={() => onRemove(d.id)}>
+              <Trash2 aria-hidden />
+            </Button>
+          )}
+        </li>
+      ))}
     </ul>
   );
 }

@@ -1,67 +1,53 @@
-import { CircleAlert, CircleCheck, CircleX, LoaderCircle, Minus, Circle, type LucideIcon } from "lucide-react";
+import { Check, CircleAlert, Minus, X } from "lucide-react";
 import type { AnalysisRun, StepStatus } from "@/domain/types";
+import { groupRun } from "@/lib/analysis-groups";
 import { tk } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-const style: Record<StepStatus, { icon: LucideIcon; cls: string; spin?: boolean }> = {
-  pending: { icon: Circle, cls: "text-muted-foreground/50" },
-  running: { icon: LoaderCircle, cls: "text-primary", spin: true },
-  done: { icon: CircleCheck, cls: "text-evidence" },
-  warning: { icon: CircleAlert, cls: "text-uncertain" },
-  failed: { icon: CircleX, cls: "text-urgent" },
-  skipped: { icon: Minus, cls: "text-muted-foreground/60" },
-};
+/** The mark in front of a stage: ✓ done, ● in progress, ○ waiting. */
+function Mark({ status }: { status: StepStatus }) {
+  const base = "grid size-7 shrink-0 place-items-center rounded-full";
+  switch (status) {
+    case "done":
+      return <span className={cn(base, "bg-primary text-primary-foreground")}><Check aria-hidden className="size-4" /></span>;
+    case "warning":
+      return <span className={cn(base, "bg-uncertain-soft text-uncertain ring-1 ring-uncertain/40")}><CircleAlert aria-hidden className="size-4" /></span>;
+    case "failed":
+      return <span className={cn(base, "bg-urgent text-white")}><X aria-hidden className="size-4" /></span>;
+    case "running":
+      return (
+        <span className={cn(base, "ring-2 ring-primary/30")}>
+          <span className="size-3 animate-pulse rounded-full bg-primary motion-reduce:animate-none" />
+        </span>
+      );
+    case "skipped":
+      return <span className={cn(base, "text-muted-foreground/60")}><Minus aria-hidden className="size-4" /></span>;
+    default:
+      return <span className={cn(base, "border-2 border-muted-foreground/30")} />;
+  }
+}
 
 /**
- * Generic run progress. Renders any workflow's steps, including partial
- * (done with a note), failed and skipped, so no step ever fails silently.
+ * Calm, five-stage progress. The internal workflow (14 steps, agents, review
+ * passes) stays out of sight. Partial and failed states are explained in plain
+ * language and never hidden.
  */
 export function RunProgress({ run }: { run: AnalysisRun }) {
-  const pct = Math.round(run.progress * 100);
+  const groups = groupRun(run);
   return (
-    <div className="space-y-5">
-      <div className="space-y-2">
-        <div className="flex items-baseline justify-between text-sm">
-          <span className="font-medium">{pct}% complete</span>
-          <span className="text-muted-foreground">Run {run.id}</span>
-        </div>
-        <div
-          role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label="Analysis progress"
-          className="h-2 overflow-hidden rounded-full bg-muted"
-        >
-          <div
-            className={cn("h-full rounded-full transition-all duration-700", run.status === "failed" ? "bg-urgent" : run.status === "partial" ? "bg-uncertain" : "bg-primary")}
-            style={{ width: `${pct}%` }}
-          />
-        </div>
-      </div>
-
-      <ol className="space-y-1" aria-label="Analysis steps">
-        {run.steps.map((s) => {
-          const { icon: Icon, cls, spin } = style[s.status];
-          return (
-            <li
-              key={s.n}
-              aria-current={s.status === "running" ? "step" : undefined}
-              className={cn(
-                "flex items-start gap-3 rounded-xl px-3 py-2.5",
-                s.status === "running" && "bg-accent",
-                s.status === "warning" && "bg-uncertain-soft/60",
-                s.status === "failed" && "bg-urgent-soft",
-              )}
-            >
-              <Icon aria-hidden className={cn("mt-0.5 size-5 shrink-0", cls, spin && "animate-spin motion-reduce:animate-none")} />
-              <div className="min-w-0 flex-1">
-                <p className={cn("font-medium", (s.status === "pending" || s.status === "skipped") && "text-muted-foreground")}>
-                  {tk(`run.s${s.n}`)}
-                </p>
-                {s.note && <p className="text-sm text-muted-foreground">{s.note}</p>}
-              </div>
-              <span className={cn("shrink-0 text-xs", cls)}>{tk(`step.${s.status}`)}</span>
-            </li>
-          );
-        })}
-      </ol>
-    </div>
+    <ol aria-label="Review progress" className="space-y-5">
+      {groups.map((g) => (
+        <li key={g.key} aria-current={g.status === "running" ? "step" : undefined} className="flex items-start gap-4">
+          <Mark status={g.status} />
+          <div className="min-w-0 flex-1">
+            <p className={cn("text-xl leading-7", (g.status === "pending" || g.status === "skipped") && "text-muted-foreground")}>
+              {g.title}
+              <span className="sr-only"> — {tk(`step.${g.status}`)}</span>
+            </p>
+            {g.note && <p className="mt-1 text-muted-foreground">{g.note}</p>}
+          </div>
+        </li>
+      ))}
+    </ol>
   );
 }

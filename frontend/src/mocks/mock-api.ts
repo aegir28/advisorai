@@ -250,7 +250,7 @@ export const mockApi: AdvisorApi = {
     const id = `c_${Math.random().toString(16).slice(2, 5)}`;
     const code = `AC-${id.slice(2).toUpperCase()}`;
     const c: CaseSummary = {
-      id, code, ownerLabel: "You (synthetic demo)", ageYears: input.ageYears, sex: input.sex, concern: input.concern,
+      id, code, ownerLabel: "You (synthetic demo)", title: input.intent ?? "New case", ageYears: input.ageYears, sex: input.sex, concern: input.concern,
       proposedTreatment: input.proposedTreatment || undefined, status: "awaiting_upload", scenario: input.scenario ?? "cardiology",
       documentCount: 0, updatedAt: new Date().toISOString(), specialtyLabel: "New case",
     };
@@ -302,7 +302,7 @@ export const mockApi: AdvisorApi = {
     const s = store();
     s.documents[caseId] = sc.documents.map((d) => ({ ...d }));
     patchCase(caseId, {
-      scenario, ageYears: sc.seedCase.ageYears, sex: sc.seedCase.sex, specialtyLabel: sc.seedCase.specialtyLabel,
+      scenario, title: sc.seedCase.title, ageYears: sc.seedCase.ageYears, sex: sc.seedCase.sex, specialtyLabel: sc.seedCase.specialtyLabel,
       documentCount: sc.documents.length,
     });
     return findCase(caseId)!;

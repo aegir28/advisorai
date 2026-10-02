@@ -28,7 +28,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         </div>
       </header>
       <main id="main">{children}</main>
-      <footer className="border-t bg-card/60">
+      <footer className="border-t bg-card/60 pb-14">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-8 text-sm text-muted-foreground sm:px-6">
           <p>
             © {new Date().getFullYear()} {BRAND.name}. Prototype built on fictional data.

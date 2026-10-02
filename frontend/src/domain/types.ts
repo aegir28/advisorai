@@ -34,6 +34,8 @@ export interface CaseSummary {
   updatedAt: string;
   runId?: string;
   specialtyLabel: string;
+  /** Short patient-facing name for lists ("Knee pain"). Optional and additive. */
+  title?: string;
 }
 
 export type DocumentType = "lab" | "ecg" | "prescription" | "discharge" | "imaging" | "consult" | "other";
@@ -411,6 +413,8 @@ export interface SafetyCheckResult {
 }
 
 export interface NewCaseInput {
+  /** What the person wants help with ("Understanding my treatment"). Optional and additive. */
+  intent?: string;
   concern: string;
   proposedTreatment?: string;
   ageYears: number;

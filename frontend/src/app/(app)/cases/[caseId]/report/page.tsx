@@ -1,22 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Printer } from "lucide-react";
-import { PageHeader } from "@/components/layout/page-header";
+import { ArrowRight, Printer } from "lucide-react";
 import { ResultsGate } from "@/components/case/results-gate";
+import { PageIntro } from "@/components/layout/page-intro";
 import { Legend } from "@/components/medical/legend";
-import { SyntheticTag } from "@/components/medical/markers";
-import { SectionRenderer } from "@/components/report/section-renderer";
-import { Button } from "@/components/ui/button";
+import { ReportView } from "@/components/report/report-view";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { BRAND } from "@/config/brand";
-import { useCase, useReport } from "@/features/case/hooks";
-import { formatDate, sexLabel } from "@/lib/format";
-import { t, tk } from "@/i18n";
+import { useReport } from "@/features/case/hooks";
+import { formatDate } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import { t } from "@/i18n";
 
 export default function ReportPage() {
   const { caseId } = useParams<{ caseId: string }>();
   const report = useReport(caseId);
-  const c = useCase(caseId);
 
   return (
     <>
@@ -26,46 +26,28 @@ export default function ReportPage() {
         <p className="text-sm">Prototype on fictional data. {t("disclaimer.short")}</p>
       </div>
 
-      <PageHeader
-        eyebrow="Report"
+      <PageIntro
         title={t("report.title")}
-        description={
-          c.data ? (
-            <>
-              Case {c.data.code} · {c.data.ageYears}, {sexLabel(c.data.sex)} · written in plain language from the reviewed summary.
-            </>
+        action={
+          report.data ? (
+            <Button variant="outline" onClick={() => window.print()}>
+              <Printer aria-hidden data-icon="inline-start" /> {t("common.print")}
+            </Button>
           ) : undefined
         }
-        actions={
-          <Button variant="outline" size="lg" onClick={() => window.print()}>
-            <Printer aria-hidden data-icon="inline-start" /> {t("common.print")}
-          </Button>
-        }
-      />
+      >
+        {report.data ? t("report.generated", { date: formatDate(report.data.generatedAt), run: report.data.runId }) : "A plain-language summary of your case."}
+      </PageIntro>
 
       <ResultsGate query={report} caseId={caseId}>
         {(r) => (
-          <div className="grid gap-10 xl:grid-cols-[13rem_minmax(0,1fr)]">
-            <nav aria-label="Report sections" data-no-print className="no-print hidden xl:block">
-              <ol className="sticky top-40 space-y-0.5 text-sm">
-                {r.sections.map((s) => (
-                  <li key={s.number}>
-                    <a href={`#s${s.number}`} className="flex gap-2 rounded-lg px-2 py-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground">
-                      <span className="w-5 shrink-0 text-right tabular-nums">{s.number}</span>
-                      <span>{tk(`report.s${s.number}`)}</span>
-                    </a>
-                  </li>
-                ))}
-              </ol>
-            </nav>
-
-            <div className="min-w-0 space-y-10">
-              <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                <SyntheticTag />
-                <span>{t("report.generated", { date: formatDate(r.generatedAt), run: r.runId })}</span>
-              </div>
-              <Legend />
-              {r.sections.map((s) => <SectionRenderer key={s.number} section={s} caseId={caseId} />)}
+          <div className="space-y-10">
+            <ReportView report={r} caseId={caseId} />
+            <Legend />
+            <div className="no-print border-t pt-10">
+              <Link href={`/cases/${caseId}/questions`} className={cn(buttonVariants({ size: "lg" }), "h-14 rounded-2xl px-8 text-base")}>
+                See what to ask your doctors <ArrowRight aria-hidden data-icon="inline-end" />
+              </Link>
             </div>
           </div>
         )}
