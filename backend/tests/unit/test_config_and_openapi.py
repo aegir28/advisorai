@@ -19,11 +19,11 @@ def test_defaults() -> None:
 
 
 def test_reads_advisorai_prefixed_env_vars(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("ADVISORAI_ENVIRONMENT", "production")
+    monkeypatch.setenv("ADVISORAI_ENVIRONMENT", "test")
     monkeypatch.setenv("ADVISORAI_CORS_ORIGINS", "https://a.example, https://b.example")
     monkeypatch.setenv("ADVISORAI_DOCS_ENABLED", "false")
     s = make()
-    assert s.environment == "production"
+    assert s.environment == "test"
     assert s.cors_origins == ["https://a.example", "https://b.example"]
     assert s.docs_enabled is False
 

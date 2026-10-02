@@ -18,6 +18,11 @@ FIXTURES = Path(__file__).parent / "fixtures" / "contracts"
 
 
 @pytest.fixture
+def anyio_backend() -> str:
+    return "asyncio"
+
+
+@pytest.fixture
 def settings() -> Settings:
     return Settings(environment="test", cors_origins=["http://localhost:3000"], _env_file=None)
 
