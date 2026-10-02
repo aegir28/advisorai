@@ -105,10 +105,13 @@ select is((select count(*)::int from public.audit_logs where request_id = 'req_a
 select is((select count(*)::int from public.patients where owner_user_id = 'aaaaaaaa-0000-4000-8000-000000000001'), 1, 'the patient exists');
 select lives_ok($$delete from auth.users where id = 'aaaaaaaa-0000-4000-8000-000000000001'$$, 'a user can be deleted');
 select is(
-  (select (select count(*) from public.patients) + (select count(*) from public.cases) + (select count(*) from public.documents)
-        + (select count(*) from public.medical_records) + (select count(*) from public.workflow_runs)
-        + (select count(*) from public.workflow_steps) + (select count(*) from public.profiles
-                                                          where user_id = 'aaaaaaaa-0000-4000-8000-000000000001'))::int,
+  (select (select count(*) from public.patients where owner_user_id = 'aaaaaaaa-0000-4000-8000-000000000001')
+        + (select count(*) from public.cases where owner_user_id = 'aaaaaaaa-0000-4000-8000-000000000001')
+        + (select count(*) from public.documents where owner_user_id = 'aaaaaaaa-0000-4000-8000-000000000001')
+        + (select count(*) from public.medical_records where owner_user_id = 'aaaaaaaa-0000-4000-8000-000000000001')
+        + (select count(*) from public.workflow_runs where owner_user_id = 'aaaaaaaa-0000-4000-8000-000000000001')
+        + (select count(*) from public.workflow_steps where owner_user_id = 'aaaaaaaa-0000-4000-8000-000000000001')
+        + (select count(*) from public.profiles where user_id = 'aaaaaaaa-0000-4000-8000-000000000001'))::int,
   0, 'deleting the user cascaded through patients, cases, documents, records, runs, steps and the profile');
 select is((select count(*)::int from public.audit_logs where request_id = 'req_audit1'), 1, 'the audit row survives the deletion');
 

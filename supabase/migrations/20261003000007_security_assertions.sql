@@ -58,7 +58,8 @@ begin
   -- ... and the user-path login role can only become authenticated, nothing privileged.
   select string_agg(r, ', ') into bad
   from unnest(array['postgres', 'service_role', 'anon', 'supabase_admin', 'app_system']) as r
-  where exists (select from pg_roles where rolname = r) and pg_has_role('app_backend', r, 'member');
+  where case when exists (select from pg_roles where rolname = r)
+             then pg_has_role('app_backend', r, 'member') else false end;
   if bad is not null then
     raise exception 'app_backend can become: %', bad;
   end if;
