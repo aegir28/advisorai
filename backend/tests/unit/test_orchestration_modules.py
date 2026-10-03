@@ -11,6 +11,7 @@ from app.docintel.contracts import ExtractedFact
 from app.orchestration import comparison, crossreview, questions, report, review, verification
 from app.orchestration.context import build_case_context, record_text
 from app.orchestration.contracts import (
+    CaseContext,
     ComparisonModelOutput,
     DocumentBrief,
     ModelQuestion,
@@ -23,6 +24,7 @@ from app.orchestration.policy import OrchestrationPolicy, PolicyError
 from app.orchestration.promptstore import PromptError, load, specialist_prompt
 from app.orchestration.stages import STAGE_IDS, STAGES, stage
 from app.orchestration.store import CaseInputs, DocInfo, InMemoryOrchestrationStore
+from app.schemas.evidence import Claim
 from app.schemas.specialist_report import SpecialistReport
 from app.schemas.synthesis import SynthesisReviewer
 from tests.orch_support import CASE, DOC8, F_LAB, F_MED, OWNER, specialist_json
@@ -56,7 +58,7 @@ INPUTS = CaseInputs(
 )
 
 
-def context():  # type: ignore[no-untyped-def]
+def context() -> CaseContext:
     return build_case_context(
         INPUTS, FACTS, [DocumentBrief(doc_id=DOC, type="lab", pages=1, text_layer="full")], 0
     )
@@ -182,7 +184,7 @@ def test_a_model_may_move_an_unclear_claim_but_never_invent_an_unknown_claim_id(
 
 
 # ── cross-review & review: disagreement preserved, never voted ───────────────────────────────────
-def two_views():  # type: ignore[no-untyped-def]
+def two_views() -> tuple[list[SpecialistReport], list[Claim], CaseContext]:
     a = make_report("general_medicine")
     b = make_report(
         "cardiology",

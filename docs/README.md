@@ -5,6 +5,9 @@
 - [`deployment.md`](deployment.md): free-tier deployment foundations and the secrets map.
 - [`observability.md`](observability.md): what is logged, measured and deliberately not.
 - [`handoff-ai-phase.md`](handoff-ai-phase.md): **start here.** What is built, where the key / model config / workflow / prompts go, and how to turn real calls on.
+- [`n8n.md`](n8n.md): n8n workflows, env vars, local/prod, activation.
+- [`provider-research.md`](provider-research.md): provider retention/cost research (dated, with limits).
+- [`architecture-audit.md`](architecture-audit.md): the Stage-1 audit and decisions.
 
 The architecture blueprint (product scope, agentic workflow, verification, security and build plan)
 is the source of truth for the product. It is maintained outside this repository for now.
@@ -22,3 +25,4 @@ is the source of truth for the product. It is maintained outside this repository
 - [`adr/0009-google-auth-and-frontend-http-integration.md`](adr/0009-google-auth-and-frontend-http-integration.md): Google sign-in via Supabase Auth, the frontend HTTP API, request hardening.
 - [`adr/0010-non-ai-foundation-boundary-and-ai-handoff.md`](adr/0010-non-ai-foundation-boundary-and-ai-handoff.md): the non-AI foundation is complete; the boundary guard and the extension points.
 - [`adr/0011-ai-gateway-and-pii-boundary.md`](adr/0011-ai-gateway-and-pii-boundary.md): the AI gateway, de-identification boundary, usage ledger and the workflow/agent/router/evidence seams (no clinical decisions).
+- [`adr/0012-n8n-orchestration.md`](adr/0012-n8n-orchestration.md): n8n sequences, the backend works; registry-driven specialists; honest failure.

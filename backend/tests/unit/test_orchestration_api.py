@@ -3,6 +3,7 @@
 import json
 import time
 import uuid
+from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
@@ -18,8 +19,8 @@ SECRET = "s" * 40
 PREFIX = "/internal/orchestrator/v1"
 
 
-def settings(**kw: object) -> Settings:
-    return Settings(  # type: ignore[arg-type]
+def settings(**kw: Any) -> Settings:
+    return Settings(
         environment="test",
         _env_file=None,
         n8n_enabled=True,
@@ -39,18 +40,19 @@ def signed(
 # ── signing ──────────────────────────────────────────────────────────────────────────────────────
 def test_a_valid_signature_verifies_and_any_change_breaks_it() -> None:
     ts, sig = sign(b"k" * 32, "POST", "/a/b", b'{"x":1}')
-    ok = lambda **kw: verify(  # noqa: E731
-        kw.get("secret", b"k" * 32),
-        kw.get("method", "POST"),
-        kw.get("path", "/a/b"),
-        kw.get("body", b'{"x":1}'),
-        ts,
-        kw.get("sig", sig),
-        max_skew_seconds=300,
-    )
+
+    def ok(
+        secret: bytes = b"k" * 32,
+        method: str = "POST",
+        path: str = "/a/b",
+        body: bytes = b'{"x":1}',
+        signature: str = sig,
+    ) -> bool:
+        return verify(secret, method, path, body, ts, signature, max_skew_seconds=300)
+
     assert ok()
     assert not ok(body=b'{"x":2}') and not ok(path="/a/c") and not ok(method="GET")
-    assert not ok(secret=b"z" * 32) and not ok(sig="0" * 64) and not ok(sig="")
+    assert not ok(secret=b"z" * 32) and not ok(signature="0" * 64) and not ok(signature="")
 
 
 def test_a_stale_or_future_timestamp_is_refused() -> None:
@@ -128,7 +130,7 @@ START = OrchestrationStart(
 async def test_the_http_client_signs_the_start_request_and_sends_ids_only() -> None:
     import httpx
 
-    seen: dict[str, object] = {}
+    seen: dict[str, Any] = {}
 
     def handler(request: httpx.Request) -> httpx.Response:
         seen["body"], seen["headers"], seen["path"] = request.content, request.headers, request.url.path
@@ -143,10 +145,10 @@ async def test_the_http_client_signs_the_start_request_and_sends_ids_only() -> N
         str(seen["path"]),
         seen["body"],
         headers[TIMESTAMP_HEADER],
-        headers[SIGNATURE_HEADER],  # type: ignore[arg-type, index]
+        headers[SIGNATURE_HEADER],
         max_skew_seconds=60,
     )
-    assert set(json.loads(seen["body"])) == {"schema_version", "run_id", "case_id", "workflow", "resume"}  # type: ignore[arg-type]
+    assert set(json.loads(seen["body"])) == {"schema_version", "run_id", "case_id", "workflow", "resume"}
 
 
 @pytest.mark.anyio
