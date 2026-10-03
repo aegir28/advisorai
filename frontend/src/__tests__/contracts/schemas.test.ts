@@ -80,7 +80,7 @@ describe("specialist_report.v1", () => {
     expect(SpecialistReportSchema.safeParse({ ...validSpecialist(), schema_version: "specialist_report.v2" }).success).toBe(false);
   });
   it("rejects an unknown specialty and a finding with a bad kind", () => {
-    expect(SpecialistReportSchema.safeParse({ ...validSpecialist(), specialist: "astrology" }).success).toBe(false);
+    expect(SpecialistReportSchema.safeParse({ ...validSpecialist(), specialist: "Not A Specialty!" }).success).toBe(false);
     const r = validSpecialist();
     r.findings[0] = { ...r.findings[0], kind: "opinion" as never };
     expect(SpecialistReportSchema.safeParse(r).success).toBe(false);

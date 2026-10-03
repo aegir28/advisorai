@@ -129,14 +129,11 @@ export const TimelineDataSchema = z.object({
 });
 
 // ── Specialists: specialist_report.v1 ────────────────────
-export const SpecialistIdSchema = z.enum([
-  "general_medicine",
-  "cardiology",
-  "interventional_cardiology",
-  "medication_safety",
-  "orthopedics",
-  "neurology",
-]);
+/**
+ * Any registered specialty, sub-specialty or capability. The registry (backend `registry/agents.yaml`) is the
+ * list of ids; the wire type is an identifier so adding a specialist never changes this contract (ADR 0012).
+ */
+export const SpecialistIdSchema = z.string().regex(/^[a-z][a-z0-9_]{2,63}$/);
 
 export const FindingSchema = z.object({
   id: Id,

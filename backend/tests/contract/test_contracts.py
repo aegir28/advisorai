@@ -194,7 +194,7 @@ class TestSpecialistReport:
 
     def test_rejects_an_unknown_specialty_kind_and_tier(self) -> None:
         mutations: tuple[Mutation, ...] = (
-            lambda p: p.update(specialist="astrology"),
+            lambda p: p.update(specialist="Not A Specialty!"),
             lambda p: p["findings"][0].update(kind="opinion"),
             lambda p: p.update(tier=4),
             lambda p: p.update(status="great"),
