@@ -26,7 +26,8 @@ exception when others then
 end $$;
 
 -- The test session must be allowed to SET ROLE to the project roles (a no-op for a superuser).
-grant app_system, app_backend to current_user;
+-- The role is named explicitly: on the Supabase image `GRANT ... TO CURRENT_USER` crashed the server.
+do $$ begin execute format('grant app_system, app_backend to %I', current_user); end $$;
 
 -- ── Fixtures, written as the database owner (bypasses RLS) ──────────────────────────────────────
 -- Users A and B. Profiles are created by the on_auth_user_created trigger.

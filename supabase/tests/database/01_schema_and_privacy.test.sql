@@ -82,11 +82,11 @@ select is(
     where table_schema = 'public' and grantee = 'app_backend'),
   0, 'the backend login role holds no privileges of its own (fail closed)'
 );
-select results_eq(
-  $$ select table_name::text, privilege_type::text from information_schema.role_table_grants
-      where table_schema = 'public' and grantee = 'app_system' order by 1, 2 $$,
-  $$ values ('audit_logs'::text, 'INSERT'::text) $$,
-  'app_system can only INSERT into audit_logs'
+select is(
+  (select coalesce(string_agg(table_name::text || ':' || privilege_type::text, ',' order by table_name::text, privilege_type::text), '')
+     from information_schema.role_table_grants
+    where table_schema = 'public' and grantee = 'app_system'),
+  'audit_logs:INSERT', 'app_system can only INSERT into audit_logs'
 );
 select is(
   (select count(*)::int from information_schema.role_table_grants
@@ -121,7 +121,8 @@ select is(
   0, 'app_system is not a member of any role');
 select is(
   (select coalesce(string_agg(r, ', '), '') from unnest(array['postgres', 'service_role', 'anon', 'supabase_admin', 'app_system']) r
-    where exists (select from pg_roles where rolname = r) and pg_has_role('app_backend', r, 'member')),
+    where case when exists (select from pg_roles where rolname = r)
+                then pg_has_role('app_backend', r, 'member') else false end),
   '', 'app_backend can become none of the privileged roles');
 select is(
   (select coalesce(string_agg(r, ', '), '') from unnest(array['authenticated']) r where pg_has_role('app_backend', r, 'member')),
