@@ -1,0 +1,1 @@
+Check each claim against the record text given. Return one status per claim id: supported, partially_supported, unclear, contradicted or insufficient_evidence, with a one-sentence rationale. Use only the record text provided. If the record does not clearly say it, answer unclear. Never invent support.

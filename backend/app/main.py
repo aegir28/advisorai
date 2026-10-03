@@ -25,6 +25,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import __version__
 from app.ai.factory import build_gateway
 from app.ai.usage import PostgresSpendReader, PostgresUsageSink
+from app.api.internal_orchestrator import router as internal_orchestrator
 from app.api.router import api_v1
 from app.audit.writer import AuditWriter
 from app.auth.jwks import JwksKeyProvider, KeyProvider
@@ -123,6 +124,38 @@ def create_app(
         else None
     )
 
+    orchestration, analysis_starter = None, None
+    if settings.n8n_enabled and database is not None and settings.n8n_hmac_secret is not None:
+        from app.agents.registry import SpecialtyRegistry
+        from app.orchestration.n8n_client import HttpN8nClient
+        from app.orchestration.policy import OrchestrationPolicy
+        from app.orchestration.service import OrchestrationService
+        from app.orchestration.starter import AnalysisStarter
+        from app.orchestration.store import PostgresOrchestrationStore
+        from app.router.signals import SignalExtractor
+
+        store = PostgresOrchestrationStore(database)
+        registry = SpecialtyRegistry.from_file()
+        orchestration = OrchestrationService(
+            store,
+            ai_gateway,
+            registry,
+            OrchestrationPolicy.from_file(),
+            SignalExtractor.from_file(),
+            storage=storage,
+        )
+        if settings.n8n_webhook_url is not None:
+            analysis_starter = AnalysisStarter(
+                database,
+                store,
+                HttpN8nClient(
+                    http,
+                    settings.n8n_webhook_url,
+                    settings.n8n_hmac_secret.get_secret_value().encode(),
+                    settings.n8n_request_timeout_seconds,
+                ),
+            )
+
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         stop = asyncio.Event()
@@ -176,8 +209,11 @@ def create_app(
     app.state.node_registry = node_registry
     app.state.ai_gateway = ai_gateway
     app.state.definitions = definitions
+    app.state.orchestration = orchestration
+    app.state.analysis_starter = analysis_starter
     register_exception_handlers(app)
     app.include_router(api_v1)
+    app.include_router(internal_orchestrator)
     install_openapi(app)
     return app
 

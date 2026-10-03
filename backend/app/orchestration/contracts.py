@@ -68,6 +68,8 @@ class StageResult(WireModel):
     # True when this stage had already run (idempotent retry or resume): nothing was recomputed or re-billed.
     cached: bool
     code: str | None = None
+    # True when n8n may retry this stage (a transient provider/storage failure), False when a retry cannot help.
+    retryable: bool
     counts: dict[str, int]
     # Branch conditions decided by the backend from registry/orchestration.yaml, e.g. extra_verification.
     flags: dict[str, bool]
