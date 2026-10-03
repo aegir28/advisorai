@@ -241,3 +241,47 @@ async def test_a_new_specialist_is_a_registry_entry_not_a_code_change() -> None:
     art = await rig.store.get_artifact(rig.run_id, "specialist", "endocrinology")
     assert art is not None  # planned, run and stored through the same generic path
     assert isinstance(DOC, uuid.UUID)
+
+
+async def test_identity_in_free_text_never_reaches_the_provider() -> None:
+    rig = await make_rig(
+        concern="Please call me on +91 98765 43210 or write to asha.verma@example.org about my diabetes."
+    )
+    await drive(rig)
+    sent = " ".join(m.content for req in rig.provider.requests for m in req.messages)
+    assert "asha.verma@example.org" not in sent and "98765 43210" not in sent
+    assert "[EMAIL]" in sent or "[PHONE]" in sent
+
+
+async def test_a_medication_review_with_an_instruction_is_refused_as_unavailable() -> None:
+    bad = json.loads(specialist_json(medication=True))
+    bad["medication_review"]["discussion_points"][0]["text"] = "Stop taking Metformin now."
+    rig = await make_rig(responders={"SpecialistModelOutput:medication": lambda _: json.dumps(bad)})
+    await drive(rig)
+    art = await rig.store.get_artifact(rig.run_id, "specialist", "medication_safety")
+    assert art is not None and art.payload["status"] == "unavailable"
+    assert art.payload["reason_code"] in {"invalid_medication_review", "unsafe_output"}
+    report = await report_of(rig)
+    assert "Stop taking Metformin" not in json.dumps(report.model_dump())
+
+
+async def test_a_medication_review_is_stored_with_the_report_when_it_is_valid() -> None:
+    rig = await make_rig()
+    await drive(rig)
+    art = await rig.store.get_artifact(rig.run_id, "specialist", "medication_safety")
+    assert (
+        art is not None
+        and art.payload["report"]["extensions"]["medication_review"]["medicines"][0]["id"] == "med1"
+    )
+
+
+async def test_the_budget_guard_stops_calls_and_the_run_ends_honestly_instead_of_overspending() -> None:
+    from app.ai.gateway import GatewayConfig
+
+    rig = await make_rig(config=GatewayConfig(run_budget_micro_usd=1))
+    result = await drive(rig)
+    # The first call is allowed (the cap is checked before a call, charged after); then nothing more is sent.
+    assert result["fact_extraction"] == "ok" and result["specialist_collect"] == "failed"
+    assert result["finish"] == "failed" and len(rig.provider.requests) == 1
+    art = await rig.store.get_artifact(rig.run_id, "specialist", "general_medicine")
+    assert art is not None and art.payload["reason_code"] == "budget_exceeded"

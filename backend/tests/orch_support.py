@@ -223,12 +223,14 @@ async def make_rig(
     responders: dict[str, Responder] | None = None,
     pdf: bytes | None = None,
     enabled: tuple[str, ...] = ("general_medicine", "medication_safety"),
+    config: Any = None,
+    concern: str = "I want a second opinion on my diabetes treatment.",
 ) -> Rig:
     store = InMemoryOrchestrationStore()
     store.inputs[CASE] = CaseInputs(
         CASE,
         OWNER,
-        "I want a second opinion on my diabetes treatment.",
+        concern,
         None,
         "second_opinion",
         52,
@@ -237,7 +239,7 @@ async def make_rig(
     )
     run_id, _ = await store.create_run(OWNER, CASE, "test-key-0001", "case_analysis")
     provider = FakeProvider(responder=default_responder(responders))
-    gateway, provider, sink, _ = make_gateway(provider)
+    gateway, provider, sink, _ = make_gateway(provider, config=config)
     registry = SpecialtyRegistry.from_file()
     registry = SpecialtyRegistry(
         [s.model_copy(update={"enabled": s.id in enabled}) for s in registry.specs()]
