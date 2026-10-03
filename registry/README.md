@@ -1,6 +1,8 @@
-# registry (placeholder)
+# registry
 
-Future home of configuration-driven agents (one entry per specialty), prompts and `models.yaml`
-(model tiers). Adding a specialty should be a registry entry, not a code change.
+Configuration, not code.
 
-Nothing is implemented in Phase 1.
+- `models.yaml`: model tiers per provider, enablement, and prices. Loaded by `backend/app/ai/registry.py`.
+  Edit this file to point a tier at a real model (docs/handoff-ai-phase.md, "Enabling real calls").
+- Specialist-agent registry: the five specialty contracts are registered in code
+  (`backend/app/agents/registry.py`); their prompts live in `backend/app/agents/prompts/` (see that folder's README).

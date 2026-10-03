@@ -1,0 +1,122 @@
+{
+  "opinion_a_label": "Your treating cardiologist",
+  "opinion_b_label": "Second-opinion doctor",
+  "rows": [
+    {
+      "id": "cmp1",
+      "topic": "Need for angioplasty",
+      "opinion_a": "Recommends angioplasty (PCI) to the LAD artery.",
+      "opinion_b": "Agrees angioplasty is reasonable to consider, based on the same angiography findings and a new stress test.",
+      "evidence_a": [
+        "f_140",
+        "f_118"
+      ],
+      "evidence_b": [
+        "f_140",
+        "so_f1"
+      ],
+      "relationship": "agreement",
+      "item_ids": [
+        "syn_15",
+        "so_f1"
+      ]
+    },
+    {
+      "id": "cmp2",
+      "topic": "Timing",
+      "opinion_a": "Within 1–2 weeks.",
+      "opinion_b": "Describes it as planned (elective): optimise medicines and get an echocardiogram first, noting stable symptoms since May.",
+      "evidence_a": [
+        "f_118"
+      ],
+      "evidence_b": [
+        "so_f2"
+      ],
+      "relationship": "differs",
+      "item_ids": [
+        "syn_8",
+        "so_f2"
+      ]
+    },
+    {
+      "id": "cmp3",
+      "topic": "Echocardiogram",
+      "opinion_a": "Not mentioned in the records.",
+      "opinion_b": "Ordered as a next step.",
+      "evidence_a": [],
+      "evidence_b": [
+        "so_f3"
+      ],
+      "relationship": "new_info",
+      "item_ids": [
+        "syn_9",
+        "so_f3"
+      ]
+    },
+    {
+      "id": "cmp4",
+      "topic": "Medicines",
+      "opinion_a": "Continue current medicines.",
+      "opinion_b": "Suggests reviewing the NSAID painkiller.",
+      "evidence_a": [
+        "f_121"
+      ],
+      "evidence_b": [
+        "ms2"
+      ],
+      "relationship": "changed",
+      "item_ids": [
+        "syn_13",
+        "so_f4"
+      ]
+    },
+    {
+      "id": "cmp5",
+      "topic": "Diabetes control",
+      "opinion_a": "Not discussed.",
+      "opinion_b": "Not discussed.",
+      "evidence_a": [],
+      "evidence_b": [],
+      "relationship": "unresolved",
+      "item_ids": [
+        "syn_12",
+        "f_hba1c"
+      ]
+    }
+  ],
+  "next_questions": [
+    {
+      "audience": "Your current doctor",
+      "text": "Your second-opinion doctor suggests an echocardiogram first. Would its result change your plan?",
+      "item_ids": [
+        "cmp3"
+      ]
+    },
+    {
+      "audience": "Both doctors",
+      "text": "What symptoms would make this urgent rather than planned?",
+      "item_ids": [
+        "cmp2"
+      ]
+    },
+    {
+      "audience": "Either doctor",
+      "text": "Neither opinion mentions how my blood sugar level would affect the procedure. Could we cover that?",
+      "item_ids": [
+        "cmp5"
+      ]
+    }
+  ],
+  "answered_by_opinion": [
+    {
+      "question_id": "q2",
+      "note": "The second opinion orders an echocardiogram, so this is partly answered.",
+      "status": "partially_answered"
+    },
+    {
+      "question_id": "q5",
+      "note": "The second opinion suggests reviewing the NSAID.",
+      "status": "partially_answered"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "selected": [
+    {
+      "specialist": "general_medicine",
+      "priority": "mandatory",
+      "reason": "Always included to give a broad view."
+    },
+    {
+      "specialist": "cardiology",
+      "priority": "mandatory",
+      "reason": "Raised troponin, ECG changes and an artery narrowing are documented."
+    },
+    {
+      "specialist": "interventional_cardiology",
+      "priority": "mandatory",
+      "reason": "A procedure (PCI) is being proposed."
+    },
+    {
+      "specialist": "medication_safety",
+      "priority": "mandatory",
+      "reason": "A medicine list is present, so this is always reviewed."
+    }
+  ],
+  "not_selected": [
+    {
+      "name": "Neurology",
+      "why": "No neurological findings."
+    },
+    {
+      "name": "Orthopedics",
+      "why": "Joint pain is mentioned only in passing."
+    },
+    {
+      "name": "Radiology",
+      "why": "No imaging images were provided, only a written report."
+    }
+  ],
+  "missing_for_routing": [
+    "Echocardiogram (heart ultrasound)"
+  ]
+}

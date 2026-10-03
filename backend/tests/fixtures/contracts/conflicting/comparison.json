@@ -1,0 +1,94 @@
+{
+  "opinion_a_label": "Your treating team (discharge summary)",
+  "opinion_b_label": "Second-opinion doctor",
+  "rows": [
+    {
+      "id": "cmp1",
+      "topic": "What the MRI shows",
+      "opinion_a": "A small lesion in the right frontal lobe, for follow-up.",
+      "opinion_b": "A lesion is not confirmed on the written report; awaiting a formal re-read.",
+      "evidence_a": [
+        "f_a3"
+      ],
+      "evidence_b": [
+        "f_a2",
+        "so_a2"
+      ],
+      "relationship": "differs",
+      "item_ids": [
+        "syn_8",
+        "so_a2"
+      ]
+    },
+    {
+      "id": "cmp2",
+      "topic": "Radiology re-read",
+      "opinion_a": "Not mentioned.",
+      "opinion_b": "Requests a formal re-read.",
+      "evidence_a": [],
+      "evidence_b": [
+        "so_a1"
+      ],
+      "relationship": "new_info",
+      "item_ids": [
+        "syn_12",
+        "so_a1"
+      ]
+    },
+    {
+      "id": "cmp3",
+      "topic": "Follow-up MRI in 3 months",
+      "opinion_a": "Advised.",
+      "opinion_b": "Depends on the re-read.",
+      "evidence_a": [
+        "f_a4"
+      ],
+      "evidence_b": [
+        "so_a1"
+      ],
+      "relationship": "unresolved",
+      "item_ids": [
+        "syn_15",
+        "so_a1"
+      ]
+    },
+    {
+      "id": "cmp4",
+      "topic": "Painkiller days",
+      "opinion_a": "Not discussed.",
+      "opinion_b": "Suggests a diary that includes painkiller days.",
+      "evidence_a": [],
+      "evidence_b": [
+        "so_a3"
+      ],
+      "relationship": "changed",
+      "item_ids": [
+        "syn_14",
+        "so_a3"
+      ]
+    }
+  ],
+  "next_questions": [
+    {
+      "audience": "Your current doctor",
+      "text": "Your second-opinion doctor has asked for a formal radiology re-read. Can that be arranged?",
+      "item_ids": [
+        "cmp2"
+      ]
+    },
+    {
+      "audience": "Both doctors",
+      "text": "If the re-read matches the original report, is the 3-month MRI still needed?",
+      "item_ids": [
+        "cmp3"
+      ]
+    }
+  ],
+  "answered_by_opinion": [
+    {
+      "question_id": "q1",
+      "note": "The second opinion also asks for a formal re-read.",
+      "status": "partially_answered"
+    }
+  ]
+}

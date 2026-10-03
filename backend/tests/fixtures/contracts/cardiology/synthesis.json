@@ -1,0 +1,272 @@
+{
+  "id": "syn_run_77",
+  "reviewer": {
+    "label": "Interim Clinical Reviewer (AI)",
+    "tier": 2,
+    "escalated": false
+  },
+  "rubric": [
+    {
+      "factor": "Patient-specific evidence present",
+      "weight": "High"
+    },
+    {
+      "factor": "Verification status of the claim",
+      "weight": "High"
+    },
+    {
+      "factor": "Source reliability and recency",
+      "weight": "Medium"
+    },
+    {
+      "factor": "Consistency with the timeline",
+      "weight": "Medium"
+    },
+    {
+      "factor": "Quality of specialist reasoning",
+      "weight": "Medium"
+    },
+    {
+      "factor": "Number of perspectives agreeing",
+      "weight": "Tie-break only"
+    }
+  ],
+  "items": [
+    {
+      "id": "syn_18",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "You are 52 and have type 2 diabetes. Since January you have had chest tightness when climbing stairs. You are asking whether angioplasty is necessary now.",
+      "derived_from": [
+        "f_sym1",
+        "f_dx1"
+      ]
+    },
+    {
+      "id": "syn_1",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "A blood test during your April admission showed troponin (a marker of heart-muscle strain) at 182 ng/L. The lab's reference is below 34.",
+      "derived_from": [
+        "f_118",
+        "cl_52"
+      ]
+    },
+    {
+      "id": "syn_2",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "Your February ECG noted ST-segment changes, which are a type of change in the heart's electrical trace.",
+      "derived_from": [
+        "f_ecg1",
+        "cf2"
+      ]
+    },
+    {
+      "id": "syn_3",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "Your angiography report describes about 80 % narrowing in one heart artery (the LAD), with no significant narrowing in the other arteries.",
+      "derived_from": [
+        "f_140",
+        "f_150",
+        "cf3"
+      ]
+    },
+    {
+      "id": "syn_4",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "Your HbA1c, a measure of average blood sugar, was 8.9 %. The usual target in the report is below 7 %.",
+      "derived_from": [
+        "f_hba1c",
+        "gm1"
+      ]
+    },
+    {
+      "id": "syn_17",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "Your records document type 2 diabetes and coronary artery disease affecting the LAD artery.",
+      "derived_from": [
+        "f_dx1",
+        "f_dx2"
+      ]
+    },
+    {
+      "id": "syn_16",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "Your current prescription list has six medicines: aspirin, clopidogrel, metformin, atorvastatin, metoprolol and diclofenac (as needed).",
+      "derived_from": [
+        "f_m1",
+        "f_m2",
+        "f_m3",
+        "f_m4",
+        "f_m5",
+        "f_m6",
+        "gm3"
+      ]
+    },
+    {
+      "id": "syn_15",
+      "group": "proposal",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "Your treating cardiologist recommended angioplasty (PCI) to the LAD artery within 1–2 weeks.",
+      "derived_from": [
+        "f_121"
+      ]
+    },
+    {
+      "id": "syn_5",
+      "group": "interpretation",
+      "kind": "interpretation",
+      "confidence": "moderate",
+      "text": "A raised troponin together with a significant artery narrowing is the type of picture in which angioplasty is commonly discussed. This is general reference information, not a judgement about your doctor's advice.",
+      "derived_from": [
+        "cl_51",
+        "cf4",
+        "ic1"
+      ]
+    },
+    {
+      "id": "syn_7",
+      "group": "agreement",
+      "kind": "interpretation",
+      "confidence": "high",
+      "text": "The perspectives that reviewed it agree that the troponin rise is significant.",
+      "derived_from": [
+        "mx1"
+      ]
+    },
+    {
+      "id": "syn_8",
+      "group": "disagreement",
+      "kind": "interpretation",
+      "confidence": "moderate",
+      "flag": "disagreement",
+      "impact": "high",
+      "text": "Perspectives differ on timing. Your cardiologist recommended 1–2 weeks. Another perspective notes that if symptoms have been stable, a planned timeline may also be reasonable to discuss. Both views are kept.",
+      "derived_from": [
+        "mx3",
+        "cl_54",
+        "cl_55"
+      ]
+    },
+    {
+      "id": "syn_9",
+      "group": "missing",
+      "kind": "interpretation",
+      "confidence": "high",
+      "flag": "missing",
+      "impact": "high",
+      "text": "Your records do not include a heart ultrasound (echocardiogram). This test shows how well the heart is pumping. You may want to ask whether it has been done, or whether it is needed before deciding on timing.",
+      "derived_from": [
+        "mx4",
+        "gmi1",
+        "cmi1",
+        "imi1"
+      ]
+    },
+    {
+      "id": "syn_10",
+      "group": "missing",
+      "kind": "interpretation",
+      "confidence": "moderate",
+      "flag": "missing",
+      "impact": "medium",
+      "text": "No recent kidney function result was found. It is relevant to medicine choices around procedures.",
+      "derived_from": [
+        "gmi2",
+        "msmi1"
+      ]
+    },
+    {
+      "id": "syn_11",
+      "group": "uncertainty",
+      "kind": "interpretation",
+      "confidence": "low",
+      "flag": "uncertain",
+      "impact": "high",
+      "text": "It is not possible to tell from the documents alone whether this is urgent or can be planned, because current symptoms and heart function are not documented.",
+      "derived_from": [
+        "cu1",
+        "iu1",
+        "gu1",
+        "cl_54"
+      ]
+    },
+    {
+      "id": "syn_12",
+      "group": "uncertainty",
+      "kind": "interpretation",
+      "confidence": "low",
+      "flag": "uncertain",
+      "impact": "medium",
+      "text": "How your blood sugar level might affect the procedure and recovery is uncertain. General references say it can matter, but cannot say how much for you.",
+      "derived_from": [
+        "cl_56",
+        "gm1"
+      ]
+    },
+    {
+      "id": "syn_13",
+      "group": "medication",
+      "kind": "external_evidence",
+      "confidence": "high",
+      "impact": "high",
+      "text": "Your list includes two antiplatelet medicines and diclofenac, a painkiller. Taking these together is associated with a higher chance of bleeding. This is worth reviewing with your prescriber. Please do not change any medicine on your own.",
+      "derived_from": [
+        "ms2",
+        "cl_53",
+        "mx5"
+      ]
+    },
+    {
+      "id": "syn_14",
+      "group": "interpretation",
+      "kind": "external_evidence",
+      "confidence": "moderate",
+      "flag": "uncertain",
+      "text": "For people whose symptoms are stable, doctors sometimes also discuss optimising medicines first. You may want to ask why one path was preferred in your case.",
+      "derived_from": [
+        "cf5",
+        "cc1",
+        "cl_55"
+      ]
+    },
+    {
+      "id": "syn_19",
+      "group": "clarification",
+      "kind": "interpretation",
+      "confidence": "moderate",
+      "impact": "medium",
+      "text": "Your blood sugar control and kidney function may be part of how the team plans around a procedure.",
+      "derived_from": [
+        "cl_56",
+        "gmi2"
+      ]
+    },
+    {
+      "id": "syn_20",
+      "group": "clarification",
+      "kind": "interpretation",
+      "confidence": "moderate",
+      "impact": "high",
+      "text": "Before deciding, it may help to clarify three things with your doctors: heart pumping strength, how much risk there is in waiting, and the medicine combination.",
+      "derived_from": [
+        "syn_9",
+        "syn_11",
+        "syn_13"
+      ]
+    }
+  ]
+}

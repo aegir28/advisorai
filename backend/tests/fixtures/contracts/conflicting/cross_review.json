@@ -1,0 +1,116 @@
+{
+  "specialists": [
+    {
+      "id": "general_medicine",
+      "name": "General Medicine"
+    },
+    {
+      "id": "neurology",
+      "name": "Neurology"
+    },
+    {
+      "id": "medication_safety",
+      "name": "Medication Safety"
+    }
+  ],
+  "rows": [
+    {
+      "id": "mxa1",
+      "topic": "The MRI shows a lesion",
+      "relationship": "disagreement",
+      "cells": {
+        "general_medicine": "differs",
+        "neurology": "needs_context",
+        "medication_safety": "not_assessed"
+      },
+      "summary": "The records themselves disagree. General Medicine leans toward a documentation difference; Neurology wants the radiologist to clarify. Neither view is treated as correct.",
+      "perspectives": [
+        {
+          "specialist": "general_medicine",
+          "reasoning": "May be a wording difference in one document; cannot be told from the papers."
+        },
+        {
+          "specialist": "neurology",
+          "reasoning": "Should not be assumed either way. A formal clarification is the usual step."
+        }
+      ],
+      "item_ids": [
+        "gac1",
+        "na1",
+        "na2",
+        "cl_a1"
+      ]
+    },
+    {
+      "id": "mxa2",
+      "topic": "The headache pattern fits migraine with aura",
+      "relationship": "partial",
+      "cells": {
+        "general_medicine": "supports",
+        "neurology": "needs_context",
+        "medication_safety": "not_assessed"
+      },
+      "summary": "It is a commonly considered pattern. Neurology notes this is harder to settle while the imaging question is open.",
+      "perspectives": [
+        {
+          "specialist": "general_medicine",
+          "reasoning": "Pattern and normal bloods are consistent with it."
+        },
+        {
+          "specialist": "neurology",
+          "reasoning": "A reasonable working view, held with caution until the scan is clarified."
+        }
+      ],
+      "item_ids": [
+        "na4",
+        "cl_a4"
+      ]
+    },
+    {
+      "id": "mxa3",
+      "topic": "A follow-up MRI in 3 months is appropriate",
+      "relationship": "partial",
+      "cells": {
+        "general_medicine": "needs_context",
+        "neurology": "supports",
+        "medication_safety": "not_assessed"
+      },
+      "summary": "Neurology supports it; General Medicine says it depends on the radiologist's clarification.",
+      "perspectives": [
+        {
+          "specialist": "neurology",
+          "reasoning": "Consistent with the discharge description."
+        },
+        {
+          "specialist": "general_medicine",
+          "reasoning": "May not be needed if the report is confirmed as normal."
+        }
+      ],
+      "item_ids": [
+        "nc1",
+        "f_a4"
+      ]
+    },
+    {
+      "id": "mxa4",
+      "topic": "Frequent painkiller use is relevant to the headaches",
+      "relationship": "additional_context",
+      "cells": {
+        "general_medicine": "not_assessed",
+        "neurology": "not_assessed",
+        "medication_safety": "flags_issue"
+      },
+      "summary": "Raised by Medication Safety only.",
+      "perspectives": [
+        {
+          "specialist": "medication_safety",
+          "reasoning": "Use on about half the days in a month is worth reviewing."
+        }
+      ],
+      "item_ids": [
+        "ma2",
+        "cl_a5"
+      ]
+    }
+  ]
+}

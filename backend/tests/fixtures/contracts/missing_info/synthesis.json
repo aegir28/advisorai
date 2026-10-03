@@ -1,0 +1,228 @@
+{
+  "id": "syn_run_78",
+  "reviewer": {
+    "label": "Interim Clinical Reviewer (AI)",
+    "tier": 3,
+    "escalated": true,
+    "escalation_reason": "High uncertainty: key documents are missing, so one reviewer step was re-run on a stronger model."
+  },
+  "rubric": [
+    {
+      "factor": "Patient-specific evidence present",
+      "weight": "High"
+    },
+    {
+      "factor": "Verification status of the claim",
+      "weight": "High"
+    },
+    {
+      "factor": "Source reliability and recency",
+      "weight": "Medium"
+    },
+    {
+      "factor": "Consistency with the timeline",
+      "weight": "Medium"
+    },
+    {
+      "factor": "Quality of specialist reasoning",
+      "weight": "Medium"
+    },
+    {
+      "factor": "Number of perspectives agreeing",
+      "weight": "Tie-break only"
+    }
+  ],
+  "items": [
+    {
+      "id": "syn_1",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "You are 47 and have had right knee pain with twisting since March, with an occasional catching feeling. You are asking whether surgery is really needed.",
+      "derived_from": [
+        "f_k1",
+        "f_k2"
+      ]
+    },
+    {
+      "id": "syn_2",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "low",
+      "flag": "uncertain",
+      "text": "Your X-ray report mentions mild narrowing on the inner side of the knee. One measurement in the scan was hard to read, so we haven't guessed it.",
+      "derived_from": [
+        "f_xr1",
+        "clk4"
+      ]
+    },
+    {
+      "id": "syn_3",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "Your orthopaedic consultation suggests a torn cartilage pad (medial meniscus) and advises keyhole surgery.",
+      "derived_from": [
+        "f_k4",
+        "f_k5"
+      ]
+    },
+    {
+      "id": "syn_4",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "moderate",
+      "flag": "uncertain",
+      "text": "A medial meniscus tear is documented as suspected. It is not confirmed by a written report in your records.",
+      "derived_from": [
+        "f_k4",
+        "clk3"
+      ]
+    },
+    {
+      "id": "syn_5",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "Your medicine list shows ibuprofen 400 mg three times a day, and pantoprazole once a day.",
+      "derived_from": [
+        "f_km1",
+        "f_km2",
+        "clk1"
+      ]
+    },
+    {
+      "id": "syn_6",
+      "group": "proposal",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "Your surgeon advised arthroscopic partial meniscectomy (keyhole surgery on the cartilage) of the right knee.",
+      "derived_from": [
+        "f_k5"
+      ]
+    },
+    {
+      "id": "syn_7",
+      "group": "interpretation",
+      "kind": "external_evidence",
+      "confidence": "low",
+      "flag": "uncertain",
+      "text": "General reference material says keyhole surgery is commonly discussed for a confirmed tear with catching, usually after a period of non-surgical care. Neither of those is fully documented in your records.",
+      "derived_from": [
+        "clk2",
+        "ok3"
+      ]
+    },
+    {
+      "id": "syn_8",
+      "group": "uncertainty",
+      "kind": "interpretation",
+      "confidence": "low",
+      "flag": "uncertain",
+      "impact": "high",
+      "text": "It is not clear whether your pain comes mainly from a tear or from wear-related changes in the joint.",
+      "derived_from": [
+        "oku2",
+        "oku1"
+      ]
+    },
+    {
+      "id": "syn_9",
+      "group": "uncertainty",
+      "kind": "interpretation",
+      "confidence": "low",
+      "flag": "uncertain",
+      "impact": "medium",
+      "text": "How much non-surgical care has been tried is not clear. Only two physiotherapy sessions are recorded.",
+      "derived_from": [
+        "gku1",
+        "gk1"
+      ]
+    },
+    {
+      "id": "syn_10",
+      "group": "missing",
+      "kind": "interpretation",
+      "confidence": "high",
+      "flag": "missing",
+      "impact": "high",
+      "text": "Your records do not include a written MRI report. The consultation mentions an MRI, but only a photo of films was uploaded and it could not be read. A clear copy of the report would help.",
+      "derived_from": [
+        "mxk1",
+        "okm1"
+      ]
+    },
+    {
+      "id": "syn_11",
+      "group": "missing",
+      "kind": "interpretation",
+      "confidence": "moderate",
+      "flag": "missing",
+      "impact": "medium",
+      "text": "Details of any non-surgical treatment (such as a longer physiotherapy trial) are not in your records.",
+      "derived_from": [
+        "mxk2",
+        "gkm1"
+      ]
+    },
+    {
+      "id": "syn_12",
+      "group": "missing",
+      "kind": "interpretation",
+      "confidence": "moderate",
+      "flag": "missing",
+      "impact": "low",
+      "text": "Weight-bearing X-ray views are not in your records. They help judge joint wear more reliably.",
+      "derived_from": [
+        "okm2"
+      ]
+    },
+    {
+      "id": "syn_13",
+      "group": "agreement",
+      "kind": "interpretation",
+      "confidence": "high",
+      "text": "The perspectives that reviewed your case agree that the missing MRI report is the most important gap.",
+      "derived_from": [
+        "mxk1"
+      ]
+    },
+    {
+      "id": "syn_14",
+      "group": "clarification",
+      "kind": "interpretation",
+      "confidence": "low",
+      "flag": "uncertain",
+      "impact": "medium",
+      "text": "The medicine-safety review could not be completed for this report. Your ibuprofen use was raised by General Medicine only, so it has not been double-checked.",
+      "derived_from": [
+        "sr_ms",
+        "mxk3"
+      ]
+    },
+    {
+      "id": "syn_15",
+      "group": "clarification",
+      "kind": "interpretation",
+      "confidence": "moderate",
+      "impact": "medium",
+      "text": "You have taken ibuprofen regularly for about three months. It may be worth reviewing this with your prescriber. Please do not change any medicine on your own.",
+      "derived_from": [
+        "gk2",
+        "clk1"
+      ]
+    },
+    {
+      "id": "syn_16",
+      "group": "clarification",
+      "kind": "interpretation",
+      "confidence": "moderate",
+      "impact": "high",
+      "text": "Before deciding, it may help to get the written MRI report and ask how much non-surgical care is usually tried first.",
+      "derived_from": [
+        "syn_10",
+        "syn_11"
+      ]
+    }
+  ]
+}

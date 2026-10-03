@@ -1,0 +1,119 @@
+[
+  {
+    "id": "q1",
+    "audience": "current_doctor",
+    "priority": 1,
+    "category": "Diagnosis",
+    "text": "What specific findings in my angiography and blood tests support the need for angioplasty now?",
+    "trigger": "Your cardiologist recommended the procedure within 1–2 weeks. This asks for the reasoning behind it.",
+    "linked_item_ids": [
+      "cl_51",
+      "f_140"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q2",
+    "audience": "current_doctor",
+    "priority": 1,
+    "category": "Testing",
+    "text": "Has an echocardiogram been done? Could its result change the decision or the timing?",
+    "trigger": "No echocardiogram is in your records, and three perspectives flagged it independently.",
+    "linked_item_ids": [
+      "syn_9",
+      "mx4"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q3",
+    "audience": "current_doctor",
+    "priority": 1,
+    "category": "Timing",
+    "text": "What happens if I take a few weeks to decide? Is there a risk in waiting in my case?",
+    "trigger": "Perspectives differ on whether timing is urgent or can be planned.",
+    "linked_item_ids": [
+      "syn_8",
+      "mx3"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q4",
+    "audience": "current_doctor",
+    "priority": 2,
+    "category": "Alternatives",
+    "text": "Are there reasonable alternatives for my situation, such as adjusting medicines first? Why were they not preferred?",
+    "trigger": "Reference material mentions medicines-first approaches for stable symptoms.",
+    "linked_item_ids": [
+      "cf5",
+      "syn_14"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q5",
+    "audience": "current_doctor",
+    "priority": 2,
+    "category": "Medicines",
+    "text": "I take two antiplatelet medicines and a painkiller (diclofenac). Is that combination safe for me around the procedure?",
+    "trigger": "Medication Safety flagged this combination.",
+    "linked_item_ids": [
+      "ms2",
+      "syn_13"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q6",
+    "audience": "current_doctor",
+    "priority": 3,
+    "category": "Recovery",
+    "text": "How will my diabetes control affect the procedure and recovery?",
+    "trigger": "Your HbA1c is 8.9 %, and General Medicine flagged it as relevant.",
+    "linked_item_ids": [
+      "gm1",
+      "syn_12"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q7",
+    "audience": "second_opinion_doctor",
+    "priority": 1,
+    "category": "Diagnosis",
+    "text": "Having seen my angiography report, do you see the same reasons for considering angioplasty?",
+    "trigger": "Compares the second doctor's reading of the same findings.",
+    "linked_item_ids": [
+      "f_140",
+      "syn_3"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q8",
+    "audience": "second_opinion_doctor",
+    "priority": 1,
+    "category": "Timing",
+    "text": "What symptoms would make this urgent rather than planned?",
+    "trigger": "Urgency is the main point where perspectives differ.",
+    "linked_item_ids": [
+      "syn_8",
+      "syn_11"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q9",
+    "audience": "second_opinion_doctor",
+    "priority": 2,
+    "category": "Testing",
+    "text": "Which additional tests, if any, would you want before advising on timing?",
+    "trigger": "Echocardiogram and kidney function are missing from the records.",
+    "linked_item_ids": [
+      "syn_9",
+      "syn_10"
+    ],
+    "status": "not_asked"
+  }
+]

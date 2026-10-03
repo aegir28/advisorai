@@ -1,0 +1,227 @@
+{
+  "id": "syn_run_80",
+  "reviewer": {
+    "label": "Interim Clinical Reviewer (AI)",
+    "tier": 3,
+    "escalated": true,
+    "escalation_reason": "Two unresolved high-impact conflicts, so one reviewer step was re-run on a stronger model."
+  },
+  "rubric": [
+    {
+      "factor": "Patient-specific evidence present",
+      "weight": "High"
+    },
+    {
+      "factor": "Verification status of the claim",
+      "weight": "High"
+    },
+    {
+      "factor": "Source reliability and recency",
+      "weight": "Medium"
+    },
+    {
+      "factor": "Consistency with the timeline",
+      "weight": "Medium"
+    },
+    {
+      "factor": "Quality of specialist reasoning",
+      "weight": "Medium"
+    },
+    {
+      "factor": "Number of perspectives agreeing",
+      "weight": "Tie-break only"
+    }
+  ],
+  "items": [
+    {
+      "id": "syn_1",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "You are 38 and have had recurrent headaches since May, often preceded by about 20 minutes of flashing lights. You are asking what your MRI report and discharge summary are actually saying.",
+      "derived_from": [
+        "f_a1"
+      ]
+    },
+    {
+      "id": "syn_2",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "Your MRI report's conclusion says: no abnormality was identified inside the skull.",
+      "derived_from": [
+        "f_a2",
+        "cl_a2"
+      ]
+    },
+    {
+      "id": "syn_3",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "Your hospital discharge summary describes the MRI differently: a small lesion in the right frontal lobe, for follow-up.",
+      "derived_from": [
+        "f_a3",
+        "na2"
+      ]
+    },
+    {
+      "id": "syn_4",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "Your routine blood tests were within the reference ranges.",
+      "derived_from": [
+        "f_a5",
+        "ga1"
+      ]
+    },
+    {
+      "id": "syn_5",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "moderate",
+      "flag": "uncertain",
+      "text": "Your neurologist documented migraine with aura as suspected, not as a confirmed diagnosis.",
+      "derived_from": [
+        "f_a6",
+        "cl_a4"
+      ]
+    },
+    {
+      "id": "syn_6",
+      "group": "fact",
+      "kind": "patient_fact",
+      "confidence": "moderate",
+      "text": "Your current medicines are sumatriptan when needed, and ibuprofen when needed (about 15 days a month).",
+      "derived_from": [
+        "f_am1",
+        "f_am2",
+        "ma1"
+      ]
+    },
+    {
+      "id": "syn_7",
+      "group": "proposal",
+      "kind": "patient_fact",
+      "confidence": "high",
+      "text": "The discharge summary advises a repeat MRI in 3 months and a neurology review.",
+      "derived_from": [
+        "f_a4",
+        "nc1"
+      ]
+    },
+    {
+      "id": "syn_8",
+      "group": "disagreement",
+      "kind": "interpretation",
+      "confidence": "low",
+      "flag": "disagreement",
+      "impact": "high",
+      "text": "Your two documents disagree about the same scan, and the specialist perspectives differ on how to read that. One view is that it may be a wording difference in one document. Another is that it should not be assumed either way. We keep both and do not pick one.",
+      "derived_from": [
+        "mxa1",
+        "cl_a1",
+        "tl3",
+        "tl4"
+      ]
+    },
+    {
+      "id": "syn_9",
+      "group": "interpretation",
+      "kind": "external_evidence",
+      "confidence": "high",
+      "text": "When two documents describe the same scan differently, a formal re-read or clarification from the reporting radiologist is commonly requested before conclusions are drawn.",
+      "derived_from": [
+        "cl_a3",
+        "na3"
+      ]
+    },
+    {
+      "id": "syn_10",
+      "group": "uncertainty",
+      "kind": "interpretation",
+      "confidence": "low",
+      "flag": "uncertain",
+      "impact": "high",
+      "text": "Until the difference is clarified, it is not possible to say whether your scan shows anything that needs follow-up.",
+      "derived_from": [
+        "nau1",
+        "gau1"
+      ]
+    },
+    {
+      "id": "syn_11",
+      "group": "uncertainty",
+      "kind": "interpretation",
+      "confidence": "low",
+      "flag": "uncertain",
+      "impact": "medium",
+      "text": "Whether your headaches are migraine with aura is a working view only. It is held with caution while the imaging question is open.",
+      "derived_from": [
+        "mxa2",
+        "na4"
+      ]
+    },
+    {
+      "id": "syn_12",
+      "group": "missing",
+      "kind": "interpretation",
+      "confidence": "high",
+      "flag": "missing",
+      "impact": "high",
+      "text": "There is no note from the reporting radiologist explaining the difference between the MRI report and the discharge summary.",
+      "derived_from": [
+        "nam1",
+        "gam1"
+      ]
+    },
+    {
+      "id": "syn_13",
+      "group": "agreement",
+      "kind": "interpretation",
+      "confidence": "high",
+      "text": "The perspectives agree that the two documents cannot both be accepted as written, and that clarifying them is the key step.",
+      "derived_from": [
+        "mxa1"
+      ]
+    },
+    {
+      "id": "syn_14",
+      "group": "medication",
+      "kind": "external_evidence",
+      "confidence": "moderate",
+      "impact": "medium",
+      "text": "Using painkillers on many days each month is associated with more frequent headaches in some people. You use ibuprofen on about 15 days a month. This is worth reviewing with your prescriber. Please do not change any medicine on your own.",
+      "derived_from": [
+        "ma2",
+        "cl_a5",
+        "mxa4"
+      ]
+    },
+    {
+      "id": "syn_15",
+      "group": "clarification",
+      "kind": "interpretation",
+      "confidence": "moderate",
+      "impact": "medium",
+      "text": "Whether the repeat MRI in 3 months is still needed may depend on the radiologist's clarification.",
+      "derived_from": [
+        "mxa3",
+        "nc1"
+      ]
+    },
+    {
+      "id": "syn_16",
+      "group": "clarification",
+      "kind": "interpretation",
+      "confidence": "moderate",
+      "impact": "high",
+      "text": "Before deciding anything, it may help to get the radiologist's clarification and ask your doctors how they read the difference.",
+      "derived_from": [
+        "syn_8",
+        "syn_12"
+      ]
+    }
+  ]
+}

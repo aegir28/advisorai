@@ -1,0 +1,45 @@
+# Specialty-agent registry: one entry per specialist. Read by backend/app/agents/registry.py.
+#
+# Adding or changing a specialist is a change HERE, not in code. Every agent ships DISABLED: a disabled agent
+# cannot be selected by the router and cannot run. Enable one only after its prompt has been written
+# (backend/app/agents/prompts/<id>/v<N>.md) and its behaviour has been reviewed.
+#
+# `tier` is the model tier (1 cheap .. 3 best, see registry/models.yaml) the agent's calls ask for.
+# The values below are neutral starting points, not decisions: choose them when you design the workflow.
+version: 1
+agents:
+  - id: general_medicine
+    name: General Medicine
+    version: "0.0.0"
+    tier: 2
+    prompt_version: 1
+    timeout_s: 90
+    enabled: false
+  - id: cardiology
+    name: Cardiology
+    version: "0.0.0"
+    tier: 2
+    prompt_version: 1
+    timeout_s: 90
+    enabled: false
+  - id: orthopedics
+    name: Orthopedics
+    version: "0.0.0"
+    tier: 2
+    prompt_version: 1
+    timeout_s: 90
+    enabled: false
+  - id: neurology
+    name: Neurology
+    version: "0.0.0"
+    tier: 2
+    prompt_version: 1
+    timeout_s: 90
+    enabled: false
+  - id: medication_safety
+    name: Medication Safety
+    version: "0.0.0"
+    tier: 2
+    prompt_version: 1
+    timeout_s: 90
+    enabled: false
