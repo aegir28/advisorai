@@ -26,10 +26,12 @@ a doctor is right or wrong, or decide whether a procedure should happen.
 | [`backend/`](backend) | FastAPI backend: foundation only (Phase 2A) | **Foundation** |
 | [`supabase/`](supabase) | Migrations, RLS, storage policies, pgTAP tests, synthetic seed | **Foundation** |
 | [`registry/`](registry) | Future agent and model configuration | Placeholder |
-| [`workflows/`](workflows) | Future workflow (DAG) definitions | Placeholder |
+| [`workflows/`](workflows) | Workflow (DAG) definitions; the engine is built, no definition yet | **Engine ready** |
 | [`evidence/`](evidence) | Future curated evidence library | Placeholder |
-| [`evals/`](evals) | Future benchmark cases and scoring | Placeholder |
-| [`.github/`](.github) | CI: backend checks, fixture drift, Supabase stack + pgTAP + integration | **Backend + DB CI** |
+| [`evals/`](evals) | Benchmark ground-truth contract, validator, bootstrap truth; no scoring yet | **Foundation** |
+| [`.github/`](.github) | CI: backend, frontend, real Supabase stack + pgTAP + integration, repo guards | **CI** |
+| [`scripts/`](scripts) | `repo_guards.py`: naming, secrets, no-AI-yet boundary | **Implemented** |
+| [`docs/handoff-ai-phase.md`](docs/handoff-ai-phase.md) | **Where the AI / API-key phase starts** | Written |
 
 ## Run the prototype
 

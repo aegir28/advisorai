@@ -1,0 +1,42 @@
+{
+  "schema_version": "ground_truth.v1",
+  "case_id": "missing_info",
+  "synthetic": true,
+  "provenance": "derived_from_prototype_fixtures",
+  "expected_facts": {
+    "symptoms": [
+      "Right knee pain with twisting: Since March",
+      "Occasional catching sensation: Not described as locking"
+    ],
+    "diagnoses": [
+      {
+        "name": "Medial meniscus tear (suspected)",
+        "status": "suspected"
+      }
+    ],
+    "medications": [
+      {
+        "name": "Ibuprofen",
+        "dose": "400 mg, three times a day"
+      },
+      {
+        "name": "Pantoprazole",
+        "dose": "40 mg, once daily"
+      }
+    ],
+    "labs": []
+  },
+  "expected_missing_information": [
+    "Details of non-surgical treatment so far",
+    "Written MRI report",
+    "Weight-bearing X-ray views"
+  ],
+  "expected_specialists": [
+    "general_medicine",
+    "orthopedics",
+    "medication_safety"
+  ],
+  "planted_contradictions": 0,
+  "must_ask_questions": [],
+  "timeline": []
+}

@@ -1,0 +1,83 @@
+{
+  "schema_version": "ground_truth.v1",
+  "case_id": "cardiology",
+  "synthetic": true,
+  "provenance": "derived_from_prototype_fixtures",
+  "expected_facts": {
+    "symptoms": [
+      "Chest tightness on exertion: Climbing stairs, since January"
+    ],
+    "diagnoses": [
+      {
+        "name": "Type 2 diabetes mellitus",
+        "status": "documented"
+      },
+      {
+        "name": "Coronary artery disease (LAD)",
+        "status": "documented"
+      }
+    ],
+    "medications": [
+      {
+        "name": "Aspirin",
+        "dose": "75 mg, once daily"
+      },
+      {
+        "name": "Clopidogrel",
+        "dose": "75 mg, once daily"
+      },
+      {
+        "name": "Metformin",
+        "dose": "1000 mg, twice daily"
+      },
+      {
+        "name": "Atorvastatin",
+        "dose": "40 mg, at night"
+      },
+      {
+        "name": "Metoprolol",
+        "dose": "25 mg, twice daily"
+      },
+      {
+        "name": "Diclofenac (painkiller, NSAID)",
+        "dose": "50 mg, when needed"
+      }
+    ],
+    "labs": [
+      {
+        "name": "HbA1c",
+        "value": "8.9 %",
+        "flag": "high",
+        "date": "2026-03-05"
+      },
+      {
+        "name": "LDL cholesterol",
+        "value": "142 mg/dL",
+        "flag": "high",
+        "date": "2026-03-05"
+      },
+      {
+        "name": "Troponin I (high-sensitivity)",
+        "value": "182 ng/L",
+        "flag": "high",
+        "date": "2026-04-12"
+      }
+    ]
+  },
+  "expected_missing_information": [
+    "Echocardiogram (heart ultrasound)",
+    "Recent kidney function test",
+    "Echocardiogram / LVEF",
+    "Stress test or functional assessment",
+    "Recent kidney function result"
+  ],
+  "expected_specialists": [
+    "general_medicine",
+    "cardiology",
+    "interventional_cardiology",
+    "medication_safety"
+  ],
+  "planted_contradictions": 0,
+  "must_ask_questions": [],
+  "timeline": []
+}

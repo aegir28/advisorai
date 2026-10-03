@@ -5,6 +5,8 @@ on:
     branches: [develop]
     paths:
       - "backend/**"
+      - "workflows/**"
+      - "scripts/**"
       - "frontend/src/domain/**"
       - "frontend/src/mocks/**"
       - "frontend/src/lib/api/http/**"
@@ -13,6 +15,8 @@ on:
   pull_request:
     paths:
       - "backend/**"
+      - "workflows/**"
+      - "scripts/**"
       - "frontend/src/domain/**"
       - "frontend/src/mocks/**"
       - "frontend/src/lib/api/http/**"
