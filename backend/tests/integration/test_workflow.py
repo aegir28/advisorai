@@ -552,10 +552,12 @@ async def test_runs_are_visible_only_to_their_owner(
     assert (await client.get(f"/api/v1/analysis/{uuid.uuid4()}", headers=h(keys, a))).status_code == 404
 
 
-async def test_there_is_no_endpoint_that_starts_an_analysis_yet(api: Any) -> None:
+async def test_the_internal_orchestrator_api_is_never_in_the_public_openapi(api: Any) -> None:
+    # Starting an analysis is public (ADR 0012, idempotent per Idempotency-Key); the n8n capability API is not.
     client, _, _ = api
     spec = (await client.get("/api/v1/openapi.json")).json()
-    assert not [p for p in spec["paths"] if p.endswith("/analysis") or "/runs/" in p]
+    assert "/api/v1/cases/{case_id}/analysis" in spec["paths"]
+    assert not [p for p in spec["paths"] if "/internal/" in p or "/runs/" in p]
 
 
 async def test_enqueue_analysis_checks_ownership_documents_and_concurrency(
