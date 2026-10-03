@@ -26,6 +26,15 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             </Link>
           </nav>
         </div>
+        {/* The two page sections have no room in the top bar on a phone, so they get their own slim row. */}
+        <nav aria-label="On this page" className="flex justify-center gap-6 border-t px-4 py-1.5 sm:hidden">
+          <Link href="/#how-it-works" className="rounded-lg px-2 py-1.5 text-sm font-medium text-foreground/80 hover:bg-secondary">
+            {t("nav.howItWorks")}
+          </Link>
+          <Link href="/#safety" className="rounded-lg px-2 py-1.5 text-sm font-medium text-foreground/80 hover:bg-secondary">
+            {t("nav.safety")}
+          </Link>
+        </nav>
       </header>
       <main id="main">{children}</main>
       <footer className="border-t bg-card/60 pb-14">

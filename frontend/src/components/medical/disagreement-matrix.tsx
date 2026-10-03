@@ -82,7 +82,7 @@ function Row({ row, specialists }: { row: MatrixRow; specialists: CrossReviewDat
       </details>
 
       <div className="flex flex-wrap items-center gap-2">
-        <EvidenceChip itemId={row.id} label="Trace this row" />
+        <EvidenceChip itemId={row.id} label="Trace this row" describes={row.topic} />
       </div>
     </li>
   );

@@ -16,8 +16,8 @@ export function ClaimRow({ claim, sourceTitle }: { claim: Claim; sourceTitle: (i
       <p className="text-sm text-muted-foreground">{claim.removalReason ?? claim.rationale}</p>
       {(claim.patientFactIds.length > 0 || claim.externalSourceIds.length > 0) && (
         <div className="flex flex-wrap items-center gap-2">
-          {claim.patientFactIds.map((id) => <EvidenceChip key={id} itemId={id} label="Your report" />)}
-          {claim.externalSourceIds.map((id) => <EvidenceChip key={id} itemId={id} label={sourceTitle(id)} className="max-w-full truncate" />)}
+          {claim.patientFactIds.map((id) => <EvidenceChip key={id} itemId={id} label="Your report" describes={claim.text} />)}
+          {claim.externalSourceIds.map((id) => <EvidenceChip key={id} itemId={id} label={sourceTitle(id)} describes={claim.text} className="max-w-full truncate" />)}
         </div>
       )}
       <span className="sr-only">{tk(`verify.${claim.status}.long`)}</span>

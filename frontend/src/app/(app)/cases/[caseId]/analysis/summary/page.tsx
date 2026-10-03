@@ -30,7 +30,7 @@ function Item({ item }: { item: SynthesisItem }) {
       <div className="flex flex-wrap items-center gap-2">
         <KindTag kind={item.kind} plain />
         {item.flag && <FlagMarker flag={item.flag} />}
-        <EvidenceChip itemId={item.id} />
+        <EvidenceChip itemId={item.id} describes={item.text} />
       </div>
     </li>
   );

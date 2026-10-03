@@ -35,7 +35,7 @@ function Sentence({ item }: { item: ReportItem }) {
       <p className="text-lg leading-relaxed">{item.text}</p>
       <div className="flex flex-wrap items-center gap-2">
         {item.flag && <FlagMarker flag={item.flag} />}
-        {item.evidenceIds.map((id) => <EvidenceChip key={id} itemId={id} />)}
+        {item.evidenceIds.map((id) => <EvidenceChip key={id} itemId={id} describes={item.text} />)}
       </div>
     </li>
   );
