@@ -188,7 +188,7 @@ function TraceNodeView({ node, docName, top }: { node: TraceNode; docName: (id: 
       </div>
       {node.children.length > 0 && (
         <ol className="ml-3 mt-2 space-y-2 border-l-2 border-dashed pl-3">
-          {node.children.map((child) => <TraceNodeView key={child.id} node={child} docName={docName} />)}
+          {node.children.map((child, i) => <TraceNodeView key={`${child.id}:${i}`} node={child} docName={docName} />)}
         </ol>
       )}
     </li>
