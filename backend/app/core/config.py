@@ -5,6 +5,7 @@ never appear in `repr()`, logs or error messages. They are read from the BACKEND
 never reach the frontend or any `NEXT_PUBLIC_*` variable.
 """
 
+from decimal import Decimal
 from functools import lru_cache
 from pathlib import Path
 from typing import Annotated, Literal, Self
@@ -67,6 +68,21 @@ class Settings(BaseSettings):
     # Server-side secret for the HMAC of client IPs in the audit log.
     audit_ip_hmac_secret: SecretStr | None = None
 
+    # ── AI gateway (ADR 0011) ──────────────────────────────────────────────────────────────────────
+    # "fake" is the deterministic offline provider (the default: no key, no network, no cost). "openai" makes
+    # real calls and REQUIRES ADVISORAI_OPENAI_API_KEY. There is no silent fallback between the two.
+    ai_provider: Literal["fake", "openai"] = "fake"
+    # Backend environment only. SecretStr: never in repr(), logs, errors, the frontend or NEXT_PUBLIC_*.
+    openai_api_key: SecretStr | None = None
+    openai_base_url: str = "https://api.openai.com/v1"
+    # Tier -> model map and prices. Default: the repository's registry/models.yaml.
+    ai_models_file: Path = Path(__file__).resolve().parents[3] / "registry" / "models.yaml"
+    ai_request_timeout_seconds: float = Field(default=60.0, ge=1, le=300)
+    ai_max_attempts: int = Field(default=3, ge=1, le=5)
+    ai_schema_retries: int = Field(default=1, ge=0, le=3)
+    # Spend cap per workflow run in USD. 0 disables the cap.
+    ai_run_budget_usd: Decimal = Field(default=Decimal("0.50"), ge=0, le=Decimal("100"))
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_origins(cls, value: object) -> object:
@@ -94,6 +110,21 @@ class Settings(BaseSettings):
         if value is not None and len(value.get_secret_value()) < 32:
             raise ValueError("audit_ip_hmac_secret must be at least 32 characters")
         return value
+
+    @field_validator("openai_api_key")
+    @classmethod
+    def _plausible_openai_key(cls, value: SecretStr | None) -> SecretStr | None:
+        if value is not None and len(value.get_secret_value().strip()) < 20:
+            raise ValueError(
+                "openai_api_key looks wrong (too short); leave it unset until you have a real key"
+            )
+        return value
+
+    @model_validator(mode="after")
+    def _openai_provider_needs_a_key(self) -> Self:
+        if self.ai_provider == "openai" and self.openai_api_key is None:
+            raise ValueError("ai_provider=openai requires ADVISORAI_OPENAI_API_KEY")
+        return self
 
     @model_validator(mode="after")
     def _the_two_database_urls_are_different_logins(self) -> Self:

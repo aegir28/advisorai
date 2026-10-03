@@ -16,7 +16,7 @@ import json
 import logging
 import uuid
 from enum import StrEnum
-from typing import Any
+from typing import Any, Protocol
 
 from pydantic import SecretStr
 from sqlalchemy import text
@@ -38,12 +38,26 @@ class AuditAction(StrEnum):
     DOCUMENT_SIGNED_URL_ISSUED = "document.signed_url_issued"
     WORKFLOW_START = "workflow.start"
     WORKFLOW_FINISH = "workflow.finish"
+    AI_CALL = "ai.call"
     DATA_DELETION = "data.deletion"
     ADMIN_ACCESS = "admin.access"
 
 
 ALLOWED_METADATA_KEYS = frozenset(
-    {"result", "scope", "verifier", "reason", "count", "ttl_seconds", "status", "step", "completed_at"}
+    {
+        "result",
+        "scope",
+        "verifier",
+        "reason",
+        "count",
+        "ttl_seconds",
+        "status",
+        "step",
+        "completed_at",
+        "model",
+        "provider",
+        "tier",
+    }
 )
 _MAX_VALUE_LENGTH = 120
 
@@ -59,6 +73,21 @@ logger = logging.getLogger("advisorai.audit")
 
 class AuditError(Exception):
     pass
+
+
+class AuditRecorder(Protocol):
+    """What callers need from an audit writer (so tests and other writers can stand in)."""
+
+    async def record_completed(
+        self,
+        action: AuditAction,
+        *,
+        actor: uuid.UUID | None,
+        target_type: str | None = None,
+        target_id: str | None = None,
+        client_ip: str | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> None: ...
 
 
 def validate_metadata(metadata: dict[str, Any]) -> dict[str, str | int | bool]:

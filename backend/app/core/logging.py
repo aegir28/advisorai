@@ -18,6 +18,8 @@ _REDACTIONS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"(?i)\b(bearer)\s+[A-Za-z0-9._~+/=-]+"), r"\1 [redacted]"),
     # Signed URL tokens and similar secrets, in a query string or a plain key=value pair
     (re.compile(r"(?i)\b((?:token|apikey|access_token|signature|sig)=)[^&\s\"']+"), r"\1[redacted]"),
+    # Provider API keys (sk-..., sk-proj-...): the key itself, wherever it appears
+    (re.compile(r"\bsk-[A-Za-z0-9_-]{8,}"), "[redacted-key]"),
     # Passwords inside connection strings: scheme://user:password@host
     (re.compile(r"(?i)(://[^:/\s@]+:)[^@\s]+@"), r"\1[redacted]@"),
 ]

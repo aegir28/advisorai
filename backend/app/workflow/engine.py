@@ -12,6 +12,7 @@ a restart resumes instead of redoing, and a failure is never silent.
 """
 
 import asyncio
+import dataclasses
 import hashlib
 import logging
 import uuid
@@ -40,6 +41,8 @@ class RunContext:
     owner_user_id: uuid.UUID
     definition_id: str
     definition_version: int
+    # The id of the node being run (set by the engine per node). Used to correlate AI usage with a step.
+    node_id: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -152,6 +155,7 @@ class Engine:
         as a failed step and makes the run partial)."""
         node = self._registry.get(spec.type)
         assert node is not None  # checked for every node before the run started
+        ctx = dataclasses.replace(ctx, node_id=spec.id)
         fingerprint = getattr(node, "input_fingerprint", lambda _ctx: "")(ctx)
         digest = input_hash(ctx, spec, fingerprint)
 
