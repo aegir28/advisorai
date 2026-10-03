@@ -30,7 +30,7 @@ function DifferenceCard({ row, flag, nameOf }: { row: MatrixRow; flag?: Flag; na
               <p className="text-muted-foreground">{p.reasoning}</p>
             </li>
           ))}
-          <li><EvidenceChip itemId={row.id} label="Where this comes from" /></li>
+          <li><EvidenceChip itemId={row.id} label="Where this comes from" describes={row.topic} /></li>
         </ul>
       </details>
     </li>

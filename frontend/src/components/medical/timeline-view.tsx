@@ -26,7 +26,7 @@ export function TimelineView({ data }: { data: TimelineData }) {
               </p>
               <h3 className="text-xl leading-snug">{e.title}</h3>
               <p className="text-muted-foreground">{e.detail}</p>
-              <EvidenceChip itemId={e.id} />
+              <EvidenceChip itemId={e.id} describes={e.title} />
               {e.conflict && (
                 <div className={cn("mt-3 space-y-1.5 rounded-2xl border p-4 text-sm", flagSurface.disagreement)}>
                   <FlagMarker flag="disagreement" label="Two versions in your records" />
@@ -38,7 +38,7 @@ export function TimelineView({ data }: { data: TimelineData }) {
               <div className={cn("space-y-1.5 rounded-2xl border p-4 text-sm", flagSurface.missing)}>
                 <FlagMarker flag="missing" label="Possible gap" />
                 <p>{gap.text}</p>
-                <EvidenceChip itemId={gap.id} />
+                <EvidenceChip itemId={gap.id} describes={gap.text} />
               </div>
             )}
           </li>

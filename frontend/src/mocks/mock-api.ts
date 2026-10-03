@@ -444,7 +444,8 @@ export const prototypeControls: PrototypeControls = {
     const s = store();
     s.documents[caseId] = sc.documents.map((d) => ({ ...d }));
     patchCase(caseId, {
-      scenario, title: sc.seedCase.title, ageYears: sc.seedCase.ageYears, sex: sc.seedCase.sex, specialtyLabel: sc.seedCase.specialtyLabel,
+      // The title is the user's own; sample records never rename a case.
+      scenario, ageYears: sc.seedCase.ageYears, sex: sc.seedCase.sex, specialtyLabel: sc.seedCase.specialtyLabel,
       documentCount: sc.documents.length,
     });
     return findCase(caseId)!;

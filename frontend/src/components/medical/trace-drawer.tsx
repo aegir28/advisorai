@@ -142,6 +142,7 @@ export function TraceDrawer() {
                   {copied ? <Check aria-hidden data-icon="inline-start" /> : <Copy aria-hidden data-icon="inline-start" />}
                   {copied ? "Link copied" : "Copy link"}
                 </Button>
+                <span role="status" aria-live="polite" className="sr-only">{copied ? "Link copied to clipboard" : ""}</span>
                 <span className="text-xs text-muted-foreground">Item {data.itemId}</span>
               </div>
             </>

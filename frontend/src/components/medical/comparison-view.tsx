@@ -28,7 +28,7 @@ function Side({ label, text, evidence }: { label: string; text: string; evidence
       <p className="leading-relaxed">{text}</p>
       {evidence.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
-          {evidence.map((id) => <EvidenceChip key={id} itemId={id} label={evidenceLabel(id)} />)}
+          {evidence.map((id) => <EvidenceChip key={id} itemId={id} label={evidenceLabel(id)} describes={text} />)}
         </div>
       )}
     </div>
@@ -70,7 +70,7 @@ export function ComparisonView({ comparison, caseId, questions }: { comparison: 
                     <Side label={comparison.opinionALabel} text={row.opinionA} evidence={row.evidenceA} />
                     <Side label={comparison.opinionBLabel} text={row.opinionB} evidence={row.evidenceB} />
                   </div>
-                  <EvidenceChip itemId={row.id} label="Where this comes from" />
+                  <EvidenceChip itemId={row.id} label="Where this comes from" describes={row.topic} />
                 </li>
               ))}
             </ul>
