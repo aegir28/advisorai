@@ -123,7 +123,8 @@ def cloud_rules(text: str) -> set[str]:
 
 
 def good_cloud() -> str:
-    return (Path(__file__).resolve().parents[3] / CLOUD).read_text(encoding="utf-8")
+    text: str = (Path(__file__).resolve().parents[3] / CLOUD).read_text(encoding="utf-8")
+    return text
 
 
 def test_the_cloud_deploy_workflow_is_as_designed() -> None:
