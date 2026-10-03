@@ -13,6 +13,7 @@ from app.core.config import Settings
 from app.core.logging import RedactingFormatter, redact
 
 KEY = "sk-test-" + "k" * 32
+SYSTEM_URL = "postgresql+asyncpg://app_system@localhost/advisorai"
 
 
 def settings(**kwargs: object) -> Settings:
@@ -28,9 +29,18 @@ def test_the_default_is_the_offline_fake_provider_with_no_key_required() -> None
 def test_openai_requires_a_key_and_the_key_is_never_shown() -> None:
     with pytest.raises(ValidationError, match="ADVISORAI_OPENAI_API_KEY"):
         settings(ai_provider="openai")
-    s = settings(ai_provider="openai", openai_api_key=KEY)
+    s = settings(ai_provider="openai", openai_api_key=KEY, system_database_url=SYSTEM_URL)
     assert isinstance(build_provider(s), OpenAIProvider)
     assert KEY not in repr(s) and KEY not in str(s) and KEY not in repr(s.model_dump())
+
+
+def test_a_live_provider_cannot_run_without_the_budget_ledger_or_a_budget() -> None:
+    with pytest.raises(ValidationError, match="system_database_url"):
+        settings(ai_provider="openai", openai_api_key=KEY)
+    with pytest.raises(ValidationError, match="TOTAL_BUDGET"):
+        settings(
+            ai_provider="openai", openai_api_key=KEY, system_database_url=SYSTEM_URL, ai_total_budget_inr=0
+        )
 
 
 def test_an_obviously_wrong_key_is_rejected_at_startup() -> None:
@@ -41,6 +51,7 @@ def test_an_obviously_wrong_key_is_rejected_at_startup() -> None:
 def test_the_key_is_read_from_the_backend_environment(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("ADVISORAI_AI_PROVIDER", "openai")
     monkeypatch.setenv("ADVISORAI_OPENAI_API_KEY", KEY)
+    monkeypatch.setenv("ADVISORAI_SYSTEM_DATABASE_URL", SYSTEM_URL)
     s = Settings(environment="test", _env_file=None)
     assert s.openai_api_key is not None and s.openai_api_key.get_secret_value() == KEY
 

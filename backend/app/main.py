@@ -24,7 +24,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
 from app.ai.factory import build_gateway
-from app.ai.usage import PostgresUsageSink
+from app.ai.usage import PostgresSpendReader, PostgresUsageSink
 from app.api.router import api_v1
 from app.audit.writer import AuditWriter
 from app.auth.jwks import JwksKeyProvider, KeyProvider
@@ -99,7 +99,10 @@ def create_app(
 
     definitions = DefinitionRegistry.from_directory(settings.workflows_dir)
     ai_gateway = build_gateway(
-        settings, sink=PostgresUsageSink(database) if database is not None else None, audit=audit
+        settings,
+        sink=PostgresUsageSink(database) if database is not None else None,
+        audit=audit,
+        spend_reader=PostgresSpendReader(database) if database is not None else None,
     )
     node_registry = NodeRegistry()
     register_nodes(node_registry, ai_gateway)  # empty until clinical nodes are added (app/workflow/nodes.py)

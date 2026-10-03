@@ -40,7 +40,9 @@ class FakeProvider:
         *,
         responder: Callable[[ModelRequest], str] | None = None,
         canned: Mapping[str, Any] | None = None,
+        name: str = "fake",
     ) -> None:
+        self.name = name  # a second fake under another name lets tests exercise provider fallback
         self._script: deque[FakeStep] = deque(script or ())
         self._responder = responder
         # schema_name -> JSON-able value returned when nothing is scripted.

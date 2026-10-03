@@ -126,3 +126,19 @@ class AIMetrics:
 
     def snapshot(self) -> dict[str, int]:
         return dict(sorted(self.counters.items()))
+
+
+class PostgresSpendReader:
+    """Cumulative spend from the ledger on the SYSTEM path (SELECT of two aggregates, nothing else)."""
+
+    def __init__(self, database: Database) -> None:
+        self._database = database
+
+    async def total_micro_usd(self) -> int:
+        async with self._database.system_session(SystemOperation.AI_USAGE_READ) as connection:
+            total = (
+                await connection.execute(
+                    text("select coalesce(sum(cost_micro_usd), 0)::bigint from public.model_usage")
+                )
+            ).scalar_one()
+        return int(total)

@@ -82,6 +82,26 @@ class Settings(BaseSettings):
     ai_schema_retries: int = Field(default=1, ge=0, le=3)
     # Spend cap per workflow run in USD. 0 disables the cap.
     ai_run_budget_usd: Decimal = Field(default=Decimal("0.50"), ge=0, le=Decimal("100"))
+    # Prototype-wide model budget (ADR 0012). Rupees, converted at an EXPLICIT exchange rate that you keep
+    # current: the default is a planning assumption above the last rate checked (docs/provider-research.md),
+    # not a quote. 0 disables the cumulative guard (only allowed with the fake provider).
+    ai_total_budget_inr: Decimal = Field(default=Decimal("5000"), ge=0, le=Decimal("10000000"))
+    ai_inr_per_usd: Decimal = Field(default=Decimal("95"), gt=0, le=Decimal("1000"))
+    # Share of the budget kept unspent so a fix or a re-run is always affordable.
+    ai_budget_reserve_fraction: float = Field(default=0.10, ge=0, lt=1)
+    # `allow_unverified_synthetic` or `require_verified` (registry/models.yaml, `providers:`).
+    ai_privacy_policy: Literal["allow_unverified_synthetic", "require_verified"] = (
+        "allow_unverified_synthetic"
+    )
+    # ── n8n orchestration (ADR 0012) ───────────────────────────────────────────────────────────────────
+    # n8n sequences the clinical pipeline; it holds NO database login and NO provider key. FastAPI starts a
+    # run by calling `n8n_webhook_url` (signed); n8n calls back into /internal/orchestrator, signed.
+    n8n_enabled: bool = False
+    n8n_webhook_url: str | None = None
+    # Shared HMAC key for both directions (backend -> n8n start request, n8n -> backend callbacks).
+    n8n_hmac_secret: SecretStr | None = None
+    n8n_request_timeout_seconds: float = Field(default=10.0, ge=1, le=60)
+    n8n_max_clock_skew_seconds: int = Field(default=300, ge=30, le=900)
 
     @field_validator("cors_origins", mode="before")
     @classmethod
@@ -124,6 +144,36 @@ class Settings(BaseSettings):
     def _openai_provider_needs_a_key(self) -> Self:
         if self.ai_provider == "openai" and self.openai_api_key is None:
             raise ValueError("ai_provider=openai requires ADVISORAI_OPENAI_API_KEY")
+        return self
+
+    @field_validator("n8n_hmac_secret")
+    @classmethod
+    def _strong_n8n_secret(cls, value: SecretStr | None) -> SecretStr | None:
+        if value is not None and len(value.get_secret_value()) < 32:
+            raise ValueError("n8n_hmac_secret must be at least 32 characters")
+        return value
+
+    @model_validator(mode="after")
+    def _n8n_needs_its_webhook_and_secret(self) -> Self:
+        if self.n8n_enabled:
+            if self.n8n_webhook_url is None or self.n8n_hmac_secret is None:
+                raise ValueError(
+                    "n8n_enabled requires ADVISORAI_N8N_WEBHOOK_URL and ADVISORAI_N8N_HMAC_SECRET"
+                )
+            if self.environment == "production" and not self.n8n_webhook_url.startswith("https://"):
+                raise ValueError("n8n_webhook_url must be https in production")
+        return self
+
+    @model_validator(mode="after")
+    def _a_live_provider_needs_the_budget_ledger(self) -> Self:
+        """A real provider may not run without the cumulative budget guard and the ledger it reads."""
+        if self.ai_provider != "fake":
+            if self.ai_total_budget_inr <= 0:
+                raise ValueError("a live AI provider requires ADVISORAI_AI_TOTAL_BUDGET_INR > 0")
+            if self.system_database_url is None:
+                raise ValueError(
+                    "a live AI provider requires system_database_url (the budget ledger is read there)"
+                )
         return self
 
     @model_validator(mode="after")
