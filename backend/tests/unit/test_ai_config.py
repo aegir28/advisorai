@@ -70,7 +70,7 @@ def test_a_missing_registry_file_is_a_configuration_error_not_a_crash_later(tmp_
 
 def test_provider_keys_are_redacted_from_log_lines() -> None:
     assert KEY not in redact(f"calling with {KEY} now")
-    assert "[redacted-key]" in redact("key sk-proj-abcdefgh12345678")
+    assert "[redacted-key]" in redact("key " + "sk-" + "proj-abcdefgh12345678")  # split: not a key literal
     formatter = RedactingFormatter("%(message)s")
     record = logging.LogRecord("advisorai.ai", logging.ERROR, __file__, 1, "failed with %s", (KEY,), None)
     assert KEY not in formatter.format(record)
