@@ -3,12 +3,12 @@ begin;
 create extension if not exists pgtap with schema extensions;
 select * from no_plan();
 
--- ── The 16 tables (15 from Phase 2B + model_usage, the AI usage ledger) ───────────────────────────────────────────────────────────────────────────────
+-- ── The 17 tables (15 from Phase 2B + model_usage, the AI usage ledger + analysis_artifacts, n8n stage results) ───────────────────────────────────────────────────────────────────────────────
 select tables_are(
   'public',
   array['profiles', 'patients', 'cases', 'documents', 'document_pages', 'medical_records', 'facts',
         'timeline_events', 'medications', 'lab_results', 'diagnoses', 'procedures',
-        'workflow_runs', 'workflow_steps', 'model_usage', 'audit_logs'],
+        'workflow_runs', 'workflow_steps', 'model_usage', 'analysis_artifacts', 'audit_logs'],
   'public schema has exactly the expected tables'
 );
 
@@ -86,8 +86,8 @@ select is(
   (select coalesce(string_agg(table_name::text || ':' || privilege_type::text, ',' order by table_name::text, privilege_type::text), '')
      from information_schema.role_table_grants
     where table_schema = 'public' and grantee = 'app_system'),
-  'audit_logs:INSERT,model_usage:INSERT,workflow_runs:INSERT,workflow_runs:SELECT,workflow_steps:INSERT,workflow_steps:SELECT',
-  'app_system holds only the audit INSERT, the model_usage INSERT and the workflow run/step table privileges'
+  'analysis_artifacts:INSERT,analysis_artifacts:SELECT,audit_logs:INSERT,model_usage:INSERT,workflow_runs:INSERT,workflow_runs:SELECT,workflow_steps:INSERT,workflow_steps:SELECT',
+  'app_system holds only the audit INSERT, the model_usage INSERT, the artifact INSERT/SELECT and the workflow run/step table privileges (column-level reads are asserted in 06)'
 );
 select is(
   (select count(*)::int from information_schema.role_table_grants
