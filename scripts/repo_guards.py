@@ -11,6 +11,8 @@ Standard library only. Exit code 1 and a list of findings when a rule is broken.
              ADVISORAI_OPENAI_API_KEY, read in settings only), no provider endpoint outside the adapter,
              config and tests, and no pgvector/vector column (embeddings are not chosen yet). This replaced
              the Phase 2 rule that forbade any AI code; the boundary is now "AI only through the gateway".
+  cloud-deploy  The manual Supabase Cloud deployment workflow stays manual-only, forward-only, pinned to the
+             AdvisorAI project, serialized, and reads its credentials only from GitHub secrets.
 """
 
 import base64
@@ -58,6 +60,7 @@ _SECRET_PATTERNS: dict[str, re.Pattern[str]] = {
     "Google API key": re.compile(r"\bAIza[0-9A-Za-z_-]{35}\b"),
     "Google OAuth client secret": re.compile(r"\bGOCSPX-[A-Za-z0-9_-]{20,}"),
     "GitHub token": re.compile(r"\b(?:ghp|gho|ghs|ghu|github_pat)_[A-Za-z0-9_]{30,}"),
+    "Supabase access token": re.compile(r"\bsbp_[A-Za-z0-9]{20,}"),
     "Slack token": re.compile(r"\bxox[baprs]-[A-Za-z0-9-]{10,}"),
     "AWS access key": re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
 }
@@ -93,6 +96,46 @@ _AI_ALLOWLIST = {
 }
 # Docs may describe the future AI phase.
 _DOC_SUFFIXES = {".md"}
+
+
+CLOUD_DEPLOY_WORKFLOW = ".github/workflows/supabase-cloud-deploy.yml"
+CLOUD_PROJECT_REF = "mutwtdtqohmhsrgrkvwd"
+# Anything that could change or discard data, or replay history, is refused in the cloud workflow.
+_CLOUD_FORBIDDEN = re.compile(
+    r"(?i)\bdb\s+reset\b|\bdb\s+(?:push|pull|remote)\b[^\n]*--(?:include-all|include-roles|include-seed|force)\b"
+    r"|\bmigration\s+(?:repair|squash)\b|\bdb\s+(?:execute|query)\b|\bpsql\b|\bdrop\s+(?:table|schema|database)\b"
+    r"|\btruncate\b|\bsupabase\s+(?:projects\s+delete|branches\s+delete)\b"
+)
+_CLOUD_SECRET_NAMES = ("SUPABASE_ACCESS_TOKEN", "SUPABASE_DB_PASSWORD")
+
+
+def check_cloud_deploy(text: str) -> list[str]:
+    """Problems with the cloud deployment workflow's text (empty when it is as designed)."""
+    problems: list[str] = []
+    triggers = re.search(r"(?m)^on:\s*\n((?:[ \t]+.*\n|\n)+)", text)
+    keys = re.findall(r"(?m)^  ([a-z_]+):", triggers.group(1)) if triggers else []
+    if keys != ["workflow_dispatch"]:
+        problems.append(f"must be workflow_dispatch only (found triggers: {keys or 'none'})")
+    if not re.search(
+        r"(?m)^concurrency:\s*\n\s+group: supabase-cloud-deploy\s*\n\s+cancel-in-progress: false", text
+    ):
+        problems.append("needs the serial concurrency guard (cancel-in-progress: false)")
+    if f"SUPABASE_PROJECT_REF: {CLOUD_PROJECT_REF}" not in text:
+        problems.append("SUPABASE_PROJECT_REF must be the AdvisorAI project")
+    if re.search(r"--project-ref\s+(?!\"\$SUPABASE_PROJECT_REF\")", text):
+        problems.append("link only to $SUPABASE_PROJECT_REF")
+    if "supabase db push" not in text:
+        problems.append("must deploy with `supabase db push`")
+    for line in text.splitlines():
+        if _CLOUD_FORBIDDEN.search(line):
+            problems.append(f"forbidden command: {line.strip()[:80]}")
+    for name in _CLOUD_SECRET_NAMES:
+        if f"${{{{ secrets.{name} }}}}" not in text:
+            problems.append(f"{name} must come from `${{{{ secrets.{name} }}}}`")
+        for line in text.splitlines():
+            if re.match(rf"\s*{name}:\s*(?!\$\{{\{{ secrets\.{name} \}}\}}\s*$)\S", line):
+                problems.append(f"{name} must not be set to a literal")
+    return problems
 
 
 @dataclass(frozen=True, slots=True)
@@ -164,6 +207,11 @@ def scan(files: dict[str, str]) -> list[Finding]:
                         "pgvector / vector column (embeddings are not chosen yet)",
                     )
                 )
+    cloud = files.get(CLOUD_DEPLOY_WORKFLOW)
+    if cloud is not None:
+        findings.extend(
+            Finding("cloud-deploy", CLOUD_DEPLOY_WORKFLOW, 1, p) for p in check_cloud_deploy(cloud)
+        )
     return findings
 
 
@@ -198,7 +246,7 @@ def main(argv: Iterable[str] = ()) -> int:
     if findings:
         print(f"\n{len(findings)} finding(s).", file=sys.stderr)
         return 1
-    print("repo guards: ok (naming, secrets, ai-boundary)")
+    print("repo guards: ok (naming, secrets, ai-boundary, cloud-deploy)")
     return 0
 
 

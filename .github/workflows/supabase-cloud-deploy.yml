@@ -1,0 +1,164 @@
+name: supabase-cloud-deploy
+
+# MANUAL ONLY. Applies the migrations in supabase/migrations/ to the REAL AdvisorAI Supabase Cloud project.
+#
+#   Claude Code -> new forward-only migration -> PR -> review/merge -> THIS workflow, started by hand -> Supabase Cloud
+#
+# It is separate from `supabase.yml`, which only ever touches a throwaway local stack inside the runner.
+# Forward-only: it applies migrations that are not in the remote history yet. It never resets, drops,
+# truncates or rewrites anything, and it runs no SQL of its own. Read docs/deployment.md before using it.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Preview only: list what would be applied and change nothing (recommended first)"
+        type: boolean
+        default: true
+      confirm_project_ref:
+        description: "A real deployment needs the project ref typed here (mutwtdtqohmhsrgrkvwd)"
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+# One cloud deployment at a time. A second run waits; it never cancels one that is applying migrations.
+concurrency:
+  group: supabase-cloud-deploy
+  cancel-in-progress: false
+
+env:
+  SUPABASE_PROJECT_REF: mutwtdtqohmhsrgrkvwd
+  SUPABASE_PROJECT_NAME: advisorai
+  SUPABASE_CLI_VERSION: 2.107.0
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # A GitHub Environment lets the owner add required reviewers in the repository settings (optional).
+    environment: supabase-cloud
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.107.0
+
+      # ---- Preflight: nothing here changes the cloud database -------------------------------------------
+      - name: Preflight (inputs, secrets, migrations, CLI)
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+          CONFIRM_REF: ${{ inputs.confirm_project_ref }}
+          HAVE_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN != '' }}
+          HAVE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD != '' }}
+        run: |
+          set -euo pipefail
+
+          # Secrets: only their presence is checked; values are never echoed.
+          [ "$HAVE_TOKEN" = "true" ] || { echo "::error::The GitHub secret SUPABASE_ACCESS_TOKEN is not set."; exit 1; }
+          [ "$HAVE_DB_PASSWORD" = "true" ] || { echo "::error::The GitHub secret SUPABASE_DB_PASSWORD is not set."; exit 1; }
+
+          # The target is fixed in this file; the confirmation input must match it for a real run.
+          [ "$SUPABASE_PROJECT_REF" = "mutwtdtqohmhsrgrkvwd" ] || { echo "::error::Unexpected project ref in workflow env."; exit 1; }
+          if [ "$DRY_RUN" != "true" ]; then
+            [ "$CONFIRM_REF" = "$SUPABASE_PROJECT_REF" ] || { echo "::error::A real deployment needs confirm_project_ref to equal the project ref."; exit 1; }
+            [ "$GITHUB_REF" = "refs/heads/develop" ] || { echo "::error::A real deployment runs only from develop (this run is on $GITHUB_REF). Use a dry run for other branches."; exit 1; }
+          fi
+
+          # Migrations: directory exists, names are well formed, filenames and count only.
+          [ -d supabase/migrations ] || { echo "::error::supabase/migrations is missing."; exit 1; }
+          count=$(find supabase/migrations -maxdepth 1 -type f -name '*.sql' | wc -l)
+          [ "$count" -gt 0 ] || { echo "::error::No migrations found."; exit 1; }
+          bad=$(find supabase/migrations -maxdepth 1 -type f -regextype posix-extended ! -regex '.*/[0-9]{14}_[a-z0-9_]+\.sql' | wc -l)
+          [ "$bad" -eq 0 ] || { echo "::error::Unexpected file(s) in supabase/migrations (names must be <14 digits>_<name>.sql)."; exit 1; }
+          echo "Migrations to consider ($count):"
+          ls -1 supabase/migrations
+
+          # CLI: pinned version.
+          version=$(supabase --version)
+          echo "Supabase CLI: $version"
+          [ "$version" = "$SUPABASE_CLI_VERSION" ] || { echo "::error::Expected Supabase CLI $SUPABASE_CLI_VERSION."; exit 1; }
+          echo "MIGRATION_COUNT=$count" >> "$GITHUB_ENV"
+
+      - name: Verify the target project and link
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          # The token must see exactly this project, with the expected name.
+          name=$(supabase projects list -o json | jq -r --arg ref "$SUPABASE_PROJECT_REF" \
+            '(if type=="array" then . else (.projects // []) end)
+             | map(select((.id // .ref // .project_ref) == $ref)) | (.[0].name // "")')
+          [ -n "$name" ] || { echo "::error::Project $SUPABASE_PROJECT_REF is not visible to this access token."; exit 1; }
+          lower=$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')
+          [ "$lower" = "$SUPABASE_PROJECT_NAME" ] || { echo "::error::Project $SUPABASE_PROJECT_REF is named '$name', expected '$SUPABASE_PROJECT_NAME'. Stopping."; exit 1; }
+          echo "Target: $name ($SUPABASE_PROJECT_REF)"
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+      - name: Migration state before deployment (read-only)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          supabase migration list
+          echo "--- what a push would apply ---"
+          supabase db push --dry-run
+
+      # ---- Deployment: forward-only, skipped on a dry run ------------------------------------------------
+      - name: Apply the migrations (forward-only)
+        if: ${{ inputs.dry_run != true }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          # Plain push: no --include-all (no out-of-order replays), no roles, no seed data.
+          supabase db push --yes
+          echo "DEPLOYED=true" >> "$GITHUB_ENV"
+
+      # ---- Verification: read-only ----------------------------------------------------------------------
+      - name: Verify migration state after deployment (read-only)
+        if: ${{ inputs.dry_run != true }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          supabase migration list | tee /tmp/migration-list.txt
+          # Every local migration must now be in the remote history, with the same version.
+          missing=0
+          for f in supabase/migrations/*.sql; do
+            v=$(basename "$f" | cut -d_ -f1)
+            n=$(grep -cE "^[[:space:]]*${v}[[:space:]]*\|[[:space:]]*${v}[[:space:]]*\|" /tmp/migration-list.txt || true)
+            if [ "$n" -ne 1 ]; then echo "::error::Migration $v is not recorded on the remote."; missing=$((missing + 1)); fi
+          done
+          [ "$missing" -eq 0 ] || exit 1
+          echo "--- a second push must have nothing left to apply ---"
+          supabase db push --dry-run | tee /tmp/dry-run-after.txt
+          grep -qi "up to date" /tmp/dry-run-after.txt || { echo "::error::The remote still reports unapplied migrations."; exit 1; }
+
+      - name: Summary
+        if: always()
+        env:
+          JOB_STATUS: ${{ job.status }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$JOB_STATUS" != "success" ]; then status="FAILED (nothing further was applied after the failing step)"
+          elif [ "$DRY_RUN" = "true" ]; then status="DRY RUN complete (no changes made)"
+          else status="DEPLOYED and verified"; fi
+          {
+            echo "## Supabase Cloud deployment"
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Project ref | \`$SUPABASE_PROJECT_REF\` ($SUPABASE_PROJECT_NAME) |"
+            echo "| Migrations in repository | ${MIGRATION_COUNT:-unknown} |"
+            echo "| Status | $status |"
+            echo "| Commit | \`$GITHUB_SHA\` |"
+            echo "| Run | $RUN_URL |"
+          } >> "$GITHUB_STEP_SUMMARY"

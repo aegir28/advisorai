@@ -58,6 +58,7 @@ def test_secrets_are_refused() -> None:
         "GOCSPX-" + "a" * 24,
         "ghp_" + "a" * 36,
         "AKIA" + "A" * 16,
+        "sbp_" + "a" * 40,
         "key = " + jwt("service_role"),
     ]
     for text in bad:
@@ -112,3 +113,48 @@ def test_the_gateway_may_exist_but_a_provider_endpoint_outside_the_adapter_may_n
     # The key's real name is fine in settings; the bare provider default name is not.
     assert rules({"backend/app/core/config.py": "openai_api_key: SecretStr | None = None"}) == set()
     assert "ai-boundary" in rules({"backend/app/x.py": 'os.environ["OPENAI_API_KEY"]'})
+
+
+CLOUD = guards.CLOUD_DEPLOY_WORKFLOW
+
+
+def cloud_rules(text: str) -> set[str]:
+    return {f.rule for f in guards.scan({CLOUD: text})}
+
+
+def good_cloud() -> str:
+    text: str = (Path(__file__).resolve().parents[3] / CLOUD).read_text(encoding="utf-8")
+    return text
+
+
+def test_the_cloud_deploy_workflow_is_as_designed() -> None:
+    assert guards.check_cloud_deploy(good_cloud()) == []
+
+
+@pytest.mark.parametrize(
+    ("old", "new"),
+    [
+        ("on:\n  workflow_dispatch:", "on:\n  push:\n    branches: [develop]\n  workflow_dispatch:"),
+        ("on:\n  workflow_dispatch:", "on:\n  pull_request:\n  workflow_dispatch:"),
+        ("on:\n  workflow_dispatch:", "on:\n  schedule:\n    - cron: '0 3 * * *'\n  workflow_dispatch:"),
+        ("supabase db push --yes", "supabase db reset --linked"),
+        ("supabase db push --yes", "supabase db push --include-all"),
+        ("supabase db push --yes", "supabase db push --force"),
+        ("supabase migration list", "supabase migration repair --status reverted 1"),
+        ("supabase migration list", "psql \"$URL\" -c 'select 1'"),
+        ("cancel-in-progress: false", "cancel-in-progress: true"),
+        ("SUPABASE_PROJECT_REF: mutwtdtqohmhsrgrkvwd", "SUPABASE_PROJECT_REF: abcdefghijklmnopqrst"),
+        ('--project-ref "$SUPABASE_PROJECT_REF"', "--project-ref abcdefghijklmnopqrst"),
+        ("SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}", "SUPABASE_DB_PASSWORD: hunter2"),
+        ("SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}", "SUPABASE_ACCESS_TOKEN: abc"),
+    ],
+)
+def test_a_cloud_deploy_workflow_that_breaks_a_safety_rule_is_refused(old: str, new: str) -> None:
+    text = good_cloud()
+    assert old in text
+    assert "cloud-deploy" in cloud_rules(text.replace(old, new, 1))
+
+
+def test_the_local_ci_workflow_may_still_reset_its_throwaway_database() -> None:
+    assert "supabase db reset" in (Path(SCRIPT).parents[1] / ".github/workflows/supabase.yml").read_text()
+    assert guards.scan({".github/workflows/supabase.yml": "run: supabase db reset"}) == []
