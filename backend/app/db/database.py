@@ -50,6 +50,8 @@ class SystemOperation(StrEnum):
     AI_USAGE_RECORD = "ai.usage_record"
     # Read-only totals of the usage ledger (migration 20261007000001): the cumulative budget guard.
     AI_USAGE_READ = "ai.usage_read"
+    # n8n orchestration (migration 20261007000002): active-run case reads, artifact append, run extras.
+    ORCHESTRATION = "orchestration.run"
 
 
 def create_engine(database_url: SecretStr) -> AsyncEngine:

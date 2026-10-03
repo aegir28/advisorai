@@ -52,6 +52,8 @@ select = ["E", "F", "I", "B", "UP", "SIM", "N", "RUF"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["E501"]
+# Orchestration modules carry long explanatory docstrings and one-line SQL; formatting handles the code.
+"app/orchestration/**" = ["E501"]
 
 [tool.mypy]
 python_version = "3.12"

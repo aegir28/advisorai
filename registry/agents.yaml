@@ -13,6 +13,7 @@
 #                while it is a placeholder)
 #   triggers     "select this agent when this case signal is present" (signals: registry/signals.yaml). The
 #                reason is fixed text; the router appends only COUNTS of what matched, never case content.
+#   extension    none | medication_review (a structured addition to the report with its own contract)
 #   tier         model tier 1..3 (registry/models.yaml). tools: names of optional tools (none exist yet).
 #
 # Every agent ships DISABLED: a disabled agent cannot be selected by the router and cannot run. Enable one only
@@ -36,6 +37,7 @@ agents:
   - id: medication_safety
     name: Medication Safety
     kind: capability
+    extension: medication_review
     focus: "Reviews the documented current medicines: purpose, dose, frequency, duration, duplication, documented conflicts and missing medicine information."
     prompt_mode: shared
     version: "0.1.0"

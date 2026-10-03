@@ -44,6 +44,7 @@ class SpecialtyInput(WireModel):
 
 AgentKind = Literal["specialty", "subspecialty", "capability"]
 PromptMode = Literal["shared", "file"]
+Extension = Literal["none", "medication_review"]
 TriggerPriority = Literal["mandatory", "optional"]
 
 
@@ -74,6 +75,8 @@ class AgentSpec(WireModel):
     # `shared`: the shared specialist base prompt + `focus` (a new specialist needs no prompt file).
     # `file`: a dedicated prompt file prompts/<id>/v<prompt_version>.md (refused while it is a placeholder).
     prompt_mode: PromptMode = "file"
+    # A structured addition to the specialist report, validated by its own contract (medication_review.v1).
+    extension: Extension = "none"
     max_output_tokens: Annotated[int, Field(ge=256, le=8192)] = 2048
     # Agent-specific spend ceiling per call, in micro-USD. 0 = no extra ceiling beyond the run budget.
     max_call_cost_micro_usd: Annotated[int, Field(ge=0)] = 0
