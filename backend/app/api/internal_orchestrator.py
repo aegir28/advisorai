@@ -12,7 +12,14 @@ from fastapi import APIRouter, Depends, Request
 
 from app.core.config import Settings
 from app.core.errors import AppError
-from app.orchestration.contracts import AgentResult, BeginResult, FinishResult, RunPlan, StageResult
+from app.orchestration.contracts import (
+    AgentResult,
+    BeginRequest,
+    BeginResult,
+    FinishResult,
+    RunPlan,
+    StageResult,
+)
 from app.orchestration.service import OrchestrationService, StageError
 from app.orchestration.signing import SIGNATURE_HEADER, TIMESTAMP_HEADER, verify
 from app.schemas.errors import ErrorCode
@@ -61,9 +68,9 @@ def _raise(exc: StageError) -> AppError:
 
 
 @router.post("/runs/{run_id}/begin")
-async def begin(run_id: uuid.UUID, service: ServiceDep) -> BeginResult:
+async def begin(run_id: uuid.UUID, body: BeginRequest, service: ServiceDep) -> BeginResult:
     try:
-        return await service.begin(run_id)
+        return await service.begin(run_id, body.execution_id)
     except StageError as exc:
         raise _raise(exc) from None
 
@@ -98,3 +105,12 @@ async def finish(run_id: uuid.UUID, service: ServiceDep) -> FinishResult:
         return await service.finish(run_id)
     except StageError as exc:
         raise _raise(exc) from None
+
+
+@router.post("/executions/{execution_id}/fail")
+async def fail_execution(execution_id: str, service: ServiceDep) -> FinishResult:
+    """Called by the n8n error-recovery workflow. Unknown or already-finished executions are a 404 no-op."""
+    result = await service.fail_execution(execution_id)
+    if result is None:
+        raise AppError(ErrorCode.NOT_FOUND, "No active run for this execution.", status_code=404)
+    return result

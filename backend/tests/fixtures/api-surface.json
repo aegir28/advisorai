@@ -163,6 +163,9 @@
     "/api/v1/analysis/{run_id}/report": [
       "get"
     ],
+    "/api/v1/analysis/{run_id}/resume": [
+      "post"
+    ],
     "/api/v1/cases": [
       "get",
       "post"

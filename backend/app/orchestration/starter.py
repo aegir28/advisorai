@@ -96,6 +96,39 @@ class AnalysisStarter:
             ) from None
         return run_id, True
 
+    async def resume(self, user: CurrentUser, run_id: uuid.UUID) -> None:
+        """Re-send the start message for a run that is still active (n8n restarted mid-run). The master
+        workflow skips completed stages and the backend returns stored results, so nothing is redone or re-billed."""
+        async with self._db.user_session(user) as conn:
+            row = (
+                await conn.execute(
+                    text(
+                        "select case_id, status from public.workflow_runs where id = :r and owner_user_id = :o"
+                    ),
+                    {"r": run_id, "o": user.user_id},
+                )
+            ).first()
+        if row is None:
+            raise AppError(ErrorCode.RUN_NOT_FOUND, "Run could not be found.", status_code=404)
+        if row[1] not in ("queued", "running"):
+            raise AppError(ErrorCode.CONFLICT, "This analysis has already ended.", status_code=409)
+        try:
+            await self._n8n.start(
+                OrchestrationStart(
+                    schema_version="orchestration_start.v1",
+                    run_id=str(run_id),
+                    case_id=str(row[0]),
+                    workflow="case_analysis",
+                    resume=True,
+                )
+            )
+        except OrchestratorUnavailableError:
+            raise AppError(
+                ErrorCode.SERVICE_UNAVAILABLE,
+                "The analysis service is not available right now.",
+                status_code=503,
+            ) from None
+
     async def cancel(self, user: CurrentUser, run_id: uuid.UUID) -> None:
         async with self._db.user_session(user) as conn:
             owned = (

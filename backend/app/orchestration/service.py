@@ -219,6 +219,24 @@ class OrchestrationService:
         await self._store.finish_run(run_id, status, failure, warnings)
         return FinishResult(schema_version="finish_result.v1", run_id=str(run_id), status=status)  # type: ignore[arg-type]
 
+    async def fail_execution(self, execution_id: str) -> FinishResult | None:
+        """Error recovery: the n8n execution driving a run crashed. The run is failed with a person-safe
+        reason (idempotent: a run that already ended has nothing to fail). Never touches content."""
+        run = await self._store.run_by_execution(execution_id)
+        if run is None:
+            return None
+        await self._store.finish_run(
+            run.id,
+            "failed",
+            {
+                "code": "orchestrator_crashed",
+                "title": "We could not finish the analysis",
+                "body": "Something went wrong while the analysis was running. You can try again.",
+            },
+            ["The analysis stopped unexpectedly."],
+        )
+        return FinishResult(schema_version="finish_result.v1", run_id=str(run.id), status="failed")
+
     async def cancel(self, run_id: uuid.UUID) -> None:
         await self._run(run_id)
         await self._store.request_cancel(run_id)

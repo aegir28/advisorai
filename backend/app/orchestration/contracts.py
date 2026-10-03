@@ -99,6 +99,13 @@ class AgentResult(WireModel):
     code: str | None = None
 
 
+class BeginRequest(WireModel):
+    """n8n -> backend at the start of a run: which n8n execution is driving it (for error recovery)."""
+
+    schema_version: Literal["begin_request.v1"]
+    execution_id: Annotated[str, Field(pattern=r"^[A-Za-z0-9_.:-]{1,128}$")]
+
+
 class BeginResult(WireModel):
     schema_version: Literal["begin_result.v1"]
     run_id: Id

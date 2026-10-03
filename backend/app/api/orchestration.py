@@ -54,6 +54,16 @@ async def cancel_analysis(run_id: uuid.UUID, user: CurrentUserDep, request: Requ
     await _starter(request).cancel(user, run_id)
 
 
+@router.post(
+    "/analysis/{run_id}/resume",
+    status_code=status.HTTP_202_ACCEPTED,
+    operation_id="resumeAnalysis",
+    summary="Resume an analysis whose orchestrator stopped (completed steps are not redone)",
+)
+async def resume_analysis(run_id: uuid.UUID, user: CurrentUserDep, request: Request) -> None:
+    await _starter(request).resume(user, run_id)
+
+
 @router.get(
     "/analysis/{run_id}/report",
     response_model=PatientReport,

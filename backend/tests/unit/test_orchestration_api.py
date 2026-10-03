@@ -89,9 +89,17 @@ async def test_the_internal_api_is_absent_when_n8n_is_disabled_and_hidden_from_o
 async def test_a_signed_call_drives_a_stage_and_returns_only_ids_statuses_and_counts() -> None:
     client, rig = await client_for_rig()
     rid = rig.run_id  # type: ignore[attr-defined]
-    for path in (f"{PREFIX}/runs/{rid}/begin", f"{PREFIX}/runs/{rid}/stages/intake_safety"):
-        response = client.post(path, headers=signed("POST", path))
-        assert response.status_code == 200, response.text
+    begin = f"{PREFIX}/runs/{rid}/begin"
+    body = b'{"schema_version":"begin_request.v1","execution_id":"exec-1"}'
+    assert (
+        client.post(
+            begin, content=body, headers={**signed("POST", begin, body), "Content-Type": "application/json"}
+        ).status_code
+        == 200
+    )
+    path = f"{PREFIX}/runs/{rid}/stages/intake_safety"
+    response = client.post(path, headers=signed("POST", path))
+    assert response.status_code == 200, response.text
     body = response.json()
     assert body["status"] == "ok" and body["stage"] == "intake_safety" and body["counts"]["documents"] == 1
     flat = json.dumps(body).lower()
@@ -104,7 +112,7 @@ async def test_a_signed_call_drives_a_stage_and_returns_only_ids_statuses_and_co
 @pytest.mark.anyio
 async def test_unknown_run_and_unknown_stage_are_clean_errors() -> None:
     client, rig = await client_for_rig()
-    p = f"{PREFIX}/runs/{uuid.uuid4()}/begin"
+    p = f"{PREFIX}/runs/{uuid.uuid4()}/plan"
     assert client.post(p, headers=signed("POST", p)).status_code == 404
     p = f"{PREFIX}/runs/{rig.run_id}/stages/not_a_stage"  # type: ignore[attr-defined]
     assert client.post(p, headers=signed("POST", p)).status_code == 400
@@ -162,3 +170,22 @@ async def test_a_rejecting_or_unreachable_n8n_is_a_coded_error(status: int) -> N
 async def test_the_recording_client_can_simulate_an_outage() -> None:
     with pytest.raises(OrchestratorUnavailableError):
         await RecordingN8nClient(fail=True).start(START)
+
+
+@pytest.mark.anyio
+async def test_error_recovery_fails_the_run_of_a_crashed_execution_once_and_only_while_it_is_active() -> None:
+    client, rig = await client_for_rig()
+    rid = rig.run_id  # type: ignore[attr-defined]
+    begin = f"{PREFIX}/runs/{rid}/begin"
+    body = b'{"schema_version":"begin_request.v1","execution_id":"exec-9"}'
+    client.post(
+        begin, content=body, headers={**signed("POST", begin, body), "Content-Type": "application/json"}
+    )
+    fail = f"{PREFIX}/executions/exec-9/fail"
+    first = client.post(fail, headers=signed("POST", fail))
+    assert first.status_code == 200 and first.json()["status"] == "failed"
+    run = await rig.store.get_run(rid)  # type: ignore[attr-defined]
+    assert run is not None and run.status == "failed"
+    assert client.post(fail, headers=signed("POST", fail)).status_code == 404  # nothing active any more
+    nope = f"{PREFIX}/executions/never-started/fail"
+    assert client.post(nope, headers=signed("POST", nope)).status_code == 404

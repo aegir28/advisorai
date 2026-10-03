@@ -113,6 +113,9 @@ class OrchestrationStore(Protocol):
         self, run_id: uuid.UUID, status: str, failure: dict[str, str] | None, warnings: list[str]
     ) -> None: ...
     async def request_cancel(self, run_id: uuid.UUID) -> None: ...
+    async def run_by_execution(self, execution_id: str) -> RunRecord | None:
+        """The active run n8n execution `execution_id` is driving (error recovery looks it up by this)."""
+        ...
 
 
 # ═══ in-memory (tests, demos) ════════════════════════════════════════════════════════════════════════
@@ -225,6 +228,16 @@ class InMemoryOrchestrationStore:
     async def request_cancel(self, run_id: uuid.UUID) -> None:
         self._set(run_id, cancel_requested=True)
 
+    async def run_by_execution(self, execution_id: str) -> RunRecord | None:
+        return next(
+            (
+                r.record
+                for r in self.runs.values()
+                if r.execution_id == execution_id and r.record.status in ("queued", "running")
+            ),
+            None,
+        )
+
 
 # ═══ Postgres, system path ═══════════════════════════════════════════════════════════════════════════
 class PostgresOrchestrationStore:
@@ -273,15 +286,24 @@ class PostgresOrchestrationStore:
             return run_id, True
 
     async def get_run(self, run_id: uuid.UUID) -> RunRecord | None:
+        return await self._run_where("id = :r", {"r": run_id})
+
+    async def run_by_execution(self, execution_id: str) -> RunRecord | None:
+        return await self._run_where(
+            "external_execution_id = :e and status in ('queued', 'running')", {"e": execution_id}
+        )
+
+    async def _run_where(self, where: str, params: dict[str, Any]) -> RunRecord | None:
         async with self._db.system_session(SystemOperation.ORCHESTRATION) as conn:
             row = (
                 (
                     await conn.execute(
                         text(
                             "select id, case_id, owner_user_id, status, orchestrator, definition,"
-                            " cancel_requested_at is not null as cancel from public.workflow_runs where id = :r"
+                            " cancel_requested_at is not null as cancel from public.workflow_runs"
+                            f" where {where} limit 1"
                         ),
-                        {"r": run_id},
+                        params,
                     )
                 )
                 .mappings()
