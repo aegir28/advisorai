@@ -11,6 +11,7 @@ from datetime import UTC, datetime
 
 from app.orchestration.contracts import CaseContext, RunSummary, SynthesisArtifact
 from app.orchestration.review import SECTIONS_FOR_GROUP
+from app.orchestration.wire import make
 from app.safety.output_lint import lint_document
 from app.safety.readability import grade_level
 from app.schemas.common import Confidence
@@ -69,7 +70,7 @@ _TYPES: dict[int, ReportSectionType] = {
 
 
 def _note(text: str) -> ReportItem:
-    return ReportItem(text=text, kind="template", evidence_ids=[])
+    return make(ReportItem, text=text, kind="template", evidence_ids=[])
 
 
 def _section_for(group: str, hint: int | None) -> int:
@@ -88,6 +89,7 @@ def assemble_report(
     questions: list[Question],
     summary: RunSummary,
     source_titles: dict[str, str],
+    removed_claim_ids: set[str] | frozenset[str] = frozenset(),
     now: datetime | None = None,
 ) -> PatientReport:
     buckets: dict[int, list[ReportItem]] = {n: [] for n in range(1, 20)}
@@ -95,7 +97,8 @@ def assemble_report(
     for item in synthesis.synthesis.items:
         n = _section_for(item.group, synthesis.section_hints.get(item.id))
         buckets[n].append(
-            ReportItem(
+            make(
+                ReportItem,
                 id=item.id,
                 text=item.text,
                 kind=item.kind,
@@ -106,7 +109,8 @@ def assemble_report(
         )
     for entry in context.timeline:
         buckets[3].append(
-            ReportItem(
+            make(
+                ReportItem,
                 id=entry.id,
                 text=entry.title,
                 kind="patient_fact",
@@ -117,7 +121,8 @@ def assemble_report(
     for med in context.case.medications:
         if med.fact_ref:
             buckets[5].append(
-                ReportItem(
+                make(
+                    ReportItem,
                     id=f"med_{med.fact_ref}",
                     text=med.name,
                     kind="patient_fact",
@@ -127,10 +132,16 @@ def assemble_report(
             )
     for r in reports:
         conf: Confidence = r.confidence.overall
-        top = sorted(r.findings, key=lambda f: {"high": 0, "medium": 1, "low": 2}[f.importance])[:2]
+        top = sorted(
+            (f for f in r.findings if f"cl_{r.specialist}_{f.id}" not in removed_claim_ids),
+            key=lambda f: {"high": 0, "medium": 1, "low": 2}[f.importance],
+        )[:2]
         for f in top:
+            if f"cl_{r.specialist}_{f.id}" in removed_claim_ids:
+                continue  # an unsupported claim never reaches the report, whatever section it would be in
             buckets[12].append(
-                ReportItem(
+                make(
+                    ReportItem,
                     id=f"persp_{r.specialist}_{f.id}",
                     text=f.statement,
                     kind=f.kind,
@@ -140,7 +151,8 @@ def assemble_report(
             )
     for agent in summary.agents_unavailable:
         buckets[12].append(
-            ReportItem(
+            make(
+                ReportItem,
                 text=f"The {agent.replace('_', ' ')} perspective could not be completed, so it is not included.",
                 kind="template",
                 flag="uncertain",
@@ -150,7 +162,8 @@ def assemble_report(
     for q in questions:
         n = 15 if q.audience == "current_doctor" else 16
         buckets[n].append(
-            ReportItem(
+            make(
+                ReportItem,
                 id=q.id,
                 text=q.text,
                 kind="interpretation",
@@ -163,7 +176,8 @@ def assemble_report(
         for ref in r.evidence_refs:
             if ref.source_id in source_titles and ref.source_id not in {i.id for i in buckets[18]}:
                 buckets[18].append(
-                    ReportItem(
+                    make(
+                        ReportItem,
                         id=ref.source_id,
                         text=source_titles[ref.source_id],
                         kind="external_evidence",
@@ -188,7 +202,8 @@ def assemble_report(
         if not items and n in _EMPTY:
             items = [_note(_EMPTY[n])]
         sections.append(
-            ReportSection(
+            make(
+                ReportSection,
                 number=n,
                 type=_TYPES[n],
                 items=items,

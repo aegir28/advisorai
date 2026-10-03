@@ -12,6 +12,7 @@ from app.docintel.contracts import ExtractedFact
 from app.evidence.contracts import EvidenceItem
 from app.orchestration.contracts import CaseContext, DocumentBrief, TimelineEntry
 from app.orchestration.store import CaseInputs
+from app.orchestration.wire import make
 from app.safety.deidentify import deidentify
 from app.schemas.case import (
     CaseV1,
@@ -87,28 +88,33 @@ def build_case_context(
         text, iso = clean(fact.text), to_iso_date(fact.date)
         match fact.category:
             case "symptom":
-                symptoms.append(Symptom(text=text, onset=fact.date and clean(fact.date), fact_ref=fact.id))
+                symptoms.append(
+                    make(Symptom, text=text, onset=fact.date and clean(fact.date), fact_ref=fact.id)
+                )
             case "diagnosis":
                 diagnoses.append(
-                    Diagnosis(
+                    make(
+                        Diagnosis,
                         name=text,
                         status="suspected" if _SUSPECTED.search(fact.text) else "documented",
                         fact_ref=fact.id,
                     )
                 )
             case "medication":
-                meds.append(Medication(name=text, dose=_value(fact), fact_ref=fact.id))
+                meds.append(make(Medication, name=text, dose=_value(fact), fact_ref=fact.id))
             case "allergy":
-                allergies.append(FactItem(text=text, fact_ref=fact.id))
+                allergies.append(make(FactItem, text=text, fact_ref=fact.id))
             case "procedure":
-                procedures.append(FactItem(text=text, fact_ref=fact.id))
+                procedures.append(make(FactItem, text=text, fact_ref=fact.id))
             case "recommendation":
-                recs.append(Recommendation(by="document", text=text, fact_ref=fact.id))
+                recs.append(make(Recommendation, by="document", text=text, fact_ref=fact.id))
             case "lab_result" | "imaging_finding":
                 if iso is None:
-                    history.append(FactItem(text=text, fact_ref=fact.id))  # undated: kept as plain history
+                    history.append(
+                        make(FactItem, text=text, fact_ref=fact.id)
+                    )  # undated: kept as plain history
                 else:
-                    item = InvestigationItem(name=text, value=_value(fact), date=iso, fact_ref=fact.id)
+                    item = make(InvestigationItem, name=text, value=_value(fact), date=iso, fact_ref=fact.id)
                     if fact.category == "lab_result":
                         labs.append(item)
                     elif _ECG.search(fact.text):
@@ -116,7 +122,7 @@ def build_case_context(
                     else:
                         imaging.append(item)
             case _:
-                history.append(FactItem(text=text, fact_ref=fact.id))
+                history.append(make(FactItem, text=text, fact_ref=fact.id))
         if iso is not None:
             timeline.append(TimelineEntry(id=f"tl_{fact.id}", date=iso, title=text[:120], fact_id=fact.id))
     timeline.sort(key=lambda e: (e.date, e.id))
@@ -155,3 +161,27 @@ def build_case_context(
         timeline=timeline,
         unreadable_documents=unreadable_documents,
     )
+
+
+def record_text(case: CaseV1) -> dict[str, str]:
+    """fact id -> everything the structured case says about that fact (name, value, unit, date...).
+
+    Verification checks a claim against this AND the quoted snippet: a quote is short, the structured fact
+    carries the value and date the model was shown. Nothing here is new information; it is the same record."""
+    out: dict[str, list[str]] = {}
+
+    def walk(node: object) -> None:
+        if isinstance(node, dict):
+            ref = node.get("fact_ref")
+            if isinstance(ref, str):
+                out.setdefault(ref, []).extend(
+                    str(v) for k, v in node.items() if k != "fact_ref" and isinstance(v, str | int | float)
+                )
+            for v in node.values():
+                walk(v)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v)
+
+    walk(case.model_dump(mode="json"))
+    return {ref: " ".join(parts) for ref, parts in out.items()}

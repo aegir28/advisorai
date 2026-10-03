@@ -12,9 +12,9 @@ Three groups:
   them, and the backend decides what is kept (a removed claim stays removed whatever a model says).
 """
 
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.evidence.contracts import EvidenceItem
 from app.schemas.case import CaseV1
@@ -183,6 +183,28 @@ class RunSummary(WireModel):
 
 
 # ═══ Model-output schemas (what the gateway asks a model for) ═════════════════════════════════════
+def _strip_nulls(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {k: _strip_nulls(v) for k, v in value.items() if v is not None}
+    if isinstance(value, list):
+        return [_strip_nulls(v) for v in value]
+    return value
+
+
+class ModelOutput(BaseModel):
+    """Top level of anything a MODEL returns. Providers' strict JSON modes emit `null` for an optional field;
+    the wire contracts mean "absent", so nulls are dropped (recursively) before validation. Everything else
+    stays strict: unknown keys, wrong types and bad values are still rejected. (Deliberately not a
+    `WireModel`: it is never a wire contract, only the shape a model is asked to return.)"""
+
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _drop_nulls(cls, data: Any) -> Any:
+        return _strip_nulls(data)
+
+
 class ModelFact(WireModel):
     category: Literal[
         "symptom",
@@ -205,11 +227,11 @@ class ModelFact(WireModel):
     snippet: NonEmpty
 
 
-class FactsModelOutput(WireModel):
+class FactsModelOutput(ModelOutput):
     facts: list[ModelFact]
 
 
-class SpecialistModelOutput(WireModel):
+class SpecialistModelOutput(ModelOutput):
     """What a specialist model returns. The backend adds identity, version, tier, priority and routing."""
 
     status: Literal["complete", "incomplete"]
@@ -233,7 +255,7 @@ class VerificationModelResult(WireModel):
     rationale: NonEmpty
 
 
-class VerificationModelOutput(WireModel):
+class VerificationModelOutput(ModelOutput):
     results: list[VerificationModelResult]
 
 
@@ -250,7 +272,7 @@ class ReviewItem(WireModel):
     section: Annotated[int, Field(ge=1, le=18)] | None = None
 
 
-class ReviewModelOutput(WireModel):
+class ReviewModelOutput(ModelOutput):
     items: list[ReviewItem]
 
 
@@ -272,7 +294,7 @@ class ModelQuestion(WireModel):
     linked_item_ids: Annotated[list[Id], Field(min_length=1)]
 
 
-class QuestionsModelOutput(WireModel):
+class QuestionsModelOutput(ModelOutput):
     questions: list[ModelQuestion]
 
 
@@ -281,7 +303,7 @@ class SimplifiedItem(WireModel):
     text: NonEmpty
 
 
-class SimplifiedModelOutput(WireModel):
+class SimplifiedModelOutput(ModelOutput):
     items: list[SimplifiedItem]
 
 
@@ -295,7 +317,7 @@ class ModelComparisonRow(WireModel):
     item_ids: Annotated[list[Id], Field(min_length=1)]
 
 
-class ComparisonModelOutput(WireModel):
+class ComparisonModelOutput(ModelOutput):
     rows: list[ModelComparisonRow]
     next_questions: list[ModelQuestion]
 

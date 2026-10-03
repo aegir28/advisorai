@@ -50,6 +50,8 @@ tasks:
   verification: [{tier: 1}]
   review: [{tier: 2}]
   report: [{tier: 2}]
+  questions: [{tier: 1}]
+  second_opinion: [{tier: 2}]
 
 routes:
   fake:

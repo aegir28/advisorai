@@ -9,6 +9,7 @@ covers, so what matters most always reaches the visit even if the question model
 from collections.abc import Collection
 
 from app.orchestration.contracts import ModelQuestion, QuestionsModelOutput
+from app.orchestration.wire import make
 from app.safety.output_lint import lint_text
 from app.schemas.common import Rank
 from app.schemas.questions import Question
@@ -71,12 +72,13 @@ def _floor_question(item: SynthesisItem) -> ModelQuestion | None:
         )
     else:
         return None
-    return ModelQuestion(
+    return make(
+        ModelQuestion,
         audience="current_doctor",
         priority=1,
         category=trigger.replace("_", " "),
         text=text,
-        trigger_kind=trigger,  # type: ignore[arg-type]
+        trigger_kind=trigger,
         linked_item_ids=[item.id],
     )
 
@@ -99,7 +101,8 @@ def to_questions(items: list[ModelQuestion], run_id: str) -> list[Question]:
     for n, (_, q) in enumerate(ordered, start=1):
         rank: Rank = q.priority
         out.append(
-            Question(
+            make(
+                Question,
                 id=f"q_{run_id[:8]}_{n}",
                 audience=q.audience,
                 priority=rank,

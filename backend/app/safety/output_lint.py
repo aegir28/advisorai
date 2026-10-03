@@ -99,7 +99,8 @@ _DISCUSSION_CUE = re.compile(
 )
 _PROTECTIVE = re.compile(
     r"\b(?:do\s+not|don'?t|never|avoid)\b[^.?!]*\b(?:on\s+your\s+own|without\s+(?:first\s+)?(?:asking|talking|"
-    r"speaking|checking|consulting|discussing)|before\s+(?:talking|speaking|checking|asking|discussing))\b",
+    r"speaking|checking|consulting|discussing)|before\s+(?:talking|speaking|checking|asking|discussing)|"
+    r"because\s+of\s+(?:this|the|anything)|based\s+on\s+(?:this|the|anything))\b",
     re.I,
 )
 _SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+|\n+")

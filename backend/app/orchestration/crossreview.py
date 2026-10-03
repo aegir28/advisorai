@@ -16,6 +16,7 @@ establishes the structure, with fixed-text summaries.
 import re
 
 from app.evidence.contracts import EvidenceItem
+from app.orchestration.wire import make
 from app.schemas.common import SpecialistId
 from app.schemas.cross_review import (
     CellStance,
@@ -81,7 +82,8 @@ def cross_review(
             a: ("differs" if in_conflict else "supports") for a in by_agent
         }
         rows.append(
-            MatrixRow(
+            make(
+                MatrixRow,
                 id=f"mx_rec_{n}",
                 topic=f"What the record says: {fact_text.get(ref, ref)[:140]}",
                 cells=cells,
@@ -101,7 +103,8 @@ def cross_review(
     for report in reports:
         for con in report.contradictions:
             rows.append(
-                MatrixRow(
+                make(
+                    MatrixRow,
                     id=f"mx_con_{report.specialist}_{con.id}",
                     topic=con.description[:160] or "Two parts of the record conflict",
                     cells={report.specialist: "flags_issue"},
@@ -123,7 +126,8 @@ def cross_review(
             seen[key] = (text, [*agents, report.specialist], [*ids, gap.id])
     for n, (text, agents, ids) in enumerate(seen.values(), start=1):
         rows.append(
-            MatrixRow(
+            make(
+                MatrixRow,
                 id=f"mx_gap_{n}",
                 topic=f"Missing: {text}"[:160],
                 cells={a: "flags_issue" for a in agents},
@@ -141,7 +145,8 @@ def cross_review(
         for concern in review.concerns:
             if concern.kind in _CONFLICT_KINDS:
                 rows.append(
-                    MatrixRow(
+                    make(
+                        MatrixRow,
                         id=f"mx_med_{agent}_{concern.id}",
                         topic=concern.statement[:160],
                         cells={agent: "flags_issue"},

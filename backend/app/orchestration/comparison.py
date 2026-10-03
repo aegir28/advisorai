@@ -8,6 +8,7 @@ has no evidence behind it, so a comparison never looks more settled than the rec
 from collections.abc import Collection
 
 from app.orchestration.contracts import ComparisonModelOutput
+from app.orchestration.wire import make
 from app.safety.output_lint import lint_text
 from app.schemas.comparison import Comparison, ComparisonRow, NextQuestion
 
@@ -40,7 +41,8 @@ def build_comparison(
             relationship = "unresolved"
             drop("agreement_downgraded")
         rows.append(
-            ComparisonRow(
+            make(
+                ComparisonRow,
                 id=f"cmp_{n}",
                 topic=r.topic,
                 opinion_a=r.opinion_a,

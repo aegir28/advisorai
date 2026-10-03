@@ -16,6 +16,7 @@ guarantees, whatever a reviewer model returns:
 from collections.abc import Iterable
 
 from app.orchestration.contracts import ReviewItem, ReviewModelOutput, SynthesisArtifact
+from app.orchestration.wire import make
 from app.safety.output_lint import TextKind, lint_text
 from app.schemas.cross_review import CrossReviewData
 from app.schemas.evidence import Claim
@@ -114,11 +115,12 @@ def fallback_items(claims: list[Claim]) -> list[ReviewItem]:
     for c in usable(claims):
         group: SynthesisGroup = "fact" if c.kind == "patient_fact" else "interpretation"
         out.append(
-            ReviewItem(
+            make(
+                ReviewItem,
                 text=c.text,
                 kind=c.kind,
                 group=group,
-                confidence=_STATUS_CONFIDENCE.get(c.status, "low"),  # type: ignore[arg-type]
+                confidence=_STATUS_CONFIDENCE.get(c.status, "low"),
                 flag="uncertain" if c.status == "unclear" else None,
                 derived_from=[c.id],
             )
@@ -137,7 +139,8 @@ def preserve(items: list[ReviewItem], cross: CrossReviewData) -> list[ReviewItem
         ids = {row.id, *row.item_ids}
         if row.relationship == "disagreement" and not _covered(ids, out, {"disagreement"}):
             out.append(
-                ReviewItem(
+                make(
+                    ReviewItem,
                     text=f"Records or perspectives differ here, and both views are kept: {row.topic}",
                     kind="interpretation",
                     group="disagreement",
@@ -148,7 +151,8 @@ def preserve(items: list[ReviewItem], cross: CrossReviewData) -> list[ReviewItem
             )
         elif row.relationship == "medication_conflict" and not _covered(ids, out, {"medication"}):
             out.append(
-                ReviewItem(
+                make(
+                    ReviewItem,
                     text=f"A medicine point to discuss with your prescriber: {row.topic}",
                     kind="interpretation",
                     group="medication",
@@ -158,7 +162,8 @@ def preserve(items: list[ReviewItem], cross: CrossReviewData) -> list[ReviewItem
             )
         elif row.relationship == "missing_info" and not _covered(ids, out, {"missing"}):
             out.append(
-                ReviewItem(
+                make(
+                    ReviewItem,
                     text=row.topic.replace("Missing: ", "Not in your records: ", 1),
                     kind="interpretation",
                     group="missing",
@@ -185,7 +190,8 @@ def assemble(
     for n, item in enumerate(final, start=1):
         sid = f"syn_{n}"
         syn_items.append(
-            SynthesisItem(
+            make(
+                SynthesisItem,
                 id=sid,
                 text=item.text,
                 kind=item.kind,

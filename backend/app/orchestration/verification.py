@@ -23,6 +23,7 @@ from dataclasses import dataclass
 
 from app.evidence.contracts import EvidenceItem
 from app.orchestration.contracts import VerificationModelResult
+from app.orchestration.wire import make
 from app.schemas.common import FactKind, SpecialistId, VerificationStatus
 from app.schemas.evidence import Claim
 from app.schemas.specialist_report import SpecialistReport
@@ -131,7 +132,10 @@ def content_words(text: str) -> set[str]:
 
 
 def _numbers(text: str) -> set[str]:
-    return {n.rstrip("0").rstrip(".") if "." in n else n for n in _NUMBER.findall(text)}
+    """The numbers a statement commits to. A lone digit ("type 2", "stage 3", "once") is a label, not a
+    measurement, so it is not compared; a wrong measurement ("8.2" vs "11.9", "500" vs "50") still is."""
+    found = {n.rstrip("0").rstrip(".") if "." in n else n for n in _NUMBER.findall(text)}
+    return {n for n in found if len(n) > 1}
 
 
 @dataclass(frozen=True, slots=True)
@@ -147,6 +151,7 @@ def judge(
     source_ids: Collection[str],
     evidence_by_fact: Mapping[str, EvidenceItem],
     known_sources: Collection[str],
+    record_text: Mapping[str, str] | None = None,
 ) -> tuple[Verdict, list[str], list[str]]:
     """(verdict, valid fact ids, valid source ids)."""
     facts = [f for f in dict.fromkeys(fact_refs) if f in evidence_by_fact]
@@ -162,7 +167,9 @@ def judge(
     if not facts:
         return Verdict("insufficient_evidence", "No record item that exists is cited."), facts, sources
 
-    evidence_text = " ".join(evidence_by_fact[f].snippet for f in facts)
+    # The quoted snippet plus what the structured record says about the same fact (value, unit, date): a
+    # claim is checked against everything the record holds for the facts it cites, not only the quote.
+    evidence_text = " ".join(f"{evidence_by_fact[f].snippet} {(record_text or {}).get(f, '')}" for f in facts)
     claim_words = content_words(text)
     overlap = len(claim_words & content_words(evidence_text)) / max(len(claim_words), 1)
     claim_numbers, evidence_numbers = _numbers(text), _numbers(evidence_text)
@@ -192,6 +199,7 @@ def claims_from_reports(
     known_sources: Collection[str] = (),
     *,
     medication_concerns: Mapping[SpecialistId, list[tuple[str, str, list[str], list[str]]]] | None = None,
+    record_text: Mapping[str, str] | None = None,
 ) -> list[Claim]:
     """One `Claim` per finding/consideration of every usable report (and per medication concern)."""
     by_fact = {e.id.removeprefix("ev_"): e for e in evidence}
@@ -208,6 +216,7 @@ def claims_from_reports(
                     finding.source_ids or [],
                     by_fact,
                     known_sources,
+                    record_text,
                 )
             )
     for agent, concerns in (medication_concerns or {}).items():
@@ -215,7 +224,15 @@ def claims_from_reports(
             kind: FactKind = "external_evidence" if source_ids and not fact_refs else "interpretation"
             claims.append(
                 _claim(
-                    f"cl_{agent}_{cid}", statement, kind, agent, fact_refs, source_ids, by_fact, known_sources
+                    f"cl_{agent}_{cid}",
+                    statement,
+                    kind,
+                    agent,
+                    fact_refs,
+                    source_ids,
+                    by_fact,
+                    known_sources,
+                    record_text,
                 )
             )
     return claims
@@ -230,10 +247,12 @@ def _claim(
     source_ids: Collection[str],
     by_fact: Mapping[str, EvidenceItem],
     known_sources: Collection[str],
+    record_text: Mapping[str, str] | None = None,
 ) -> Claim:
-    verdict, facts, sources = judge(text, kind, fact_refs, source_ids, by_fact, known_sources)
+    verdict, facts, sources = judge(text, kind, fact_refs, source_ids, by_fact, known_sources, record_text)
     removed = verdict.status in SUPPORT_REMOVED
-    return Claim(
+    return make(
+        Claim,
         id=claim_id,
         text=text,
         kind=kind,
