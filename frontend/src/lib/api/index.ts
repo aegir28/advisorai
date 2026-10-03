@@ -38,14 +38,16 @@ function withInvalidation(base: AdvisorApi): AdvisorApi {
  * The single place that decides which implementation the UI talks to.
  *
  *   NEXT_PUBLIC_API_MODE unset (default) -> the in-browser mock (Phase 1 prototype)
- *   NEXT_PUBLIC_API_MODE=http            -> the HTTP boundary in ./http. Phase 2A builds the
- *                                           transport, error envelope and wire decoders only; data
- *                                           methods report "not available yet" until the backend
- *                                           serves them.
+ *   NEXT_PUBLIC_API_MODE=http            -> the HTTP boundary in ./http (Phase 2E): cases, documents,
+ *                                           the safety check and run status are served by the backend;
+ *                                           anything that needs the AI pipeline is reported as not
+ *                                           available, never faked.
  *
  * Whichever implementation is used, every response is validated against the contract schemas
  * before it reaches the UI.
  */
 const base: AdvisorApi = process.env.NEXT_PUBLIC_API_MODE === "http" ? createHttpApi() : mockApi;
+
+export { setAccessTokenGetter } from "./http";
 
 export const api: AdvisorApi = withInvalidation(withValidation(base));

@@ -17,12 +17,12 @@ function GMark() {
 const DEMO_ACCOUNT = { email: "demo@advisorai.test", displayName: "Demo User" };
 
 /**
- * Stand-in for "Continue with Google". It opens a simulated account chooser so
- * the flow feels like the future OAuth redirect. No Google account is used.
+ * "Continue with Google". In mock mode it opens a simulated account chooser (no Google account is used). With
+ * NEXT_PUBLIC_AUTH_MODE=supabase it starts the real Google sign-in through Supabase Auth.
  */
 export function GoogleSignInButton({ consentGiven, disabled, label = "Continue with Google" }: { consentGiven?: boolean; disabled?: boolean; label?: string }) {
   const router = useRouter();
-  const { signIn } = useAuth();
+  const { signIn, signInWithGoogle, mode } = useAuth();
   const [open, setOpen] = useState(false);
 
   const choose = () => {
@@ -33,7 +33,7 @@ export function GoogleSignInButton({ consentGiven, disabled, label = "Continue w
 
   return (
     <>
-      <Button type="button" variant="outline" size="lg" className="h-14 w-full gap-3 rounded-2xl bg-card text-base" disabled={disabled} onClick={() => setOpen(true)}>
+      <Button type="button" variant="outline" size="lg" className="h-14 w-full gap-3 rounded-2xl bg-card text-base" disabled={disabled} onClick={() => (mode === "supabase" ? void signInWithGoogle({ consent: consentGiven }) : setOpen(true))}>
         <GMark /> {label}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>

@@ -344,6 +344,21 @@ skip_nonce_check = false
 # If enabled, it will allow the user to successfully authenticate when the provider does not return an email address.
 email_optional = false
 
+# Google is the only product sign-in (ADR 0004, decision 1; ADR 0009). It is OFF here so `supabase start` (and CI)
+# work without credentials: Supabase refuses to start an enabled provider that has no client id or secret.
+# To turn it on locally: create a Google OAuth client (redirect URI = <API_EXTERNAL_URL>/auth/v1/callback), export
+# SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID and SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET in the shell that runs
+# `supabase start`, and set enabled = true. The secret stays in that shell / the hosted project's settings; it is
+# never in the repository, the backend or the frontend. See supabase/README.md.
+[auth.external.google]
+enabled = false
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+redirect_uri = ""
+url = ""
+skip_nonce_check = false
+email_optional = false
+
 # Allow Solana wallet holders to sign in to your project via the Sign in with Solana (SIWS, EIP-4361) standard.
 # You can configure "web3" rate limit in the [auth.rate_limit] section and set up [auth.captcha] if self-hosting.
 [auth.web3.solana]

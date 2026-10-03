@@ -47,7 +47,8 @@ export const CaseSummarySchema = z.object({
   id: Id,
   /** Pseudonymous display code. Full names never appear on case screens. */
   code: Id,
-  ownerLabel: z.string(),
+  /** Prototype-only display string. The real backend never sends a label for the owner. */
+  ownerLabel: z.string().optional(),
   ageYears: z.number().int().min(0).max(120),
   sex: SexSchema,
   concern: z.string(),
@@ -58,7 +59,8 @@ export const CaseSummarySchema = z.object({
   documentCount: z.number().int().min(0),
   updatedAt: IsoDate,
   runId: Id.optional(),
-  specialtyLabel: z.string(),
+  /** Prototype-only. Specialty routing is part of the AI phase, so the real backend does not send it yet. */
+  specialtyLabel: z.string().optional(),
   /** Short patient-facing name for lists ("Knee pain"). */
   title: z.string().optional(),
 });
@@ -70,7 +72,8 @@ export const DocumentItemSchema = z.object({
   id: Id,
   name: z.string().min(1),
   type: DocumentTypeSchema,
-  pages: z.number().int().min(1),
+  /** Unknown for a file that could not be read (needs_attention). */
+  pages: z.number().int().min(1).optional(),
   sizeKb: z.number().min(0),
   status: DocumentStatusSchema,
   uploadedAt: IsoDate,

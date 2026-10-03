@@ -31,6 +31,7 @@ from app.core.config import API_PREFIX, Settings, get_settings
 from app.core.errors import ErrorBoundaryMiddleware, register_exception_handlers
 from app.core.logging import configure_logging
 from app.core.request_id import REQUEST_ID_HEADER, RequestIdMiddleware
+from app.core.security import BodyLimitMiddleware, SecurityHeadersMiddleware
 from app.db.database import Database, create_engine
 from app.openapi import DESCRIPTION, install_openapi
 from app.schemas import ErrorEnvelope
@@ -141,6 +142,8 @@ def create_app(
     )
 
     app.add_middleware(ErrorBoundaryMiddleware)
+    app.add_middleware(BodyLimitMiddleware)
+    app.add_middleware(SecurityHeadersMiddleware, hsts=settings.environment == "production")
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,

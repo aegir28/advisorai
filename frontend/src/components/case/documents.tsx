@@ -94,7 +94,7 @@ export function DocumentList({ documents, onRemove }: { documents: DocumentItem[
             </summary>
             <dl className="mt-3 space-y-1 pl-8 text-sm text-muted-foreground">
               <div className="flex gap-2"><dt>File</dt><dd className="break-all text-foreground">{d.name}</dd></div>
-              <div className="flex gap-2"><dt>Size</dt><dd className="text-foreground">{d.pages} {d.pages === 1 ? "page" : "pages"} · {formatSize(d.sizeKb)}</dd></div>
+              <div className="flex gap-2"><dt>Size</dt><dd className="text-foreground">{d.pages !== undefined ? `${d.pages} ${d.pages === 1 ? "page" : "pages"} · ` : ""}{formatSize(d.sizeKb)}</dd></div>
               {d.ocrConfidence !== undefined && (
                 <div className="flex gap-2"><dt>How clearly we could read it</dt><dd className="text-foreground">{Math.round(d.ocrConfidence * 100)}%</dd></div>
               )}

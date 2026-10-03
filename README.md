@@ -10,9 +10,11 @@ questions to take to a qualified doctor.
 AdvisorAI is **not** a doctor. It does not diagnose, prescribe, tell anyone to stop a medicine, say
 a doctor is right or wrong, or decide whether a procedure should happen.
 
-> **Status: Phase 1 prototype + Phase 2A/2B backend and database foundation.** The clickable frontend
-> runs on mocked, entirely fictional data. The backend is FastAPI with a Supabase Postgres foundation
-> (RLS, private storage, audit log, JWT verification). There is no real sign-in, upload, AI or OCR yet.
+> **Status: Phase 1 prototype + the non-AI backend foundation (Phases 2A to 2F).** The clickable frontend
+> runs on mocked, entirely fictional data by default and can be switched to the real backend. The backend is
+> FastAPI on a Supabase Postgres foundation: RLS, private storage, audit log, JWT verification, the case and
+> document lifecycle with secure upload and validation, and a job-queue/workflow engine with no AI nodes. Google
+> sign-in is wired through Supabase Auth. There is **no AI, OCR, model call or provider key** yet.
 > **Synthetic data only: never enter real medical information.**
 
 ## Repository layout
