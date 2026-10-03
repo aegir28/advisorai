@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronLeft } from "lucide-react";
 import { UrgentCareScreen } from "@/components/case/urgent-care-screen";
@@ -14,6 +14,7 @@ import type { SafetyCheckResult, Sex } from "@/domain/types";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { t } from "@/i18n";
+import { readWizardStep, withWizardStep } from "@/lib/wizard-history";
 
 const INTENTS = [
   "Understanding my diagnosis",
@@ -45,6 +46,26 @@ export default function NewCasePage() {
   const [busy, setBusy] = useState(false);
   const [urgent, setUrgent] = useState<SafetyCheckResult | null>(null);
 
+  const LAST_STEP = 2;
+
+  /** Every step is a history entry, so browser Back/Forward move between steps. */
+  const goToStep = useCallback((n: number) => {
+    window.history.pushState(withWizardStep(window.history.state, n), "");
+    setStep(n);
+  }, []);
+
+  useEffect(() => {
+    window.history.replaceState(withWizardStep(window.history.state, 0), "");
+    const onPop = (e: PopStateEvent) => {
+      const n = readWizardStep(e.state, LAST_STEP + 1);
+      setError(null);
+      setStep(Math.min(n, LAST_STEP));
+      if (n <= LAST_STEP) setUrgent(null);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
   if (urgent) return <UrgentCareScreen result={urgent} />;
 
   const toggleFlag = (id: string, on: boolean) => setFlags((p) => (on ? [...p, id] : p.filter((f) => f !== id)));
@@ -56,16 +77,17 @@ export default function NewCasePage() {
       if (!Number.isFinite(ageNum) || ageNum < 1 || ageNum > 120) return setError("Please add your age (or the patient’s age).");
     }
     setError(null);
-    setStep((s) => s + 1);
+    goToStep(step + 1);
   };
 
-  const finish = async () => {
+  const finish = async (symptoms: string[] = flags) => {
     setBusy(true);
     setError(null);
     try {
       // The safety gate always runs BEFORE a case or analysis exists.
-      const result = await api.safetyCheck({ text: story, currentSymptoms: flags });
+      const result = await api.safetyCheck({ text: story, currentSymptoms: symptoms });
       if (result.redFlag) {
+        window.history.pushState(withWizardStep(window.history.state, LAST_STEP + 1), "");
         setUrgent(result);
         window.scrollTo({ top: 0 });
         return;
@@ -84,7 +106,7 @@ export default function NewCasePage() {
       <title>{`New case · ${BRAND.name}`}</title>
       <div className="mb-10 flex items-center justify-between">
         {step > 0 ? (
-          <button type="button" onClick={() => { setError(null); setStep(step - 1); }} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+          <button type="button" onClick={() => { setError(null); window.history.back(); }} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
             <ChevronLeft aria-hidden className="size-4" /> Back
           </button>
         ) : <span />}
@@ -99,7 +121,7 @@ export default function NewCasePage() {
               <li key={label}>
                 <button
                   type="button"
-                  onClick={() => { setIntent(label); setStep(1); }}
+                  onClick={() => { setIntent(label); goToStep(1); }}
                   className={cn(
                     "flex w-full items-center justify-between gap-3 rounded-2xl border bg-card px-5 py-4 text-left text-lg transition-colors hover:border-primary/50 hover:bg-accent/40",
                     intent === label && "border-primary bg-accent/50",
@@ -170,13 +192,13 @@ export default function NewCasePage() {
           </fieldset>
           {error && <p role="alert" className="text-sm font-medium text-destructive">{error}</p>}
           <div className="space-y-3">
-            <Button size="lg" className="h-14 w-full rounded-2xl text-base sm:w-auto sm:px-8" onClick={finish} disabled={busy}>
+            <Button size="lg" className="h-14 w-full rounded-2xl text-base sm:w-auto sm:px-8" onClick={() => finish()} disabled={busy}>
               {busy ? "Checking…" : flags.length ? "Continue" : "None of these. Continue"} <ArrowRight aria-hidden data-icon="inline-end" />
             </Button>
             <div>
               <Button
                 type="button" variant="ghost" size="sm" className="no-print text-muted-foreground"
-                onClick={() => { setFlags(["chest_pain_now"]); }}
+                onClick={() => { setFlags(["chest_pain_now"]); void finish(["chest_pain_now"]); }}
               >
                 Demo: show me the urgent-care screen
               </Button>
