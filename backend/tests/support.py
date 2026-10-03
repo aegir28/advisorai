@@ -150,3 +150,48 @@ class FakeDatabase:
 
     async def dispose(self) -> None:
         return None
+
+
+# ── In-memory storage ───────────────────────────────────────────────────────────────────────────
+class InMemoryStorage:
+    """A `StorageGateway` that keeps objects in a dict. `put` plays the browser uploading to the signed URL."""
+
+    def __init__(self) -> None:
+        self.objects: dict[str, bytes] = {}
+        self.fail_deletes = False
+        self.fail_upload_url = False
+        self.issued: list[str] = []
+
+    def put(self, path: str, data: bytes) -> None:
+        self.objects[path] = data
+
+    async def create_download_url(self, path: Any) -> Any:
+        from app.storage.gateway import SignedUrl
+
+        return SignedUrl(f"https://storage.test/download/{path}?token=SECRET-DOWNLOAD", 300)
+
+    async def create_upload_url(self, path: Any) -> Any:
+        from app.storage.gateway import SignedUrl, StorageError
+
+        if self.fail_upload_url:
+            raise StorageError("down")
+        self.issued.append(str(path))
+        return SignedUrl(f"https://storage.test/upload/{path}?token=SECRET-UPLOAD", 7200)
+
+    async def delete_objects(self, paths: list[Any]) -> None:
+        from app.storage.gateway import StorageError
+
+        if self.fail_deletes:
+            raise StorageError("down")
+        for p in paths:
+            self.objects.pop(str(p), None)
+
+    async def read_object(self, path: Any, *, max_bytes: int) -> bytes:
+        from app.storage.gateway import ObjectNotFoundError, ObjectTooLargeError
+
+        data = self.objects.get(str(path))
+        if data is None:
+            raise ObjectNotFoundError("object not found")
+        if len(data) > max_bytes:
+            raise ObjectTooLargeError("too large")
+        return data

@@ -57,6 +57,23 @@ alter role app_backend with password '<choose one>';
 alter role app_system  with password '<choose a different one>';
 ```
 
+## Without Docker: the native substitute
+
+If Docker or the Supabase images are unavailable, `supabase/native/run.sh up|pgtap|reset|down` builds a
+throw-away PostgreSQL 16 cluster with a **stub** of the Supabase `auth`/`storage` schemas and roles, applies the
+real migrations and seed, and runs the real pgTAP files. It prints the `ADVISORAI_TEST_ADMIN_DATABASE_URL` for the
+backend integration tests (the two Storage API tests still skip). It is **not** a replacement for the stack above
+and a green native run is never reported as one. It needs `postgresql-16` and `postgresql-16-pgtap`.
+
+## Google sign-in (Supabase Auth)
+
+`config.toml` has an `[auth.external.google]` block, **disabled** so `supabase start` works without credentials.
+To use real Google sign-in locally: create a Google OAuth client (authorised redirect URI
+`<API_EXTERNAL_URL>/auth/v1/callback`), export `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` and
+`SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET` in the shell that runs `supabase start`, and set `enabled = true`. These
+credentials belong to Supabase Auth only: never the frontend, the backend or the repository
+([ADR 0009](../docs/adr/0009-google-auth-and-frontend-http-integration.md)).
+
 ## Adding a migration
 
 `supabase migration new <name>`, write forward-only SQL, include RLS and policies for any new table, add

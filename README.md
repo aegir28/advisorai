@@ -10,9 +10,11 @@ questions to take to a qualified doctor.
 AdvisorAI is **not** a doctor. It does not diagnose, prescribe, tell anyone to stop a medicine, say
 a doctor is right or wrong, or decide whether a procedure should happen.
 
-> **Status: Phase 1 prototype + Phase 2A/2B backend and database foundation.** The clickable frontend
-> runs on mocked, entirely fictional data. The backend is FastAPI with a Supabase Postgres foundation
-> (RLS, private storage, audit log, JWT verification). There is no real sign-in, upload, AI or OCR yet.
+> **Status: Phase 1 prototype + the non-AI backend foundation (Phases 2A to 2F).** The clickable frontend
+> runs on mocked, entirely fictional data by default and can be switched to the real backend. The backend is
+> FastAPI on a Supabase Postgres foundation: RLS, private storage, audit log, JWT verification, the case and
+> document lifecycle with secure upload and validation, and a job-queue/workflow engine with no AI nodes. Google
+> sign-in is wired through Supabase Auth. There is **no AI, OCR, model call or provider key** yet.
 > **Synthetic data only: never enter real medical information.**
 
 ## Repository layout
@@ -24,10 +26,12 @@ a doctor is right or wrong, or decide whether a procedure should happen.
 | [`backend/`](backend) | FastAPI backend: foundation only (Phase 2A) | **Foundation** |
 | [`supabase/`](supabase) | Migrations, RLS, storage policies, pgTAP tests, synthetic seed | **Foundation** |
 | [`registry/`](registry) | Future agent and model configuration | Placeholder |
-| [`workflows/`](workflows) | Future workflow (DAG) definitions | Placeholder |
+| [`workflows/`](workflows) | Workflow (DAG) definitions; the engine is built, no definition yet | **Engine ready** |
 | [`evidence/`](evidence) | Future curated evidence library | Placeholder |
-| [`evals/`](evals) | Future benchmark cases and scoring | Placeholder |
-| [`.github/`](.github) | CI: backend checks, fixture drift, Supabase stack + pgTAP + integration | **Backend + DB CI** |
+| [`evals/`](evals) | Benchmark ground-truth contract, validator, bootstrap truth; no scoring yet | **Foundation** |
+| [`.github/`](.github) | CI: backend, frontend, real Supabase stack + pgTAP + integration, repo guards | **CI** |
+| [`scripts/`](scripts) | `repo_guards.py`: naming, secrets, no-AI-yet boundary | **Implemented** |
+| [`docs/handoff-ai-phase.md`](docs/handoff-ai-phase.md) | **Where the AI / API-key phase starts** | Written |
 
 ## Run the prototype
 

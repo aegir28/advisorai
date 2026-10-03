@@ -1,0 +1,235 @@
+{
+  "$defs": {
+    "ExpectedDiagnosis": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "documented",
+            "suspected"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "status"
+      ],
+      "title": "ExpectedDiagnosis",
+      "type": "object"
+    },
+    "ExpectedFacts": {
+      "additionalProperties": false,
+      "properties": {
+        "diagnoses": {
+          "items": {
+            "$ref": "#/$defs/ExpectedDiagnosis"
+          },
+          "title": "Diagnoses",
+          "type": "array"
+        },
+        "labs": {
+          "items": {
+            "$ref": "#/$defs/ExpectedLab"
+          },
+          "title": "Labs",
+          "type": "array"
+        },
+        "medications": {
+          "items": {
+            "$ref": "#/$defs/ExpectedMedication"
+          },
+          "title": "Medications",
+          "type": "array"
+        },
+        "symptoms": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Symptoms",
+          "type": "array"
+        }
+      },
+      "required": [
+        "symptoms",
+        "diagnoses",
+        "medications",
+        "labs"
+      ],
+      "title": "ExpectedFacts",
+      "type": "object"
+    },
+    "ExpectedLab": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "minLength": 1,
+          "title": "Date",
+          "type": "string"
+        },
+        "flag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Flag"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "name",
+        "date"
+      ],
+      "title": "ExpectedLab",
+      "type": "object"
+    },
+    "ExpectedMedication": {
+      "additionalProperties": false,
+      "properties": {
+        "dose": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dose"
+        },
+        "freq": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Freq"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ExpectedMedication",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "pattern": "^[a-z][a-z0-9_]{2,40}$",
+      "title": "Case Id",
+      "type": "string"
+    },
+    "expected_facts": {
+      "$ref": "#/$defs/ExpectedFacts"
+    },
+    "expected_missing_information": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Expected Missing Information",
+      "type": "array"
+    },
+    "expected_specialists": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Expected Specialists",
+      "type": "array"
+    },
+    "must_ask_questions": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Must Ask Questions",
+      "type": "array"
+    },
+    "planted_contradictions": {
+      "minimum": 0,
+      "title": "Planted Contradictions",
+      "type": "integer"
+    },
+    "provenance": {
+      "enum": [
+        "derived_from_prototype_fixtures",
+        "expert_reviewed"
+      ],
+      "title": "Provenance",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "ground_truth.v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "timeline": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Timeline",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "case_id",
+    "synthetic",
+    "provenance",
+    "expected_facts",
+    "expected_missing_information",
+    "expected_specialists",
+    "planted_contradictions",
+    "must_ask_questions",
+    "timeline"
+  ],
+  "title": "GroundTruthV1",
+  "type": "object"
+}

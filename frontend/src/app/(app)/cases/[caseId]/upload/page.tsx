@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import type { RunOutcome, ScenarioId } from "@/domain/types";
 import { useCase, useDocuments } from "@/features/case/hooks";
-import { api } from "@/lib/api";
+import { api, ApiError, ApiNotAvailableError } from "@/lib/api";
 import { prototype } from "@/lib/prototype";
 
 export default function UploadPage() {
@@ -45,7 +45,15 @@ export default function UploadPage() {
     setErrors(errs);
     if (!valid.length) return;
     setBusy(true);
-    for (const f of valid) await api.uploadDocument(caseId, { name: f.name, sizeKb: Math.max(1, Math.round(f.size / 1024)) });
+    const failed: string[] = [];
+    for (const f of valid) {
+      try {
+        await api.uploadDocument(caseId, { name: f.name, sizeKb: Math.max(1, Math.round(f.size / 1024)), blob: f });
+      } catch (e) {
+        failed.push(e instanceof ApiError ? e.message : `${f.name} could not be added. Please try again.`);
+      }
+    }
+    if (failed.length) setErrors((prev) => [...prev, ...failed]);
     setBusy(false);
   };
 
@@ -54,7 +62,14 @@ export default function UploadPage() {
     // Prototype only: use the chosen sample case's synthetic documents, and decide how the demo run ends.
     if (prototype && selected) await prototype.attachSampleRecords(caseId, selected).catch(() => undefined);
     prototype?.setNextRunOutcome(caseId, simulate === "auto" ? undefined : simulate);
-    await api.startAnalysis(caseId);
+    try {
+      await api.startAnalysis(caseId);
+    } catch (e) {
+      // The real backend cannot review a case until the AI phase exists: say so instead of failing silently.
+      setErrors([e instanceof ApiNotAvailableError ? "Reviewing your case isn't available in this version yet. Your reports are saved." : "We couldn't start the review. Please try again."]);
+      setBusy(false);
+      return;
+    }
     router.push(`/cases/${caseId}/analysis`);
   };
 

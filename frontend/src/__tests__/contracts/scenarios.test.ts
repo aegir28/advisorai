@@ -43,7 +43,7 @@ describe.each(scenarioList.map((sc) => [sc.id, sc] as const))("scenario %s", (_i
     expect(c.schema_version).toBe("case.v1");
     expect(c.case_id).toBe(caseId);
     // Names live in the app profile, never in the canonical case agents read.
-    const owner = sc.seedCase.ownerLabel.split(" ")[0].replace(/\.$/, "");
+    const owner = (sc.seedCase.ownerLabel ?? "").split(" ")[0].replace(/\.$/, "");
     expect(JSON.stringify(c)).not.toContain(owner);
     expect(JSON.stringify(c)).not.toMatch(/ownerLabel|email|phone/i);
     // Every fact reference points at a real extracted fact.

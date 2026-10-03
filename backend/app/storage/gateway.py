@@ -23,6 +23,14 @@ class StorageError(Exception):
     """A storage call failed. The message never contains a URL, token or key."""
 
 
+class ObjectNotFoundError(StorageError):
+    """The object does not exist (for an upload: the client never sent the file)."""
+
+
+class ObjectTooLargeError(StorageError):
+    """The object is bigger than the limit the caller allowed."""
+
+
 @dataclass(frozen=True, slots=True)
 class StoragePath:
     owner_user_id: uuid.UUID
@@ -57,6 +65,11 @@ class StorageGateway(Protocol):
     async def create_upload_url(self, path: StoragePath) -> SignedUrl: ...
 
     async def delete_objects(self, paths: list[StoragePath]) -> None: ...
+
+    async def read_object(self, path: StoragePath, *, max_bytes: int) -> bytes:
+        """The object's bytes, for server-side validation. Raises `ObjectNotFoundError` or
+        `ObjectTooLargeError`. Never returns more than `max_bytes`."""
+        ...
 
 
 class SupabaseStorageGateway:
@@ -110,3 +123,26 @@ class SupabaseStorageGateway:
         await self._call(
             "DELETE", f"{self._base}/object/{self._bucket}", json={"prefixes": [str(p) for p in paths]}
         )
+
+    async def read_object(self, path: StoragePath, *, max_bytes: int) -> bytes:
+        url = f"{self._base}/object/authenticated/{self._bucket}/{path}"
+        chunks: list[bytes] = []
+        received = 0
+        try:
+            async with self._http.stream("GET", url, headers=self._headers, timeout=30.0) as response:
+                if response.status_code in (400, 404):
+                    # Storage answers a missing object with 400 or 404 depending on the version.
+                    raise ObjectNotFoundError("object not found")
+                response.raise_for_status()
+                async for chunk in response.aiter_bytes():
+                    received += len(chunk)
+                    if received > max_bytes:
+                        raise ObjectTooLargeError("object is larger than allowed")
+                    chunks.append(chunk)
+        except StorageError:
+            raise
+        except httpx.HTTPStatusError as exc:
+            raise StorageError(f"storage request failed with status {exc.response.status_code}") from None
+        except httpx.HTTPError as exc:
+            raise StorageError(f"storage request failed ({type(exc).__name__})") from None
+        return b"".join(chunks)

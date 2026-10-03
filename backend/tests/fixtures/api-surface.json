@@ -1,0 +1,196 @@
+{
+  "models": {
+    "AnalysisRun": {
+      "properties": [
+        "case_id",
+        "failure",
+        "finished_at",
+        "id",
+        "progress",
+        "schema_version",
+        "started_at",
+        "status",
+        "steps",
+        "warnings"
+      ],
+      "required": [
+        "case_id",
+        "id",
+        "progress",
+        "schema_version",
+        "started_at",
+        "status",
+        "steps",
+        "warnings"
+      ]
+    },
+    "CaseSummary": {
+      "properties": [
+        "age_years",
+        "code",
+        "concern",
+        "document_count",
+        "id",
+        "proposed_treatment",
+        "run_id",
+        "sex",
+        "status",
+        "title",
+        "updated_at"
+      ],
+      "required": [
+        "age_years",
+        "code",
+        "concern",
+        "document_count",
+        "id",
+        "sex",
+        "status",
+        "updated_at"
+      ]
+    },
+    "ConsentInput": {
+      "properties": [
+        "version"
+      ],
+      "required": [
+        "version"
+      ]
+    },
+    "DocumentItem": {
+      "properties": [
+        "id",
+        "name",
+        "note",
+        "ocr_confidence",
+        "pages",
+        "size_kb",
+        "status",
+        "type",
+        "uploaded_at"
+      ],
+      "required": [
+        "id",
+        "name",
+        "size_kb",
+        "status",
+        "type",
+        "uploaded_at"
+      ]
+    },
+    "MeResponse": {
+      "properties": [
+        "consent_version",
+        "consented_at",
+        "data_mode",
+        "display_name",
+        "locale",
+        "user_id"
+      ],
+      "required": [
+        "data_mode",
+        "locale",
+        "user_id"
+      ]
+    },
+    "NewCaseInput": {
+      "properties": [
+        "age_years",
+        "concern",
+        "intent",
+        "proposed_treatment",
+        "sex"
+      ],
+      "required": [
+        "age_years",
+        "concern",
+        "sex"
+      ]
+    },
+    "SafetyCheckRequest": {
+      "properties": [
+        "current_symptoms",
+        "text"
+      ],
+      "required": [
+        "text"
+      ]
+    },
+    "SafetyCheckResult": {
+      "properties": [
+        "category",
+        "matched",
+        "red_flag"
+      ],
+      "required": [
+        "matched",
+        "red_flag"
+      ]
+    },
+    "UploadUrlRequest": {
+      "properties": [
+        "mime_type",
+        "name",
+        "size_bytes",
+        "type"
+      ],
+      "required": [
+        "mime_type",
+        "name",
+        "size_bytes"
+      ]
+    },
+    "UploadUrlResponse": {
+      "properties": [
+        "document_id",
+        "expires_in",
+        "upload_url"
+      ],
+      "required": [
+        "document_id",
+        "expires_in",
+        "upload_url"
+      ]
+    }
+  },
+  "paths": {
+    "/api/v1/analysis/{run_id}": [
+      "get"
+    ],
+    "/api/v1/cases": [
+      "get",
+      "post"
+    ],
+    "/api/v1/cases/safety-check": [
+      "post"
+    ],
+    "/api/v1/cases/{case_id}": [
+      "delete",
+      "get"
+    ],
+    "/api/v1/cases/{case_id}/documents": [
+      "get"
+    ],
+    "/api/v1/cases/{case_id}/documents/upload-url": [
+      "post"
+    ],
+    "/api/v1/cases/{case_id}/documents/{document_id}": [
+      "delete"
+    ],
+    "/api/v1/cases/{case_id}/documents/{document_id}/complete": [
+      "post"
+    ],
+    "/api/v1/health": [
+      "get"
+    ],
+    "/api/v1/health/ready": [
+      "get"
+    ],
+    "/api/v1/me": [
+      "get"
+    ],
+    "/api/v1/me/consent": [
+      "post"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+# Render blueprint (free web service) for the backend. Blueprint, Part 8: "Backend: Render free web service".
+# A free service sleeps when idle (slow first request): fine for a synthetic-data demo, not for pilots.
+#
+# Every `sync: false` value is set by hand in the Render dashboard (the secret store). Nothing secret is here.
+services:
+  - type: web
+    name: advisorai-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /api/v1/health
+    autoDeploy: false
+    envVars:
+      - {key: ADVISORAI_ENVIRONMENT, value: production}
+      - {key: ADVISORAI_DOCS_ENABLED, value: "false"}
+      - {key: ADVISORAI_DATA_MODE, value: synthetic_only}
+      - {key: ADVISORAI_WORKER_ENABLED, value: "false"}   # no node types exist before the AI phase
+      - {key: ADVISORAI_STORAGE_BUCKET, value: case-documents}
+      - {key: FORWARDED_ALLOW_IPS, value: "10.0.0.0/8"}   # Render's internal proxy range; confirm for your region
+      - {key: ADVISORAI_CORS_ORIGINS, sync: false}              # the Netlify site, e.g. https://advisorai-demo.netlify.app
+      - {key: ADVISORAI_DATABASE_URL, sync: false}               # postgresql+asyncpg://app_backend:...@<pooler>/postgres
+      - {key: ADVISORAI_SYSTEM_DATABASE_URL, sync: false}        # a DIFFERENT login: app_system
+      - {key: ADVISORAI_SUPABASE_URL, sync: false}               # https://<project>.supabase.co
+      - {key: ADVISORAI_SUPABASE_JWKS_URL, sync: false}          # https://<project>.supabase.co/auth/v1/.well-known/jwks.json
+      - {key: ADVISORAI_SUPABASE_JWT_ISSUER, sync: false}        # https://<project>.supabase.co/auth/v1
+      - {key: ADVISORAI_SUPABASE_SERVICE_ROLE_KEY, sync: false}  # backend only; Storage API; never the frontend
+      - {key: ADVISORAI_AUDIT_IP_HMAC_SECRET, sync: false}       # >= 32 random characters

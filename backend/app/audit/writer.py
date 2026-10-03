@@ -13,6 +13,7 @@ import hashlib
 import hmac
 import ipaddress
 import json
+import logging
 import uuid
 from enum import StrEnum
 from typing import Any
@@ -33,7 +34,10 @@ class AuditAction(StrEnum):
     DOCUMENT_UPLOAD = "document.upload"
     DOCUMENT_VIEW = "document.view"
     DOCUMENT_DOWNLOAD = "document.download"
+    DOCUMENT_DELETE = "document.delete"
     DOCUMENT_SIGNED_URL_ISSUED = "document.signed_url_issued"
+    WORKFLOW_START = "workflow.start"
+    WORKFLOW_FINISH = "workflow.finish"
     DATA_DELETION = "data.deletion"
     ADMIN_ACCESS = "admin.access"
 
@@ -48,6 +52,9 @@ _INSERT = text(
     " (actor_user_id, action, target_type, target_id, request_id, ip_hash, metadata)"
     " values (:actor, :action, :target_type, :target_id, :request_id, :ip_hash, cast(:metadata as jsonb))"
 )
+
+
+logger = logging.getLogger("advisorai.audit")
 
 
 class AuditError(Exception):
@@ -106,3 +113,31 @@ class AuditWriter:
                     "metadata": json.dumps(clean, separators=(",", ":")),
                 },
             )
+
+    async def record_completed(
+        self,
+        action: AuditAction,
+        *,
+        actor: uuid.UUID | None,
+        target_type: str | None = None,
+        target_id: str | None = None,
+        client_ip: str | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> None:
+        """Audit an operation that has ALREADY committed (create, delete, upload).
+
+        The business transaction cannot be undone and a 500 would misreport it, so a failure here is
+        logged at ERROR (no content: the action and request ID only) and does not fail the request. Use
+        `record` where the audit row must exist BEFORE something is released (a signed URL).
+        """
+        try:
+            await self.record(
+                action,
+                actor=actor,
+                target_type=target_type,
+                target_id=target_id,
+                client_ip=client_ip,
+                metadata=metadata,
+            )
+        except Exception:
+            logger.error("audit write failed for %s", action.value, exc_info=True)

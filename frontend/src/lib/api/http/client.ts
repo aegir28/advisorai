@@ -32,6 +32,12 @@ export interface HttpClientOptions {
   baseUrl: string;
   fetchImpl?: typeof fetch;
   newRequestId?: () => string;
+  /**
+   * The signed-in user's access token (a Supabase JWT), or null when signed out. It is a per-user, short-lived
+   * credential that is meant for the browser; it is never a service key. It is sent only in the Authorization
+   * header of calls to this API and is never logged.
+   */
+  getAccessToken?: () => Promise<string | null>;
 }
 
 export interface RequestOptions {
@@ -48,13 +54,15 @@ export function defaultRequestId(): string {
   return `req_${crypto.randomUUID().replaceAll("-", "")}`;
 }
 
-export function createHttpClient({ baseUrl, fetchImpl, newRequestId = defaultRequestId }: HttpClientOptions): HttpClient {
+export function createHttpClient({ baseUrl, fetchImpl, newRequestId = defaultRequestId, getAccessToken }: HttpClientOptions): HttpClient {
   const root = baseUrl.replace(/\/+$/, "");
 
   return {
     async request(method, path, { body, signal } = {}) {
       const sentRequestId = newRequestId();
       const doFetch = fetchImpl ?? fetch;
+
+      const token = getAccessToken ? await getAccessToken().catch(() => null) : null;
 
       let response: Response;
       try {
@@ -64,6 +72,7 @@ export function createHttpClient({ baseUrl, fetchImpl, newRequestId = defaultReq
           headers: {
             Accept: "application/json",
             [REQUEST_ID_HEADER]: sentRequestId,
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
             ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
           },
           body: body !== undefined ? JSON.stringify(body) : undefined,

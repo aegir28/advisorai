@@ -1,0 +1,18 @@
+# Test fixture: 14 trivial nodes in 4 layers. Not a real workflow.
+id: foundation_smoke
+version: 1
+nodes:
+  - {id: n01, type: test.noop}
+  - {id: n02, type: test.noop, after: [n01]}
+  - {id: n03, type: test.noop, after: [n01]}
+  - {id: n04, type: test.noop, after: [n01]}
+  - {id: n05, type: test.noop, after: [n01]}
+  - {id: n06, type: test.noop, after: [n02, n03, n04, n05], retries: 1, timeout_s: 30}
+  - {id: n07, type: test.noop, after: [n02, n03, n04, n05], retries: 1, timeout_s: 30}
+  - {id: n08, type: test.noop, after: [n02, n03, n04, n05], retries: 1, timeout_s: 30}
+  - {id: n09, type: test.noop, after: [n02, n03, n04, n05], retries: 1, timeout_s: 30}
+  - {id: n10, type: test.noop, after: [n06, n07, n08, n09], critical: false}
+  - {id: n11, type: test.noop, after: [n06, n07, n08, n09], critical: false}
+  - {id: n12, type: test.noop, after: [n06, n07, n08, n09], critical: false}
+  - {id: n13, type: test.noop, after: [n06, n07, n08, n09], critical: false}
+  - {id: n14, type: test.noop, after: [n10, n11, n12, n13]}

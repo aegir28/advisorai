@@ -1,0 +1,45 @@
+{
+  "schema_version": "ground_truth.v1",
+  "case_id": "conflicting",
+  "synthetic": true,
+  "provenance": "derived_from_prototype_fixtures",
+  "expected_facts": {
+    "symptoms": [
+      "Recurrent headaches with brief flashing lights: Since May"
+    ],
+    "diagnoses": [
+      {
+        "name": "Migraine with aura (suspected)",
+        "status": "suspected"
+      }
+    ],
+    "medications": [
+      {
+        "name": "Sumatriptan",
+        "dose": "50 mg, when needed"
+      },
+      {
+        "name": "Ibuprofen",
+        "dose": "400 mg, when needed (about 15 days a month)"
+      }
+    ],
+    "labs": [
+      {
+        "name": "Routine blood tests",
+        "value": "Within the reference ranges",
+        "date": "2026-06-30"
+      }
+    ]
+  },
+  "expected_missing_information": [
+    "Radiologist clarification of the MRI"
+  ],
+  "expected_specialists": [
+    "general_medicine",
+    "neurology",
+    "medication_safety"
+  ],
+  "planted_contradictions": 2,
+  "must_ask_questions": [],
+  "timeline": []
+}

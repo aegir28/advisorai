@@ -1,0 +1,23 @@
+name: guards
+
+# Repository guards: the project name, no committed secrets, and the temporary "no AI yet" boundary
+# (scripts/repo_guards.py). Standard library only, so it runs in seconds.
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  guards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/repo_guards.py

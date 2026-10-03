@@ -1,0 +1,40 @@
+name: frontend
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - "frontend/**"
+      - "backend/tests/fixtures/**"
+      - ".github/workflows/frontend.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - "backend/tests/fixtures/**"
+      - ".github/workflows/frontend.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      # Includes the wire-parity test against backend/tests/fixtures/api-surface.json, the safety-rule parity test
+      # and the "no secrets in the frontend" hygiene tests.
+      - run: npm test
+      # The default (mock) configuration builds with no environment variables at all.
+      - run: npm run build

@@ -1,0 +1,16 @@
+{
+  "_comment": "Shared by backend/tests/unit/test_safety.py and frontend/src/__tests__/contracts/safety.test.ts so the rule-based red-flag screen cannot drift between the two. All text is fictional.",
+  "cases": [
+    {"name": "plain concern", "text": "Is angioplasty necessary now?", "currentSymptoms": [], "redFlag": false, "matched": [], "category": null},
+    {"name": "chest pain now", "text": "I have chest pain right now", "currentSymptoms": [], "redFlag": true, "matched": ["chest pain right now"], "category": "cardiac"},
+    {"name": "crushing chest, mixed case", "text": "A CRUSHING CHEST feeling", "currentSymptoms": [], "redFlag": true, "matched": ["CRUSHING CHEST"], "category": "cardiac"},
+    {"name": "stroke wording", "text": "his face is drooping", "currentSymptoms": [], "redFlag": true, "matched": ["face is drooping"], "category": "stroke"},
+    {"name": "cannot breathe", "text": "I can't breathe properly", "currentSymptoms": [], "redFlag": true, "matched": ["can't breathe"], "category": "breathing"},
+    {"name": "bleeding", "text": "heavy bleeding since morning", "currentSymptoms": [], "redFlag": true, "matched": ["heavy bleeding"], "category": "bleeding"},
+    {"name": "self harm", "text": "I want to die", "currentSymptoms": [], "redFlag": true, "matched": ["want to die"], "category": "self_harm"},
+    {"name": "ticked symptom only", "text": "routine question", "currentSymptoms": ["breathless_rest"], "redFlag": true, "matched": ["breathless_rest"], "category": "breathing"},
+    {"name": "ticked symptom wins the category", "text": "chest pain now", "currentSymptoms": ["heavy_bleeding"], "redFlag": true, "matched": ["heavy_bleeding", "chest pain now"], "category": "bleeding"},
+    {"name": "history is not an emergency", "text": "I had chest pain last year during exertion", "currentSymptoms": [], "redFlag": false, "matched": [], "category": null},
+    {"name": "empty", "text": "", "currentSymptoms": [], "redFlag": false, "matched": [], "category": null}
+  ]
+}

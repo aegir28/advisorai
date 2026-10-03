@@ -8,6 +8,9 @@ second-opinion preparation, not medical advice.
 - FastAPI app factory (`app/main.py`), versioned under `/api/v1`
 - `GET /api/v1/health` (liveness) and `GET /api/v1/health/ready` (database reachable; no connection details)
 - `GET /api/v1/me`: the signed-in user's own profile (JWT -> `CurrentUser` -> user-scoped transaction -> RLS)
+- Case lifecycle: `POST/GET /cases`, `GET/DELETE /cases/{id}`, `POST /cases/safety-check` (rules only)
+- Documents: `GET /cases/{id}/documents`, `POST .../documents/upload-url`, `POST .../documents/{doc}/complete`
+  (server-side validation, no AI/OCR), `DELETE .../documents/{doc}` ([ADR 0007](../docs/adr/0007-case-and-document-lifecycle.md))
 - OpenAPI at `/api/v1/docs`, `/api/v1/redoc`, `/api/v1/openapi.json` (includes the five contracts)
 - Error contract: one envelope for every error ([ADR 0002](../docs/adr/0002-error-contract.md))
 - Request ID / correlation ID on every request, response, error and log line
@@ -78,7 +81,10 @@ uv run --no-sync pytest
 app/
   main.py              app factory, middleware order, handlers
   openapi.py           OpenAPI description + the versioned contracts as schemas
-  api/                 thin HTTP layer: router.py (/api/v1), health.py, me.py
+  api/                 thin HTTP layer: router.py (/api/v1), health, me, cases, documents
+  services/            case + document lifecycle (ownership, purge order, audit)
+  safety/              rule-based red-flag screen (no AI)
+  docintel/            upload validation: type from bytes, size, hash, pages (no OCR)
   auth/                jwks.py, verifier.py, dependencies.py (CurrentUser)
   db/                  database.py (user_session / system_session), profiles.py
   audit/               writer.py

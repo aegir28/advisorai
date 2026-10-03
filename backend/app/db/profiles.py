@@ -37,3 +37,16 @@ async def get_profile(connection: AsyncConnection, user_id: uuid.UUID) -> Profil
         consented_at=row["consented_at"],
         consent_version=row["consent_version"],
     )
+
+
+async def record_consent(connection: AsyncConnection, user_id: uuid.UUID, version: str) -> Profile | None:
+    """The caller accepts the prototype / consent notice. The first acceptance of a version keeps its time;
+    accepting a newer version replaces both. RLS and the column grant limit this to the caller's own row."""
+    await connection.execute(
+        text(
+            "update public.profiles set consented_at = now(), consent_version = :version"
+            " where user_id = :user_id and (consent_version is distinct from :version)"
+        ),
+        {"user_id": user_id, "version": version},
+    )
+    return await get_profile(connection, user_id)
