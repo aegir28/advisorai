@@ -36,6 +36,8 @@ class AuditAction(StrEnum):
     DOCUMENT_DOWNLOAD = "document.download"
     DOCUMENT_DELETE = "document.delete"
     DOCUMENT_SIGNED_URL_ISSUED = "document.signed_url_issued"
+    WORKFLOW_START = "workflow.start"
+    WORKFLOW_FINISH = "workflow.finish"
     DATA_DELETION = "data.deletion"
     ADMIN_ACCESS = "admin.access"
 

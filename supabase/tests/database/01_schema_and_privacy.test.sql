@@ -86,7 +86,8 @@ select is(
   (select coalesce(string_agg(table_name::text || ':' || privilege_type::text, ',' order by table_name::text, privilege_type::text), '')
      from information_schema.role_table_grants
     where table_schema = 'public' and grantee = 'app_system'),
-  'audit_logs:INSERT', 'app_system can only INSERT into audit_logs'
+  'audit_logs:INSERT,workflow_runs:INSERT,workflow_runs:SELECT,workflow_steps:INSERT,workflow_steps:SELECT',
+  'app_system holds only the audit INSERT and the workflow run/step table privileges'
 );
 select is(
   (select count(*)::int from information_schema.role_table_grants

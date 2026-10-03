@@ -6,6 +6,7 @@ never reach the frontend or any `NEXT_PUBLIC_*` variable.
 """
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Annotated, Literal, Self
 
 from fastapi import Request
@@ -56,6 +57,13 @@ class Settings(BaseSettings):
     )
     # Upload limits (the 20 MB / PDF-JPEG-PNG rules are fixed by the bucket and `docintel.validate`).
     max_documents_per_case: int = Field(default=30, ge=1, le=100)
+    # Background workflow worker (Phase 2D). Off by default: with no node types registered (the AI phase adds
+    # them) a run could only fail, so nothing starts it unless it is turned on deliberately.
+    worker_enabled: bool = False
+    worker_lease_seconds: int = Field(default=60, ge=10, le=600)
+    worker_poll_interval_seconds: float = Field(default=2.0, ge=0.1, le=60)
+    # Versioned workflow definitions (YAML). Default: the repository's `workflows/` folder.
+    workflows_dir: Path = Path(__file__).resolve().parents[3] / "workflows"
     # Server-side secret for the HMAC of client IPs in the audit log.
     audit_ip_hmac_secret: SecretStr | None = None
 

@@ -14,6 +14,7 @@ Services (database, JWT verifier, audit writer, storage) are built from settings
 `503 SERVICE_UNAVAILABLE`, so the app still starts in a bare environment (and in unit tests).
 """
 
+import asyncio
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -35,8 +36,13 @@ from app.openapi import DESCRIPTION, install_openapi
 from app.schemas import ErrorEnvelope
 from app.services.cases import CaseService
 from app.services.documents import DocumentService
+from app.services.workflows import WorkflowService
 from app.storage.gateway import StorageGateway, SupabaseStorageGateway
 from app.storage.service import DocumentUrlService
+from app.workflow.definitions import DefinitionRegistry
+from app.workflow.engine import Engine, NodeRegistry
+from app.workflow.repository import WorkflowRepository
+from app.workflow.worker import Worker
 
 
 def create_app(
@@ -87,9 +93,34 @@ def create_app(
         else None
     )
 
+    definitions = DefinitionRegistry.from_directory(settings.workflows_dir)
+    node_registry = NodeRegistry()  # empty until the AI phase registers node types
+    workflow_repo = WorkflowRepository(database) if database is not None else None
+    workflows = (
+        WorkflowService(database, workflow_repo, definitions)
+        if database is not None and workflow_repo is not None
+        else None
+    )
+    worker = (
+        Worker(
+            workflow_repo,
+            Engine(workflow_repo, definitions, node_registry, audit=audit),
+            lease_seconds=settings.worker_lease_seconds,
+            poll_interval=settings.worker_poll_interval_seconds,
+        )
+        if settings.worker_enabled and workflow_repo is not None
+        else None
+    )
+
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+        stop = asyncio.Event()
+        task = asyncio.create_task(worker.run_forever(stop)) if worker is not None else None
         yield
+        if task is not None:
+            stop.set()
+            task.cancel()  # a run in progress is handed back by the worker's cancellation path
+            await asyncio.gather(task, return_exceptions=True)
         await http.aclose()
         if owns_database and database is not None:
             await database.dispose()
@@ -128,6 +159,9 @@ def create_app(
     app.state.document_urls = document_urls
     app.state.cases = cases
     app.state.documents = documents
+    app.state.workflows = workflows
+    app.state.node_registry = node_registry
+    app.state.definitions = definitions
     register_exception_handlers(app)
     app.include_router(api_v1)
     install_openapi(app)
