@@ -89,8 +89,8 @@ def test_environment_files_cannot_be_committed_but_the_example_can() -> None:
         ("supabase/migrations/9.sql", "embedding vector(1536)"),
     ],
 )
-def test_ai_scope_is_enforced_until_the_ai_phase(path: str, text: str) -> None:
-    assert "ai-scope" in rules({path: text}), (path, text)
+def test_ai_boundary_is_enforced(path: str, text: str) -> None:
+    assert "ai-boundary" in rules({path: text}), (path, text)
 
 
 def test_docs_may_describe_the_future_ai_phase_and_the_supabase_cli_default_is_allowed() -> None:
@@ -100,3 +100,15 @@ def test_docs_may_describe_the_future_ai_phase_and_the_supabase_cli_default_is_a
     assert rules({"supabase/config.toml": 'openai_api_key = "env(OPENAI_API_KEY)"'}) == set()
     # Ordinary words are not flagged.
     assert rules({"backend/pyproject.toml": '  "pydantic>=2",  "httpx"'}) == set()
+
+
+def test_the_gateway_may_exist_but_a_provider_endpoint_outside_the_adapter_may_not() -> None:
+    # The gateway and adapter are allowed (they are how AI is supposed to be reached) ...
+    assert rules({"backend/app/ai/gateway.py": "from app.ai.provider import Provider"}) == set()
+    assert rules({"backend/app/ai/providers/openai.py": 'DEFAULT = "https://api.openai.com/v1"'}) == set()
+    # ... but nothing else may name a provider endpoint, and the frontend never may.
+    assert "ai-boundary" in rules({"backend/app/services/x.py": 'URL = "https://api.openai.com/v1/x"'})
+    assert "ai-boundary" in rules({"frontend/src/lib/x.ts": 'fetch("https://api.anthropic.com/v1/messages")'})
+    # The key's real name is fine in settings; the bare provider default name is not.
+    assert rules({"backend/app/core/config.py": "openai_api_key: SecretStr | None = None"}) == set()
+    assert "ai-boundary" in rules({"backend/app/x.py": 'os.environ["OPENAI_API_KEY"]'})

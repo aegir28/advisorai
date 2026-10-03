@@ -6,6 +6,7 @@ on:
     paths:
       - "backend/**"
       - "workflows/**"
+      - "registry/**"
       - "scripts/**"
       - "frontend/src/domain/**"
       - "frontend/src/mocks/**"
@@ -16,6 +17,7 @@ on:
     paths:
       - "backend/**"
       - "workflows/**"
+      - "registry/**"
       - "scripts/**"
       - "frontend/src/domain/**"
       - "frontend/src/mocks/**"

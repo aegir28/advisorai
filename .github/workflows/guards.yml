@@ -1,7 +1,7 @@
 name: guards
 
-# Repository guards: the project name, no committed secrets, and the temporary "no AI yet" boundary
-# (scripts/repo_guards.py). Standard library only, so it runs in seconds.
+# Repository guards: the project name, no committed secrets, and the AI boundary (AI only through the
+# gateway: no provider SDK, no bare key names, no endpoint outside the adapter) (scripts/repo_guards.py). Standard library only, so it runs in seconds.
 
 on:
   push:
