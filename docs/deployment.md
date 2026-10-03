@@ -49,6 +49,7 @@ backups, agreements and a security review, and a migration + ADR that lifts the 
 | `app_backend` / `app_system` passwords | Render env (inside the two DB URLs) | repository, frontend |
 | Supabase service-role key | Render env | frontend, `NEXT_PUBLIC_*`, logs |
 | `ADVISORAI_AUDIT_IP_HMAC_SECRET` | Render env | the database (only the HMAC is stored) |
+| `ADVISORAI_OPENAI_API_KEY` | Render env (backend only; unset while `ADVISORAI_AI_PROVIDER=fake`) | nowhere: never logged, stored or sent to the frontend |
 | Google OAuth client secret | Supabase Auth settings | backend, frontend, repository |
 | Supabase anon key, project URL | Netlify env (public by design) | n/a: it grants nothing alone |
 
