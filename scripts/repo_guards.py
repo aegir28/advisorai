@@ -149,6 +149,27 @@ class Finding:
         return f"[{self.rule}] {self.path}:{self.line}: {self.message}"
 
 
+N8N_WORKFLOW_DIR = "n8n/workflows/"
+_N8N_ENV_ALLOWED = {"ADVISORAI_N8N_HMAC_SECRET", "ADVISORAI_API_BASE_URL", "ADVISORAI_N8N_MAX_CLOCK_SKEW_SECONDS"}
+_N8N_FORBIDDEN_NODE = re.compile(r"(?i)langchain|openai|anthropic|\.postgres|\.supabase|mongodb|mysql|redis")
+
+
+def check_n8n(text: str) -> list[str]:
+    """n8n orchestrates; it never holds a credential, a model provider, a database or an absolute URL."""
+    problems: list[str] = []
+    if '"credentials"' in text:
+        problems.append("an n8n workflow export must not embed credentials (create them in n8n by name)")
+    if re.search(r"https?://", text):
+        problems.append("an n8n workflow must not hard-code a URL (use ADVISORAI_API_BASE_URL)")
+    for node_type in re.findall(r'"type":\s*"([^"]+)"', text):
+        if _N8N_FORBIDDEN_NODE.search(node_type):
+            problems.append(f"n8n node type {node_type!r} is a provider or database node (use the backend API)")
+    for var in sorted(set(re.findall(r"\$env\.([A-Za-z0-9_]+)", text)) - _N8N_ENV_ALLOWED):
+        problems.append(f"n8n workflow reads an environment variable that is not on the allow-list: {var}")
+    return problems
+
+
+
 def _jwt_role(payload_b64: str) -> str | None:
     try:
         raw = base64.urlsafe_b64decode(payload_b64 + "=" * (-len(payload_b64) % 4))
@@ -212,6 +233,9 @@ def scan(files: dict[str, str]) -> list[Finding]:
         findings.extend(
             Finding("cloud-deploy", CLOUD_DEPLOY_WORKFLOW, 1, p) for p in check_cloud_deploy(cloud)
         )
+    for path, text in sorted(files.items()):
+        if path.startswith(N8N_WORKFLOW_DIR) and path.endswith(".json"):
+            findings.extend(Finding("n8n", path, 1, p) for p in check_n8n(text))
     return findings
 
 
@@ -246,7 +270,7 @@ def main(argv: Iterable[str] = ()) -> int:
     if findings:
         print(f"\n{len(findings)} finding(s).", file=sys.stderr)
         return 1
-    print("repo guards: ok (naming, secrets, ai-boundary, cloud-deploy)")
+    print("repo guards: ok (naming, secrets, ai-boundary, cloud-deploy, n8n)")
     return 0
 
 

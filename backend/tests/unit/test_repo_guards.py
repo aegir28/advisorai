@@ -158,3 +158,27 @@ def test_a_cloud_deploy_workflow_that_breaks_a_safety_rule_is_refused(old: str, 
 def test_the_local_ci_workflow_may_still_reset_its_throwaway_database() -> None:
     assert "supabase db reset" in (Path(SCRIPT).parents[1] / ".github/workflows/supabase.yml").read_text()
     assert guards.scan({".github/workflows/supabase.yml": "run: supabase db reset"}) == []
+
+
+# ── n8n workflow guard ───────────────────────────────────────────────────────────────────────────
+def n8n(text: str) -> set[str]:
+    return rules({"n8n/workflows/x.json": text})
+
+
+def test_a_clean_n8n_workflow_passes() -> None:
+    ok = '{"nodes": [{"type": "n8n-nodes-base.code", "parameters": {"jsCode": "$env.ADVISORAI_API_BASE_URL"}}]}'
+    assert n8n(ok) == set()
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        '{"credentials": {"httpHeaderAuth": {"id": "1"}}}',
+        '{"parameters": {"url": "https://example.org/x"}}',
+        '{"type": "@n8n/n8n-nodes-langchain.lmChatOpenAi"}',
+        '{"type": "n8n-nodes-base.postgres"}',
+        '{"parameters": {"jsCode": "$env.SOME_OTHER_SECRET"}}',
+    ],
+)
+def test_an_n8n_workflow_with_credentials_urls_provider_nodes_or_foreign_env_is_flagged(text: str) -> None:
+    assert "n8n" in n8n(text)
