@@ -9,7 +9,9 @@ A report that fails is not shown; the caller turns it into an `incomplete`/`fail
 from dataclasses import dataclass
 
 from app.agents.contracts import AgentSpec, SpecialtyInput
+from app.safety.output_lint import lint_document
 from app.schemas.case import CaseV1
+from app.schemas.medication_review import MedicationReview
 from app.schemas.specialist_report import SpecialistReport
 
 # Codes worth surfacing that do not make a report unusable.
@@ -127,4 +129,47 @@ def validate_specialist_report(
         out.append(Violation("confidence_unexplained"))
     if report.status != "complete" and not (report.status_note or "").strip():
         out.append(Violation("status_note_missing"))
+    return out
+
+
+def validate_medication_review(
+    review: MedicationReview, case: CaseV1, source_ids: set[str]
+) -> list[Violation]:
+    """Contract + safety checks on a Medication Safety output. Deterministic; judges no medicine."""
+    out: list[Violation] = []
+    facts = case_fact_refs(case)
+    med_fact_refs = {m.fact_ref for m in case.medications}
+    medicine_ids = {m.id for m in review.medicines}
+    concern_ids = {c.id for c in review.concerns}
+
+    ids = (
+        [m.id for m in review.medicines]
+        + [c.id for c in review.concerns]
+        + [d.id for d in review.discussion_points]
+    )
+    if len(set(ids)) != len(ids):
+        out.append(Violation("duplicate_id"))
+    reviewed = {ref for m in review.medicines for ref in m.fact_refs}
+    for ref in sorted(med_fact_refs - reviewed):
+        out.append(Violation("medication_not_reviewed", ref))
+    for medicine in review.medicines:
+        for ref in medicine.fact_refs:
+            if ref not in med_fact_refs:
+                out.append(Violation("medicine_fact_not_a_medication", ref))
+    for concern in review.concerns:
+        for mid in concern.medication_ids:
+            if mid not in medicine_ids:
+                out.append(Violation("concern_unknown_medicine", mid))
+        for ref in concern.fact_refs:
+            if ref not in facts:
+                out.append(Violation("unknown_fact_ref", ref))
+        for sid in concern.source_ids:
+            if sid not in source_ids:
+                out.append(Violation("unknown_source", sid))
+    for point in review.discussion_points:
+        for ref in point.linked_to:
+            if ref not in medicine_ids | concern_ids:
+                out.append(Violation("discussion_unknown_ref", ref))
+    for key, violation in lint_document(review.model_dump(mode="json")):
+        out.append(Violation(f"unsafe_text:{violation.rule}", key))
     return out

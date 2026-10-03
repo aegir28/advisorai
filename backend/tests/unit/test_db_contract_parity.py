@@ -82,8 +82,9 @@ def test_diagnosis_status_matches_case_v1() -> None:
 
 
 def test_workflow_steps_and_run_step_count_match_run_v1() -> None:
-    assert "check (n between 1 and 14)" in MIGRATIONS
-    assert "z.number().int().min(1).max(14)" in SCHEMAS_TS  # RunStepSchema.n
+    # Widened by 20261008000001 (steps come from the workflow definition); the registry loader's maximum matches.
+    assert "workflow_steps_n_range check (n between 1 and 64)" in MIGRATIONS
+    assert "z.number().int().min(1).max(64)" in SCHEMAS_TS  # RunStepSchema.n
 
 
 def test_the_document_mime_allow_list_matches_the_storage_bucket() -> None:

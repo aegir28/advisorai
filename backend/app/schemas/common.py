@@ -30,14 +30,11 @@ VerificationStatus = Literal[
     "supported", "partially_supported", "unclear", "contradicted", "insufficient_evidence"
 ]
 
-SpecialistId = Literal[
-    "general_medicine",
-    "cardiology",
-    "interventional_cardiology",
-    "medication_safety",
-    "orthopedics",
-    "neurology",
-]
+# A specialist is any entry of the specialty/agent registry (registry/agents.yaml), so the wire type is an
+# identifier, not a closed list: specialties and sub-specialties are added in configuration, never here
+# (ADR 0012). Whether an id is REGISTERED is checked at runtime against the registry, not by the type.
+AGENT_ID_PATTERN = r"^[a-z][a-z0-9_]{2,63}$"
+SpecialistId = Annotated[str, StringConstraints(pattern=AGENT_ID_PATTERN)]
 
 
 class WireModel(BaseModel):

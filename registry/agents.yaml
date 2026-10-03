@@ -1,45 +1,116 @@
-# Specialty-agent registry: one entry per specialist. Read by backend/app/agents/registry.py.
+# Specialty / agent registry (v2): one entry per specialist perspective. Read by backend/app/agents/registry.py.
 #
-# Adding or changing a specialist is a change HERE, not in code. Every agent ships DISABLED: a disabled agent
-# cannot be selected by the router and cannot run. Enable one only after its prompt has been written
-# (backend/app/agents/prompts/<id>/v<N>.md) and its behaviour has been reviewed.
+# THIS FILE IS HOW SPECIALISTS ARE ADDED. A new specialty or sub-specialty is an entry here (id, name, kind,
+# parent, focus, triggers) and nothing else: the master workflow, the router and the n8n workflows read this
+# registry and never name a specialty (ADR 0012). The five MVP entries are a starting set, not a ceiling.
 #
-# `tier` is the model tier (1 cheap .. 3 best, see registry/models.yaml) the agent's calls ask for.
-# The values below are neutral starting points, not decisions: choose them when you design the workflow.
-version: 1
+# Fields
+#   kind         specialty | subspecialty (needs `parent`, a registered specialty) | capability (cross-cutting
+#                review such as medication safety, not a medical area)
+#   focus        ONE neutral sentence on what this perspective looks at. It is inserted into the shared
+#                specialist prompt (backend/app/orchestration/prompts/specialist/). It makes no clinical claim.
+#   prompt_mode  shared (shared base prompt + focus; no per-agent file) | file (prompts/<id>/v<N>.md, refused
+#                while it is a placeholder)
+#   triggers     "select this agent when this case signal is present" (signals: registry/signals.yaml). The
+#                reason is fixed text; the router appends only COUNTS of what matched, never case content.
+#   extension    none | medication_review (a structured addition to the report with its own contract)
+#   tier         model tier 1..3 (registry/models.yaml). tools: names of optional tools (none exist yet).
+#
+# Every agent ships DISABLED: a disabled agent cannot be selected by the router and cannot run. Enable one only
+# after its focus and the shared prompt have been reviewed and it has been scored on the synthetic benchmark
+# (evals/). The values below are neutral starting points, not decisions.
+version: 2
 agents:
   - id: general_medicine
     name: General Medicine
-    version: "0.0.0"
+    kind: specialty
+    focus: "Looks at the whole case broadly: how the history, findings, treatments and open questions fit together."
+    prompt_mode: shared
+    version: "0.1.0"
     tier: 2
     prompt_version: 1
     timeout_s: 90
     enabled: false
-  - id: cardiology
-    name: Cardiology
-    version: "0.0.0"
-    tier: 2
-    prompt_version: 1
-    timeout_s: 90
-    enabled: false
-  - id: orthopedics
-    name: Orthopedics
-    version: "0.0.0"
-    tier: 2
-    prompt_version: 1
-    timeout_s: 90
-    enabled: false
-  - id: neurology
-    name: Neurology
-    version: "0.0.0"
-    tier: 2
-    prompt_version: 1
-    timeout_s: 90
-    enabled: false
+    triggers:
+      - {signal: always, priority: mandatory, reason: "Always included to give a broad view."}
+
   - id: medication_safety
     name: Medication Safety
-    version: "0.0.0"
+    kind: capability
+    extension: medication_review
+    focus: "Reviews the documented current medicines: purpose, dose, frequency, duration, duplication, documented conflicts and missing medicine information."
+    prompt_mode: shared
+    version: "0.1.0"
     tier: 2
     prompt_version: 1
     timeout_s: 90
     enabled: false
+    triggers:
+      - {signal: medications_present, priority: mandatory, reason: "A medicine list is present, so it is always reviewed."}
+
+  - id: cardiology
+    name: Cardiology
+    kind: specialty
+    focus: "Looks at heart and blood-vessel findings documented in the case."
+    prompt_mode: shared
+    version: "0.1.0"
+    tier: 2
+    prompt_version: 1
+    timeout_s: 90
+    enabled: false
+    triggers:
+      - {signal: cardiac, priority: mandatory, reason: "Cardiac findings are documented."}
+
+  - id: interventional_cardiology
+    name: Interventional Cardiology
+    kind: subspecialty
+    parent: cardiology
+    focus: "Looks at whether a catheter-based heart procedure is documented as proposed, and what the record says about it."
+    prompt_mode: shared
+    version: "0.1.0"
+    tier: 2
+    prompt_version: 1
+    timeout_s: 90
+    enabled: false
+    triggers:
+      - {signal: cardiac_procedure_proposed, priority: optional, reason: "A heart procedure is documented as proposed."}
+
+  - id: orthopedics
+    name: Orthopedics
+    kind: specialty
+    focus: "Looks at bone, joint and muscle findings documented in the case."
+    prompt_mode: shared
+    version: "0.1.0"
+    tier: 2
+    prompt_version: 1
+    timeout_s: 90
+    enabled: false
+    triggers:
+      - {signal: musculoskeletal, priority: mandatory, reason: "Bone or joint findings are documented."}
+
+  - id: neurology
+    name: Neurology
+    kind: specialty
+    focus: "Looks at nervous-system findings documented in the case."
+    prompt_mode: shared
+    version: "0.1.0"
+    tier: 2
+    prompt_version: 1
+    timeout_s: 90
+    enabled: false
+    triggers:
+      - {signal: neurological, priority: mandatory, reason: "Neurological findings are documented."}
+
+  # Example of how the registry grows (disabled; no prompt file and no workflow change needed):
+  - id: oncology
+    name: Oncology
+    kind: specialty
+    focus: "Looks at cancer-related findings documented in the case."
+    prompt_mode: shared
+    version: "0.1.0"
+    tier: 2
+    prompt_version: 1
+    timeout_s: 90
+    enabled: false
+    triggers:
+      - {signal: oncological, priority: mandatory, reason: "Cancer-related findings are documented."}

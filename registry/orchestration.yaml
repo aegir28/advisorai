@@ -1,0 +1,34 @@
+# Orchestration policy: the knobs of the n8n-sequenced pipeline (ADR 0012). Read by backend/app/orchestration/policy.py
+# and handed to n8n when a run begins, so retries, timeouts and fan-out limits live HERE, not inside workflow JSON.
+#
+# Thresholds here are turned into FLAGS by stages (`enough_specialists`, `escalate_review`, `missing_info_branch`,
+# `extra_verification`); which stage is conditional on which flag is in registry/workflows.yaml (`when`). Per-stage
+# retry/timeout overrides also live there; the values below are the defaults. Nothing here names a specialty.
+version: 1
+
+limits:
+  # Most perspectives a single case may use (the router cap) and how many n8n may run at once.
+  max_active_agents: 6
+  max_parallel_agents: 3
+  # Cross-agent review needs at least this many usable specialist reports; fewer skips it with a note.
+  min_specialists_for_cross_review: 2
+  max_documents: 30
+
+conditions:
+  # Run a second, deeper verification pass when verification found at least this many contradicted claims.
+  extra_verification_if_contradicted_at_least: 1
+  # Take the "missing information" branch (and say so in the report) below this many patient evidence items.
+  missing_info_branch_if_evidence_items_below: 3
+  # The deeper pass may ask a verification MODEL (through the AI gateway) about unclear claims. Costs tokens.
+  verification_model_enabled: false
+  # Escalate the interim reviewer to this tier when specialists disagree on at least this many topics.
+  review_escalation: {tier: 3, if_disagreements_at_least: 4}
+
+retry:
+  # n8n retries a stage this many times (the backend is idempotent per stage, so a retry never re-bills).
+  stage_retries: 2
+  backoff_seconds: 5
+
+timeouts:
+  stage_seconds: 180
+  agent_seconds: 120

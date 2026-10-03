@@ -8,7 +8,7 @@
 #
 # Prices are USD per 1,000,000 tokens. `priced: false` means "price not entered yet": usage is still counted,
 # the cost is recorded as unknown (NULL) instead of an invented number.
-version: 1
+version: 2
 
 tiers:
   # tier 1 = cheap and fast (classification, extraction, routing aids)
@@ -17,6 +17,41 @@ tiers:
   1: {description: "cheap and fast"}
   2: {description: "reasoning workhorse"}
   3: {description: "highest quality, escalation only"}
+
+# Provider data handling, as far as the project can honestly say. `zero_retention` is one of:
+#   verified       the project HOLDS a confirmation (an approved zero-data-retention agreement or equivalent)
+#   requestable    the provider's official documentation says it is available on approval; we do NOT hold it
+#   unverified     nothing is known
+#   unsuitable     cannot meet the privacy requirement: never used
+#   not_applicable no data leaves the process (the fake provider)
+# ADVISORAI_AI_PRIVACY_POLICY=allow_unverified_synthetic (default) lets a provider that is not `unsuitable` be
+# used, which is acceptable ONLY because the prototype data is synthetic. ADVISORAI_AI_PRIVACY_POLICY=
+# require_verified refuses every provider that is not `verified`: use it before any real data, and only after
+# the confirmation exists. Sources and the check date are in docs/provider-research.md.
+providers:
+  fake:
+    data_handling: {zero_retention: not_applicable, notes: "Deterministic offline provider; nothing leaves the process."}
+  openai:
+    data_handling:
+      zero_retention: requestable
+      source: https://developers.openai.com/api/docs/guides/your-data
+      checked_on: "2026-10-03"
+      notes: "Abuse-monitoring logs kept up to 30 days by default; Zero Data Retention / Modified Abuse Monitoring need OpenAI approval. Not held by this project."
+
+# Task classes -> ordered candidates (fallback). {tier: N} means "tier N of the ACTIVE provider"; add
+# {provider: X, tier: N} or {model: id} entries for a second provider or model. A candidate that is disabled,
+# unpriced-and-budgeted, or not configured is skipped, never guessed. The first success wins; a candidate that
+# cannot answer (retries exhausted, invalid output) falls through to the next. Cost: every candidate tried is
+# metered on its own usage row. Without a chain a task is the plain (active provider, requested tier) route.
+tasks:
+  extraction: [{tier: 1}]
+  routing_assist: [{tier: 1}]
+  specialist: [{tier: 2}]
+  verification: [{tier: 1}]
+  review: [{tier: 2}]
+  report: [{tier: 2}]
+  questions: [{tier: 1}]
+  second_opinion: [{tier: 2}]
 
 routes:
   fake:

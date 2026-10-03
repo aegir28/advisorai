@@ -57,9 +57,13 @@ def payload_for(report: SpecialistReport, scenario: str) -> tuple[SpecialtyInput
 
 
 # ── registry ───────────────────────────────────────────────────────────────────────────────────────
-def test_the_shipped_registry_has_the_five_specialties_all_disabled() -> None:
+def test_the_shipped_registry_holds_the_mvp_set_and_more_all_disabled() -> None:
     registry = SpecialtyRegistry.from_file()
-    assert [s.id for s in registry.specs()] == list(REQUIRED_SPECIALTIES)
+    ids = [s.id for s in registry.specs()]
+    assert set(REQUIRED_SPECIALTIES) <= set(ids) and len(ids) > len(
+        REQUIRED_SPECIALTIES
+    )  # a floor, not a ceiling
+    assert registry.spec("interventional_cardiology").parent == "cardiology"
     assert registry.enabled_ids() == []
     assert all(
         s.input_schema == "specialty_input.v1" and s.output_schema == "specialist_report.v1"
@@ -71,7 +75,8 @@ def test_readiness_lists_exactly_what_still_blocks_each_specialty() -> None:
     readiness = SpecialtyRegistry.from_file().readiness(PromptStore())
     assert set(readiness) == set(REQUIRED_SPECIALTIES)
     for blockers in readiness.values():
-        assert blockers == ["disabled", "prompt_not_written", "no_implementation"]
+        # Prompts are the shared base prompt + each agent's `focus`, so only enabling and an implementation remain.
+        assert blockers == ["disabled", "no_implementation"]
 
 
 def test_a_disabled_or_unknown_agent_cannot_be_fetched() -> None:
@@ -87,7 +92,7 @@ def test_duplicates_and_bad_files_are_rejected(tmp_path: Path) -> None:
     with pytest.raises(RegistryError, match="agent_duplicate"):
         SpecialtyRegistry([spec, spec])
     bad = tmp_path / "agents.yaml"
-    bad.write_text("agents: [{id: nonsense}]")
+    bad.write_text("version: 2\nagents: [{id: nonsense}]")
     with pytest.raises(RegistryError, match="agent_registry_invalid"):
         SpecialtyRegistry.from_file(bad)
 
@@ -105,18 +110,19 @@ def test_an_implementation_can_be_attached_to_an_enabled_registered_specialty() 
     registry = SpecialtyRegistry([enabled, *[s for s in registry.specs() if s.id != "cardiology"]])
     registry.attach(Stub())
     assert registry.agent("cardiology").spec.id == "cardiology"
-    assert registry.readiness(PromptStore())["cardiology"] == ["prompt_not_written"]
+    assert registry.readiness(PromptStore())["cardiology"] == []
 
 
 # ── prompts ────────────────────────────────────────────────────────────────────────────────────────
 def test_placeholder_prompts_are_refused_until_they_are_written(tmp_path: Path) -> None:
     store = PromptStore()
-    for sid in REQUIRED_SPECIALTIES:
-        assert not store.is_written(sid, 1)
-        with pytest.raises(PromptNotWrittenError, match="prompt_not_written"):
-            store.get(sid, 1)
     with pytest.raises(PromptNotWrittenError, match="prompt_missing"):
         store.get("cardiology", 99)
+    (tmp_path / "ph").mkdir()
+    (tmp_path / "ph" / "v1.md").write_text("<!-- PLACEHOLDER: not written -->\n")
+    assert not PromptStore(tmp_path).is_written("ph", 1)
+    with pytest.raises(PromptNotWrittenError, match="prompt_not_written"):
+        PromptStore(tmp_path).get("ph", 1)
     (tmp_path / "x").mkdir()
     (tmp_path / "x" / "v1.md").write_text("A real prompt.\n")
     prompt = PromptStore(tmp_path).get("x", 1)

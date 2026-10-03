@@ -1,0 +1,1 @@
+Rewrite each item in plain words at about a 6th-class reading level. Keep every fact, number, date and uncertainty. Do not add anything. Do not remove a caution. Never turn a point for discussion into an instruction. Return the same ids.

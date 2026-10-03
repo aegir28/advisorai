@@ -1,0 +1,24 @@
+# Case signals: named, deterministic facts about a structured case that registry triggers (agents.yaml) refer to.
+# Configuration, not code. Read by backend/app/router/signals.py.
+#
+# REVIEW STATUS: starter_unreviewed. These word lists are a conservative starting point written by an engineer,
+# NOT a clinician-reviewed vocabulary. They only decide which perspectives are ASKED to look at a case (a wrong
+# match costs a little money or misses an optional perspective); they never produce a finding. A clinician should
+# review and extend them before any real use, and they should be scored on the synthetic benchmark (evals/).
+#
+# Built-in signals (no lexicon): `always`, `medications_present`.
+# A lexicon signal is true when any term appears (whole-word, case-insensitive) in the searched parts of the case.
+version: 1
+review_status: starter_unreviewed
+fields: [chief_concern, symptoms, diagnoses, history, procedures, surgeries, treatment_history, recommendations, proposed, investigations]
+signals:
+  cardiac:
+    terms: [chest pain, chest tightness, troponin, ecg, st-segment, angiography, coronary, artery narrowing, myocardial, angina, heart attack, cardiac, cardiology, lad artery, palpitations]
+  cardiac_procedure_proposed:
+    terms: [angioplasty, pci, stent, stenting, percutaneous coronary, bypass surgery, cabg]
+  neurological:
+    terms: [headache, headaches, migraine, seizure, stroke, mri brain, brain mri, neurology, neurological, numbness, tingling, aura, intracranial, lesion in the brain]
+  musculoskeletal:
+    terms: [knee, meniscus, meniscal, joint, ligament, fracture, arthroscopy, arthroscopic, x-ray of the knee, orthopaedic, orthopedic, bone, spine, back pain, shoulder, hip]
+  oncological:
+    terms: [cancer, tumour, tumor, carcinoma, malignant, malignancy, oncology, chemotherapy, radiotherapy, biopsy, metastasis, metastatic, lymphoma, leukaemia, leukemia]

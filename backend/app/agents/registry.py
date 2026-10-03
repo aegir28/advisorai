@@ -15,19 +15,40 @@ class RegistryError(Exception):
     """Fixed-code error: agent_registry_invalid, agent_unknown, agent_duplicate, agent_disabled."""
 
 
+MAX_REGISTRY_SIZE = 2000
+REGISTRY_VERSION = 2
+
+
 class SpecialtyRegistry:
     def __init__(self, specs: list[AgentSpec]) -> None:
+        if len(specs) > MAX_REGISTRY_SIZE:
+            raise RegistryError("agent_registry_invalid")
         self._specs: dict[str, AgentSpec] = {}
         for spec in specs:
             if spec.id in self._specs:
                 raise RegistryError("agent_duplicate")
             self._specs[spec.id] = spec
+        self._validate_hierarchy()
         self._agents: dict[str, SpecialtyAgent] = {}
+
+    def _validate_hierarchy(self) -> None:
+        """A sub-specialty names a registered parent; the tree has no cycles and no sub-sub-specialties."""
+        for spec in self._specs.values():
+            if spec.kind == "subspecialty":
+                parent = self._specs.get(spec.parent or "")
+                if parent is None or parent.kind != "specialty":
+                    raise RegistryError("agent_parent_invalid")
+            elif spec.parent is not None:
+                raise RegistryError("agent_parent_invalid")
+            if spec.prompt_mode == "shared" and not spec.focus.strip():
+                raise RegistryError("agent_focus_missing")
 
     @classmethod
     def from_file(cls, path: Path = DEFAULT_FILE) -> "SpecialtyRegistry":
         try:
             raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+            if raw.get("version") != REGISTRY_VERSION:
+                raise RegistryError("agent_registry_invalid")
             return cls([AgentSpec.model_validate(entry) for entry in raw["agents"]])
         except (OSError, yaml.YAMLError, KeyError, TypeError, ValueError) as exc:
             raise RegistryError("agent_registry_invalid") from exc
@@ -40,6 +61,9 @@ class SpecialtyRegistry:
 
     def specs(self) -> list[AgentSpec]:
         return list(self._specs.values())
+
+    def children(self, parent: str) -> list[AgentSpec]:
+        return [s for s in self._specs.values() if s.parent == parent]
 
     def is_enabled(self, specialty: str) -> bool:
         spec = self._specs.get(specialty)
@@ -73,7 +97,7 @@ class SpecialtyRegistry:
             blockers = []
             if not spec.enabled:
                 blockers.append("disabled")
-            if not prompts.is_written(sid, spec.prompt_version):
+            if spec.prompt_mode == "file" and not prompts.is_written(sid, spec.prompt_version):
                 blockers.append("prompt_not_written")
             if sid not in self._agents:
                 blockers.append("no_implementation")

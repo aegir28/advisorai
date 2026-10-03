@@ -39,10 +39,59 @@ class ModelSpec:
         return int((usd * MICROS).quantize(Decimal(1), rounding=ROUND_HALF_UP))
 
 
+# What we KNOW about a provider data handling. Never "verified" on a document say-so: `verified` means the
+# project holds a confirmation (an approved zero-retention agreement, or equivalent). `requestable` means the
+# provider's official documentation says it is available on approval and we do not hold it yet.
+RETENTION_STATES = ("verified", "requestable", "unverified", "unsuitable", "not_applicable")
+PRIVACY_POLICIES = ("allow_unverified_synthetic", "require_verified")
+
+
+@dataclass(frozen=True, slots=True)
+class ProviderPolicy:
+    name: str
+    zero_retention: str = "unverified"
+    source: str = ""
+    checked_on: str = ""
+    notes: str = ""
+
+    def allowed_under(self, policy: str) -> bool:
+        """`allow_unverified_synthetic` (the prototype default, legitimate only because the data is
+        synthetic) refuses just `unsuitable`; `require_verified` also refuses everything not verified."""
+        if self.zero_retention == "unsuitable":
+            return False
+        if policy == "require_verified":
+            return self.zero_retention in ("verified", "not_applicable")
+        return True
+
+
+@dataclass(frozen=True, slots=True)
+class ChainEntry:
+    """One candidate in a task's ordered fallback chain: a provider tier, or an explicit model id."""
+
+    provider: str | None = None
+    tier: int | None = None
+    model: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class Candidate:
+    provider: str
+    spec: "ModelSpec"
+
+
 class ModelRegistry:
-    def __init__(self, models: dict[str, ModelSpec], routes: dict[str, dict[int, str]]) -> None:
+    def __init__(
+        self,
+        models: dict[str, ModelSpec],
+        routes: dict[str, dict[int, str]],
+        *,
+        providers: dict[str, ProviderPolicy] | None = None,
+        tasks: dict[str, list[ChainEntry]] | None = None,
+    ) -> None:
         self._models = models
         self._routes = routes
+        self._providers = providers or {}
+        self._tasks = tasks or {}
 
     @classmethod
     def from_file(cls, path: Path) -> "ModelRegistry":
@@ -81,7 +130,8 @@ class ModelRegistry:
                 if models[mid].provider != provider:
                     raise AIConfigError("model_registry_invalid")
                 models[mid] = _with_tier(models[mid], tier)
-        return cls(models, routes)
+        providers, tasks = _parse_policy(raw, models, routes)
+        return cls(models, routes, providers=providers, tasks=tasks)
 
     def resolve(self, provider: str, tier: int) -> ModelSpec:
         mid = self._routes.get(provider, {}).get(tier)
@@ -89,6 +139,30 @@ class ModelRegistry:
         if spec is None or not spec.enabled or spec.id.startswith(PLACEHOLDER_PREFIX):
             raise GatewayError("model_not_configured")
         return spec
+
+    def provider_policy(self, provider: str) -> ProviderPolicy:
+        """Unlisted providers are `unverified`: nothing is assumed about their data handling."""
+        return self._providers.get(provider, ProviderPolicy(provider))
+
+    def has_task(self, task: str) -> bool:
+        return task in self._tasks
+
+    def candidates(self, task: str, default_provider: str, default_tier: int) -> list[Candidate]:
+        """The ordered models to try for a task. A task without a chain is the single (provider, tier) route.
+        Entries whose model is disabled, a placeholder or unknown are skipped here, never guessed."""
+        entries = self._tasks.get(task) or [ChainEntry(provider=default_provider, tier=default_tier)]
+        out: list[Candidate] = []
+        for entry in entries:
+            if entry.model is not None:
+                spec = self._models.get(entry.model)
+                if spec is not None and spec.enabled and not spec.id.startswith(PLACEHOLDER_PREFIX):
+                    out.append(Candidate(spec.provider, spec))
+            elif entry.tier is not None:
+                provider = entry.provider or default_provider  # no provider named: the active one
+                spec = self._try(provider, entry.tier)
+                if spec is not None:
+                    out.append(Candidate(provider, spec))
+        return out
 
     def get(self, model_id: str) -> ModelSpec | None:
         return self._models.get(model_id)
@@ -116,3 +190,42 @@ def _with_tier(spec: ModelSpec, tier: int) -> ModelSpec:
         output_per_mtok_usd=spec.output_per_mtok_usd,
         max_output_tokens=spec.max_output_tokens,
     )
+
+
+def _parse_policy(
+    raw: dict[str, Any], models: dict[str, ModelSpec], routes: dict[str, dict[int, str]]
+) -> tuple[dict[str, ProviderPolicy], dict[str, list[ChainEntry]]]:
+    try:
+        providers: dict[str, ProviderPolicy] = {}
+        for name, entry in (raw.get("providers") or {}).items():
+            handling = entry.get("data_handling", {})
+            state = str(handling.get("zero_retention", "unverified"))
+            if state not in RETENTION_STATES:
+                raise AIConfigError("model_registry_invalid")
+            providers[str(name)] = ProviderPolicy(
+                name=str(name),
+                zero_retention=state,
+                source=str(handling.get("source", "")),
+                checked_on=str(handling.get("checked_on", "")),
+                notes=str(handling.get("notes", "")),
+            )
+        tasks: dict[str, list[ChainEntry]] = {}
+        for task, chain in (raw.get("tasks") or {}).items():
+            entries = []
+            for item in chain:
+                if "model" in item:
+                    if str(item["model"]) not in models:
+                        raise AIConfigError("model_registry_invalid")
+                    entries.append(ChainEntry(model=str(item["model"])))
+                else:
+                    tier = int(item["tier"])
+                    provider = str(item["provider"]) if "provider" in item else None
+                    if provider is not None and tier not in routes.get(provider, {}):
+                        raise AIConfigError("model_registry_invalid")
+                    entries.append(ChainEntry(provider=provider, tier=tier))
+            if not entries:
+                raise AIConfigError("model_registry_invalid")
+            tasks[str(task)] = entries
+    except (KeyError, TypeError, ValueError, AttributeError) as exc:
+        raise AIConfigError("model_registry_invalid") from exc
+    return providers, tasks

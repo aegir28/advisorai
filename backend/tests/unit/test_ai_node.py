@@ -118,7 +118,11 @@ async def test_status_lists_every_open_item_for_real_calls_and_never_prints_a_ke
     assert not checks["agent cardiology"].ok and not checks["worker"].ok
     keyed = activation_checklist(
         Settings(
-            environment="test", _env_file=None, ai_provider="openai", openai_api_key="sk-test-" + "z" * 32
+            environment="test",
+            _env_file=None,
+            ai_provider="openai",
+            openai_api_key="sk-test-" + "z" * 32,
+            system_database_url="postgresql+asyncpg://app_system@localhost/advisorai",
         )
     )
     assert next(c for c in keyed if c.name == "api key").ok

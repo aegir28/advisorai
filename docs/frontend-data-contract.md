@@ -54,7 +54,7 @@ boundary: `backend wire -> Pydantic -> httpApi adapter -> domain model -> UI`.
 - A report has exactly the 19 blueprint sections, numbered 1..19 in order.
 - Every non-template report sentence has an `id` and at least one `evidenceIds` entry. Only fixed
   template text (disclaimers, "nothing found" notes) may be untraced.
-- A run has exactly the 14 workflow steps, numbered 1..14. A `failed` run must carry `failure`.
+- A run has at least one step, numbered 1..N in workflow order (`case_analysis` has 14). A `failed` run must carry `failure`.
 - `case.v1` contains no identity fields: names, phone and email never appear in it.
 
 ## Backend (Phase 2A to 2E)

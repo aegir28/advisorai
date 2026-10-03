@@ -1,0 +1,370 @@
+{
+  "id": "advisorai-fanout-stage",
+  "name": "AdvisorAI · 20 Fan-out stage",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "dbf54256-784c-5649-bbaf-95baf3581839",
+      "name": "When called",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { ...$json, action: 'run' } }];\n"
+      },
+      "id": "fc1189e1-9784-5ea1-8ca6-76d79080bef7",
+      "name": "Stage input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "advisorai-run-stage",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "a4c8c424-d0db-559d-bb07-5fbf26f28aae",
+      "name": "Run fan-out stage",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "failed",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "65f575f1-2ff1-5260-a829-701873229e7c",
+      "name": "Stage ok?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $('Stage input').first().json;\nconst path = `/internal/orchestrator/v1/runs/${input.run_id}/stages/${input.stage_id}/plan`;\nreturn [{ json: { path, body: '', timeout_ms: Number(input.timeout_seconds) * 1000,\n  max_tries: Number(input.retries) + 1, backoff_ms: Number(input.backoff_seconds) * 1000 } }];\n"
+      },
+      "id": "6f5597d7-6438-5d4e-96be-0f855a2d81d1",
+      "name": "Build plan call",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "advisorai-signed-call",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "1c44515d-978c-5c9b-ae00-4d625df1d693",
+      "name": "Plan",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const r = $input.first().json;\nconst input = $('Stage input').first().json;\nif (!r.ok) return [{ json: { plan_failed: true, code: r.code } }];\nconst plan = r.result;\nif (!plan.items.length) return [{ json: { empty: true } }];\nconst crypto = require('crypto');\nconst secret = $env.ADVISORAI_N8N_HMAC_SECRET;\nconst base = String($env.ADVISORAI_API_BASE_URL || '').replace(/\\/$/, '');\nreturn plan.items.map((it) => {\n  const path = `/internal/orchestrator/v1/runs/${input.run_id}/stages/${input.stage_id}/items/${it.id}`;\n  const ts = String(Math.floor(Date.now() / 1000));\n  const hash = crypto.createHash('sha256').update('').digest('hex');\n  const sig = crypto.createHmac('sha256', secret).update(`${ts}.POST.${path}.${hash}`).digest('hex');\n  return { json: { item_id: it.id, url: base + path, ts, sig, max_parallel: plan.max_parallel, timeout: Math.max(Number(it.timeout_s) * 1000, 10000) } };\n});\n"
+      },
+      "id": "dbd085d9-bacf-52d5-a6db-32aa2cb02ec1",
+      "name": "One item per work item",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "c9a98fa3-62a0-52bc-b3fa-675a0f85cdc7",
+      "name": "Anything to run?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1680,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Advisorai-Timestamp",
+              "value": "={{ $json.ts }}"
+            },
+            {
+              "name": "X-Advisorai-Signature",
+              "value": "={{ $json.sig }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": "={{ $json.timeout }}",
+          "batching": {
+            "batch": {
+              "batchSize": "={{ $json.max_parallel }}",
+              "batchInterval": 0
+            }
+          }
+        }
+      },
+      "id": "b7638b81-31f1-545f-8644-ac862f0793f0",
+      "name": "Run items (parallel batches)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1920,
+        -200
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Every outcome is data. A failed or timed-out item is counted, never thrown: the backend already stored it\n// as 'unavailable' (or will, at collection); the run continues.\nconst stage = $('Run fan-out stage').first().json;\nconst results = $input.all().map((i) => i.json);\nconst bad = results.filter((j) => j.error || j.status !== 'ok').length;\nreturn [{ json: { ...stage, status: 'ok', counts: { ...(stage.counts || {}), unavailable_items: bad } } }];\n"
+      },
+      "id": "3a8a7809-9a30-505c-9e43-507eea1d0da0",
+      "name": "Fan in",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// An empty plan is a valid outcome (for example no optional items). Pass the stage result through.\nconst stage = $('Run fan-out stage').first().json;\nconst failed = !!$('One item per work item').first().json.plan_failed;\nreturn [{ json: failed ? { ...stage, status: 'failed', code: 'plan_failed', retryable: false } : stage }];\n"
+      },
+      "id": "ff6c31e2-3871-54a5-aada-0e79354896e5",
+      "name": "Nothing to run",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        40
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "4b938e29-0cbc-5532-83b7-5660eee8ff85",
+      "name": "Stage failed",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        960,
+        160
+      ]
+    }
+  ],
+  "connections": {
+    "When called": {
+      "main": [
+        [
+          {
+            "node": "Stage input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stage input": {
+      "main": [
+        [
+          {
+            "node": "Run fan-out stage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run fan-out stage": {
+      "main": [
+        [
+          {
+            "node": "Stage ok?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stage ok?": {
+      "main": [
+        [
+          {
+            "node": "Build plan call",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stage failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build plan call": {
+      "main": [
+        [
+          {
+            "node": "Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan": {
+      "main": [
+        [
+          {
+            "node": "One item per work item",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One item per work item": {
+      "main": [
+        [
+          {
+            "node": "Anything to run?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anything to run?": {
+      "main": [
+        [
+          {
+            "node": "Run items (parallel batches)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Nothing to run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run items (parallel batches)": {
+      "main": [
+        [
+          {
+            "node": "Fan in",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false
+  },
+  "pinData": {},
+  "meta": {
+    "description": "Reusable. For any stage of kind=fanout: runs the stage, asks the backend for its work items (for example the specialists chosen from the REGISTRY; never named here), runs them in parallel batches of max_parallel and fans in. An item failing never fails the run: the backend records it as unavailable.",
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [
+    {
+      "name": "advisorai"
+    }
+  ]
+}

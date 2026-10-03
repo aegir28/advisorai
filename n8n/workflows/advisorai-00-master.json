@@ -1,0 +1,705 @@
+{
+  "id": "advisorai-master",
+  "name": "AdvisorAI · 00 Master orchestration",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "advisorai-case-analysis",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "b457dc8d-fe00-5394-ba34-7fb25ffac7b1",
+      "name": "Start webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "313b3633-cdec-5aed-a205-76a3a44d2fe0"
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require('crypto');\nconst secret = $env.ADVISORAI_N8N_HMAC_SECRET;\nconst skew = Number($env.ADVISORAI_N8N_MAX_CLOCK_SKEW_SECONDS || 300);\nconst h = $json.headers || {};\nconst body = JSON.stringify($json.body || {});\nconst ts = String(h['x-advisorai-timestamp'] || '');\nconst got = String(h['x-advisorai-signature'] || '');\nconst path = '/webhook/advisorai-case-analysis';\nconst hash = crypto.createHash('sha256').update(body).digest('hex');\nconst want = crypto.createHmac('sha256', secret || '').update(`${ts}.POST.${path}.${hash}`).digest('hex');\nconst fresh = /^[0-9]+$/.test(ts) && Math.abs(Date.now() / 1000 - Number(ts)) <= skew;\nconst same = got.length === want.length && crypto.timingSafeEqual(Buffer.from(got), Buffer.from(want));\nconst b = $json.body || {};\nconst valid = !!secret && fresh && same && b.schema_version === 'orchestration_start.v1';\nreturn [{ json: { valid, run_id: b.run_id, resume: b.resume === true } }];\n"
+      },
+      "id": "bb3a88fc-db01-58b0-b071-282040c11fc4",
+      "name": "Verify signature",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "c423d8f8-f003-5b84-9dd7-15e2fd92e3d6",
+      "name": "Signature valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { accepted: false } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "7e9b1f89-4181-593a-ac10-595892f6d2ac",
+      "name": "Respond 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { accepted: true } }}",
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "id": "d1bfbff6-dc90-515b-94cc-50cd77d4baa3",
+      "name": "Respond 202",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const run_id = $('Verify signature').first().json.run_id;\nconst body = JSON.stringify({ schema_version: 'begin_request.v1', execution_id: String($execution.id) });\nreturn [{ json: { run_id, path: `/internal/orchestrator/v1/runs/${run_id}/begin`, body, timeout_ms: 30000, max_tries: 3, backoff_ms: 5000 } }];\n"
+      },
+      "id": "268338ef-3bfc-5573-a4ef-e29e3e7792ea",
+      "name": "Build begin call",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "advisorai-signed-call",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "6c080d45-b949-52c3-bcb6-1f1bc781bd23",
+      "name": "Begin run",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One item per stage the backend described (minus those a resumed run already finished).\nconst r = $input.first().json;\nconst run_id = $('Verify signature').first().json.run_id;\nif (!r.ok) return [{ json: { run_id, abort: true, code: r.code, id: 'begin', kind: 'single', flags: {} } }];\nconst done = new Set(r.result.completed_stages);\nreturn r.result.stages.filter((s) => !done.has(s.id)).map((s) => ({ json: { run_id, ...s, flags: r.result.flags } }));\n"
+      },
+      "id": "79aae417-3b2b-598e-8a29-d32f59f731cf",
+      "name": "Stages still to run",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "0278284a-36eb-5bb8-8bf5-9c5685210cb1",
+      "name": "Each stage",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1680,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Flags seen so far = those from `begin` plus what each finished stage reported. `when` is the stage's\n// condition (a flag name from the workflow definition); the backend re-checks any skip we ask for.\nconst s = $json;\nconst flags = $('Update flags').isExecuted ? $('Update flags').last().json.flags : (s.flags || {});\nconst action = s.abort ? 'abort' : (s.when && !flags[s.when] ? 'skip' : 'run');\nreturn [{ json: { run_id: s.run_id, stage_id: s.id, kind: s.kind, action, flags,\n  timeout_seconds: s.timeout_seconds, retries: s.retries, backoff_seconds: s.backoff_seconds, code: s.code || null } }];\n"
+      },
+      "id": "17c92bbc-57bb-5f36-abdb-e9806b1a8ea7",
+      "name": "Evaluate condition",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "r0",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "run",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "run"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "r1",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "skip",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "skip"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "r2",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "abort",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "abort"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "18de2612-e0b4-50bd-a405-960d4d439922",
+      "name": "Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2160,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.kind }}",
+              "rightValue": "fanout",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "b5ee45b1-9421-50ec-9a50-ee3a9b4e27fa",
+      "name": "Fan-out stage?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2400,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "advisorai-fanout-stage",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "7934710c-a084-530e-8e42-548f356e97a3",
+      "name": "Run fan-out stage",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        2640,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "advisorai-run-stage",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "cf182c44-66e9-577e-8b1c-89b06c6c242a",
+      "name": "Run stage",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        2640,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "advisorai-run-stage",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "dd3e34e9-2496-557a-ab2f-3854da64d558",
+      "name": "Skip stage",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        2640,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// begin failed: there is nothing to run. Report it as a failed stage so the run is finished honestly.\nreturn [{ json: { run_id: $json.run_id, stage: 'begin', status: 'failed', code: $json.code || 'begin_failed', retryable: false, counts: {}, flags: {} } }];\n"
+      },
+      "id": "0e7b8f31-1da8-56c2-9ff4-564f6fe1913c",
+      "name": "Abort",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Accumulate the flags a stage set and decide whether to go on. Only a failed or cancelled stage stops the\n// loop; the backend decides what is critical (non-critical failures come back as 'unavailable').\nconst r = $input.first().json;\nconst flags = { ...($('Evaluate condition').first().json.flags || {}), ...(r.flags || {}) };\nconst stop = r.status === 'failed' || r.status === 'cancelled';\nreturn [{ json: { flags, stop, stage: r.stage || null, status: r.status || null, condition: r.condition || null } }];\n"
+      },
+      "id": "8d2bd2a3-683b-5bc9-a020-b445f61b2f6c",
+      "name": "Update flags",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.stop }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "b9b0a269-b867-5968-83b7-1a5bfe53c965",
+      "name": "Stopped?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3120,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const run_id = $('Verify signature').first().json.run_id;\nreturn [{ json: { run_id, path: `/internal/orchestrator/v1/runs/${run_id}/finish`, body: '', timeout_ms: 30000, max_tries: 3, backoff_ms: 5000 } }];\n"
+      },
+      "id": "c5f27a9c-41df-5467-a722-3a3e394b4f27",
+      "name": "Build finish call",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "advisorai-signed-call",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "6d781656-d348-5372-a9e5-d647b82bcf4e",
+      "name": "Finish run",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        3600,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "Start webhook": {
+      "main": [
+        [
+          {
+            "node": "Verify signature",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify signature": {
+      "main": [
+        [
+          {
+            "node": "Signature valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Signature valid?": {
+      "main": [
+        [
+          {
+            "node": "Respond 202",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 401",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond 202": {
+      "main": [
+        [
+          {
+            "node": "Build begin call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build begin call": {
+      "main": [
+        [
+          {
+            "node": "Begin run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Begin run": {
+      "main": [
+        [
+          {
+            "node": "Stages still to run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stages still to run": {
+      "main": [
+        [
+          {
+            "node": "Each stage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Each stage": {
+      "main": [
+        [
+          {
+            "node": "Build finish call",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Evaluate condition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate condition": {
+      "main": [
+        [
+          {
+            "node": "Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Action": {
+      "main": [
+        [
+          {
+            "node": "Fan-out stage?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip stage",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Abort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fan-out stage?": {
+      "main": [
+        [
+          {
+            "node": "Run fan-out stage",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Run stage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run fan-out stage": {
+      "main": [
+        [
+          {
+            "node": "Update flags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run stage": {
+      "main": [
+        [
+          {
+            "node": "Update flags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip stage": {
+      "main": [
+        [
+          {
+            "node": "Update flags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Abort": {
+      "main": [
+        [
+          {
+            "node": "Update flags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update flags": {
+      "main": [
+        [
+          {
+            "node": "Stopped?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stopped?": {
+      "main": [
+        [
+          {
+            "node": "Build finish call",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Each stage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build finish call": {
+      "main": [
+        [
+          {
+            "node": "Finish run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false,
+    "errorWorkflow": "advisorai-error-recovery",
+    "executionTimeout": 3600
+  },
+  "pinData": {},
+  "meta": {
+    "description": "Entry point. Verifies the signed start, asks the backend to begin the run (which selects the workflow definition and returns its stage descriptors), then executes each stage generically: kind decides the call pattern, `when` is evaluated against the flags seen so far, and the stage's own retry/timeout values are applied. It names no specialty, no stage and no clinical branch, and holds no case content, key or database login.",
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [
+    {
+      "name": "advisorai"
+    }
+  ]
+}

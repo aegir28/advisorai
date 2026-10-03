@@ -1,0 +1,92 @@
+{
+  "id": "advisorai-error-recovery",
+  "name": "AdvisorAI · 90 Error recovery",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "0a27d502-4d2e-54b4-b644-08dd12e0a2ab",
+      "name": "On workflow error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const id = String($json.execution.id).replace(/[^A-Za-z0-9_.:-]/g, '');\nreturn [{ json: { path: `/internal/orchestrator/v1/executions/${id}/fail`, body: '', timeout_ms: 30000, max_tries: 3, backoff_ms: 5000 } }];\n"
+      },
+      "id": "6c922f6f-0c96-527f-ba8d-8432f5a97fde",
+      "name": "Build call",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "advisorai-signed-call",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "cbfe7967-612c-58b3-8c9d-9c8f22aa4813",
+      "name": "Signed call",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "On workflow error": {
+      "main": [
+        [
+          {
+            "node": "Build call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build call": {
+      "main": [
+        [
+          {
+            "node": "Signed call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false
+  },
+  "pinData": {},
+  "meta": {
+    "description": "Set as the master's error workflow. If the master execution crashes, the backend fails the run it was driving with a person-safe reason (idempotent, content-free), so no run is left 'running'.",
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [
+    {
+      "name": "advisorai"
+    }
+  ]
+}

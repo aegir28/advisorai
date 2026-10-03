@@ -129,14 +129,11 @@ export const TimelineDataSchema = z.object({
 });
 
 // ── Specialists: specialist_report.v1 ────────────────────
-export const SpecialistIdSchema = z.enum([
-  "general_medicine",
-  "cardiology",
-  "interventional_cardiology",
-  "medication_safety",
-  "orthopedics",
-  "neurology",
-]);
+/**
+ * Any registered specialty, sub-specialty or capability. The registry (backend `registry/agents.yaml`) is the
+ * list of ids; the wire type is an identifier so adding a specialist never changes this contract (ADR 0012).
+ */
+export const SpecialistIdSchema = z.string().regex(/^[a-z][a-z0-9_]{2,63}$/);
 
 export const FindingSchema = z.object({
   id: Id,
@@ -373,8 +370,8 @@ export const RunStatusSchema = z.enum(["running", "complete", "partial", "failed
 export const RunOutcomeSchema = z.enum(["complete", "partial", "failed"]);
 
 export const RunStepSchema = z.object({
-  /** 1..14, title from i18n key run.s{n} */
-  n: z.number().int().min(1).max(14),
+  /** 1..N in workflow order (case_analysis has 14), title from i18n key run.s{n} */
+  n: z.number().int().min(1).max(64),
   status: StepStatusSchema,
   note: z.string().optional(),
 });
@@ -394,8 +391,8 @@ export const AnalysisRunSchema = z
     /** Present when the run finished with gaps. */
     warnings: z.array(z.string()),
   })
-  .refine((r) => r.steps.length === 14 && r.steps.every((s, i) => s.n === i + 1), {
-    message: "a run has exactly the 14 workflow steps, numbered 1..14 in order",
+  .refine((r) => r.steps.length >= 1 && r.steps.every((s, i) => s.n === i + 1), {
+    message: "a run has at least one step, numbered 1..N in order",
     path: ["steps"],
   })
   .refine((r) => r.status !== "failed" || !!r.failure, {

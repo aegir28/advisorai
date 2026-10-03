@@ -1,0 +1,60 @@
+# Workflow definitions: the stage graph of an analysis run. Read by backend/app/orchestration/workflows.py.
+#
+# THIS FILE IS HOW A WORKFLOW IS SHAPED. The backend creates a run's steps from the selected definition, `begin`
+# hands the stage descriptors to n8n, and the n8n master workflow runs whatever it is given. Adding, removing,
+# re-ordering or conditionally skipping a stage is an edit here; no workflow JSON and no engine code changes.
+# (A genuinely NEW capability, e.g. a new kind of model step, needs a handler in the backend; once a handler
+# exists it can be used in any workflow, any number of times, with different `params`.)
+#
+# Stage fields
+#   id           unique within the workflow (lowercase, digits, underscore). Also the step id and the artifact key.
+#   kind         single  - one backend call.
+#                fanout  - the backend plans a list of work items (for example the specialists chosen from
+#                          registry/agents.yaml); n8n runs them in parallel batches of `max_parallel`, then fans in.
+#   handler      the backend capability that does the work (see backend/app/orchestration/service.py).
+#   critical     true: a failure fails the run. false: a failure makes the run `partial` and it continues.
+#   when         optional flag name. The stage runs only if that flag is true; otherwise it is SKIPPED with the
+#                reason `condition_not_met`. The flag must be declared in `flags` by an EARLIER stage. An
+#                undeclared or never-set flag is false.
+#   flags        flags this stage may set (its result carries them). Visible to n8n, which evaluates `when`.
+#   depends_on   earlier stage ids that must be finished (done, warning or skipped) before this one runs.
+#   retries / backoff_seconds / timeout_seconds
+#                optional per-stage overrides of registry/orchestration.yaml (retry, timeouts). n8n applies them.
+#   params       free key/values handed to the handler (for example {priority: mandatory} for a fan-out).
+#   uses_model   informational: the stage calls a model through the AI gateway (cost reports, docs).
+#
+# The order of the list IS the order of execution. `n` (the step number users see in run.v1) is the position.
+version: 1
+
+workflows:
+  case_analysis:
+    version: 1
+    description: "Prepare a person's case for a second-opinion visit: documents, facts, specialist perspectives, evidence, review, report."
+    stages:
+      - {id: intake_safety, kind: single, handler: intake_safety, critical: true}
+      - {id: document_text, kind: single, handler: document_text, critical: true, flags: [needs_ocr]}
+      - {id: vision_ocr, kind: single, handler: vision_ocr, critical: false, when: needs_ocr, depends_on: [document_text]}
+      - {id: fact_extraction, kind: single, handler: fact_extraction, critical: true, uses_model: true, depends_on: [document_text]}
+      - {id: case_structuring, kind: single, handler: case_structuring, critical: true, flags: [missing_info_branch], depends_on: [fact_extraction]}
+      - {id: routing, kind: single, handler: routing, critical: true, depends_on: [case_structuring]}
+      - {id: specialist_fanout, kind: fanout, handler: specialist_fanout, critical: true, uses_model: true, depends_on: [routing], params: {priority: all}}
+      - {id: specialist_collect, kind: single, handler: specialist_collect, critical: true, flags: [enough_specialists], depends_on: [specialist_fanout]}
+      - {id: evidence_retrieval, kind: single, handler: evidence_retrieval, critical: false}
+      - {id: evidence_verification, kind: single, handler: evidence_verification, critical: true, uses_model: true, flags: [extra_verification], depends_on: [specialist_collect]}
+      - {id: cross_review, kind: single, handler: cross_review, critical: false, when: enough_specialists, flags: [escalate_review], depends_on: [evidence_verification]}
+      - {id: interim_review, kind: single, handler: interim_review, critical: false, uses_model: true, depends_on: [evidence_verification]}
+      - {id: personalized_questions, kind: single, handler: personalized_questions, critical: false, uses_model: true, depends_on: [interim_review]}
+      - {id: final_report, kind: single, handler: final_report, critical: true, uses_model: true, depends_on: [personalized_questions]}
+
+  # A minimal second workflow, here to prove the machinery is generic: it reuses the same handlers and the same
+  # n8n master. The comparison itself is not built yet (its handler reports `unavailable`, honestly).
+  second_opinion:
+    version: 1
+    description: "Prepare to compare a second doctor's opinion with the first. Skeleton: document intake and facts only."
+    stages:
+      - {id: intake_safety, kind: single, handler: intake_safety, critical: true}
+      - {id: document_text, kind: single, handler: document_text, critical: true, flags: [needs_ocr]}
+      - {id: vision_ocr, kind: single, handler: vision_ocr, critical: false, when: needs_ocr, depends_on: [document_text]}
+      - {id: fact_extraction, kind: single, handler: fact_extraction, critical: true, uses_model: true, depends_on: [document_text]}
+      - {id: case_structuring, kind: single, handler: case_structuring, critical: true, depends_on: [fact_extraction]}
+      - {id: comparison, kind: single, handler: second_opinion_compare, critical: false, depends_on: [case_structuring]}

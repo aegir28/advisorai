@@ -157,6 +157,15 @@
     "/api/v1/analysis/{run_id}": [
       "get"
     ],
+    "/api/v1/analysis/{run_id}/cancel": [
+      "post"
+    ],
+    "/api/v1/analysis/{run_id}/report": [
+      "get"
+    ],
+    "/api/v1/analysis/{run_id}/resume": [
+      "post"
+    ],
     "/api/v1/cases": [
       "get",
       "post"
@@ -167,6 +176,9 @@
     "/api/v1/cases/{case_id}": [
       "delete",
       "get"
+    ],
+    "/api/v1/cases/{case_id}/analysis": [
+      "post"
     ],
     "/api/v1/cases/{case_id}/documents": [
       "get"

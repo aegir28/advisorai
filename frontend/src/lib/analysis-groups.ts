@@ -1,7 +1,7 @@
 import type { AnalysisRun, StepStatus } from "@/domain/types";
 
 /**
- * The analysis has 14 internal steps. A patient sees five calm stages.
+ * The standard analysis has 14 internal steps (other workflows may have fewer). A patient sees five calm stages.
  * This is purely a presentation mapping; the run data is untouched.
  */
 export interface AnalysisGroup {
@@ -20,7 +20,7 @@ const GROUPS: { key: string; title: string; steps: number[] }[] = [
 ];
 
 export function groupRun(run: AnalysisRun): AnalysisGroup[] {
-  return GROUPS.map((g) => {
+  return GROUPS.filter((g) => run.steps.some((s) => g.steps.includes(s.n))).map((g) => {
     const steps = run.steps.filter((s) => g.steps.includes(s.n));
     const has = (st: StepStatus) => steps.some((s) => s.status === st);
     const all = (st: StepStatus) => steps.every((s) => s.status === st);

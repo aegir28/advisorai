@@ -1,8 +1,9 @@
 """The AI gateway: the only way to reach a model.
 
-    invoke(): de-identify -> residual-PII check -> route (tier -> model) -> budget -> call
-              (timeout, retries with backoff) -> parse + validate against the output schema
-              (bounded re-asks) -> meter (tokens, cost) -> usage row + audit + metrics
+    invoke(): plan the candidates (task -> ordered provider/model chain, privacy policy) -> de-identify ->
+              residual-PII check -> for each candidate: reserve budget -> call (timeout, retries with backoff)
+              -> parse + validate against the output schema (bounded re-asks) -> meter (tokens, cost) ->
+              usage row + audit + metrics. A failed candidate falls back to the next one in the chain.
 
 Guarantees, each tested with the fake provider (tests/unit/test_ai_gateway.py):
 
@@ -19,14 +20,15 @@ import json
 import logging
 import time
 import uuid
-from collections.abc import Awaitable, Callable, Sequence
+from collections.abc import Awaitable, Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
 from pydantic import BaseModel, ValidationError
 
+from app.ai.budget import BudgetGuard, estimate_input_tokens
 from app.ai.provider import Provider
-from app.ai.registry import ModelRegistry, ModelSpec
+from app.ai.registry import Candidate, ModelRegistry, ModelSpec
 from app.ai.types import (
     CallContext,
     ChatMessage,
@@ -64,6 +66,11 @@ class GatewayRequest[T: BaseModel]:
     segments: Sequence[PromptSegment]
     tier: int = 1
     max_output_tokens: int = 1024
+    # Task class ("extraction", "specialist", "verification", "review", "report", ...). The model registry may
+    # map it to an ordered chain of providers/models (fallback); without one it is the (provider, tier) route.
+    task: str = "default"
+    # Per-call spend ceiling in micro-USD (from the agent's registry entry). 0 = none beyond the budgets.
+    max_call_cost_micro_usd: int = 0
     context: CallContext = field(default_factory=CallContext)
     # Exact strings the system already knows are identity (the person's name, email, phone).
     known_identifiers: tuple[str, ...] = ()
@@ -89,61 +96,161 @@ class GatewayConfig:
     schema_retries: int = 1  # extra provider calls when the output fails validation
     backoff_base_s: float = 1.0
     run_budget_micro_usd: int = 0  # 0 = no cap
+    # `allow_unverified_synthetic` or `require_verified` (see registry.ProviderPolicy).
+    privacy_policy: str = "allow_unverified_synthetic"
+
+
+# Failures worth trying the next candidate for: the provider could not answer, or its answer was unusable.
+# Never for a privacy block, a budget stop or a refusal (a refusal must not be shopped around).
+FALLBACK_CODES = frozenset({"retries_exhausted", "schema_validation_failed", "provider_unavailable"})
 
 
 class AIGateway:
     def __init__(
         self,
-        provider: Provider,
+        provider: Provider | Mapping[str, Provider],
         registry: ModelRegistry,
         *,
+        default_provider: str | None = None,
         config: GatewayConfig | None = None,
         sink: UsageSink | None = None,
         audit: AuditRecorder | None = None,
         metrics: AIMetrics | None = None,
+        guard: BudgetGuard | None = None,
         sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
     ) -> None:
-        self._provider = provider
+        if isinstance(provider, Mapping):
+            self._providers: dict[str, Provider] = dict(provider)
+            if default_provider is None:
+                default_provider = next(iter(self._providers))
+        else:
+            self._providers = {provider.name: provider}
+            default_provider = default_provider or provider.name
+        self._default_provider = default_provider
         self._registry = registry
         self._config = config or GatewayConfig()
         self._sink = sink
         self._audit = audit
         self.metrics = metrics or AIMetrics()
         self._budget = RunBudget(self._config.run_budget_micro_usd)
+        self._guard = guard
         self._sleep = sleep
 
     @property
     def provider_name(self) -> str:
-        return self._provider.name
+        return self._default_provider
+
+    def _plan(self, request: GatewayRequest[Any]) -> list[Candidate]:
+        """Candidates for this call, after the registry, provider availability and the privacy policy."""
+        candidates = self._registry.candidates(request.task, self._default_provider, request.tier)
+        available = [c for c in candidates if c.provider in self._providers]
+        if not available:
+            raise GatewayError("model_not_configured")
+        allowed = [
+            c
+            for c in available
+            if self._registry.provider_policy(c.provider).allowed_under(self._config.privacy_policy)
+        ]
+        if not allowed:
+            self.metrics.incr("privacy_policy_blocked")
+            raise GatewayError("privacy_policy_blocked")
+        return allowed
 
     async def invoke[T: BaseModel](self, request: GatewayRequest[T]) -> GatewayResult[T]:
         ctx = request.context
         ctx.request_id = ctx.request_id or get_request_id()
         started = time.monotonic()
-        spec: ModelSpec | None = None
         usage_total = Usage()
-        attempts = 0
-        outcome = "success"
+        attempts_total = 0
         try:
-            spec = self._registry.resolve(self._provider.name, request.tier)
+            chain = self._plan(request)
+        except GatewayError as exc:
+            self.metrics.incr(f"failed.{exc.code}")
+            await self._finish(request, None, self._default_provider, Usage(), 0, started, exc.code)
+            raise
+        try:
             if self._budget.exceeded(ctx.run_id):
                 raise GatewayError("budget_exceeded")
             messages, redactions = self._prepare(request)
-            model_request = ModelRequest(
-                model=spec.id,
-                messages=messages,
-                response_schema=request.schema.model_json_schema(),
-                schema_name=request.schema.__name__,
-                max_output_tokens=min(request.max_output_tokens, spec.max_output_tokens),
-                timeout_s=self._config.request_timeout_s,
-            )
+        except GatewayError as exc:
+            self.metrics.incr(f"failed.{exc.code}")
+            await self._finish(request, chain[0].spec, chain[0].provider, Usage(), 0, started, exc.code)
+            raise
 
+        last_error: GatewayError | None = None
+        for index, candidate in enumerate(chain):
+            spec, provider = candidate.spec, candidate.provider
+            attempt_started = time.monotonic()
+            try:
+                output, used, attempts = await self._attempt(request, candidate, messages)
+            except _CandidateError as failed:
+                usage_total = usage_total + failed.usage
+                attempts_total += failed.attempts
+                self.metrics.incr(f"failed.{failed.error.code}")
+                await self._finish(
+                    request, spec, provider, failed.usage, failed.attempts, attempt_started, failed.error.code
+                )
+                last_error = failed.error
+                if failed.error.code in FALLBACK_CODES and index < len(chain) - 1:
+                    self.metrics.incr("fallbacks")
+                    continue
+                raise failed.error from None
+            usage_total = usage_total + used
+            attempts_total += attempts
+            await self._finish(request, spec, provider, used, attempts, attempt_started, "success")
+            self.metrics.incr("calls_ok")
+            return GatewayResult(
+                output=output,
+                usage=usage_total,
+                cost_micro_usd=spec.cost_micro_usd(used),  # the successful candidate's own cost
+                model=spec.id,
+                provider=spec.provider,
+                attempts=attempts_total,
+                latency_ms=int((time.monotonic() - started) * 1000),
+                redactions=redactions,
+                request_id=ctx.request_id,
+            )
+        assert last_error is not None  # the chain is never empty
+        raise last_error
+
+    async def _attempt[T: BaseModel](
+        self, request: GatewayRequest[T], candidate: Candidate, messages: tuple[ChatMessage, ...]
+    ) -> tuple[T, Usage, int]:
+        """One candidate: reserve budget, call with retries, validate (bounded re-asks). Raises
+        `_CandidateError` carrying the usage already spent so a failed attempt is still metered."""
+        spec = candidate.spec
+        ctx = request.context
+        usage = Usage()
+        attempts = 0
+        max_output = min(request.max_output_tokens, spec.max_output_tokens)
+        model_request = ModelRequest(
+            model=spec.id,
+            messages=messages,
+            response_schema=request.schema.model_json_schema(),
+            schema_name=request.schema.__name__,
+            max_output_tokens=max_output,
+            timeout_s=self._config.request_timeout_s,
+        )
+        reservation: int | None = None
+        try:
+            estimate = spec.cost_micro_usd(
+                Usage(estimate_input_tokens("".join(m.content for m in messages)), max_output)
+            )
+            if (
+                request.max_call_cost_micro_usd
+                and estimate is not None
+                and estimate > request.max_call_cost_micro_usd
+            ):
+                raise GatewayError("call_cost_cap_exceeded")
+            if self._guard is not None:
+                reservation = await self._guard.reserve(estimate)
+            provider = self._providers[candidate.provider]
             output: T | None = None
             schema_failures = 0
             while output is None:
-                response, used_attempts = await self._call_with_retries(model_request)
+                response, used_attempts = await self._call_with_retries(provider, model_request)
                 attempts += used_attempts
-                usage_total = usage_total + response.usage
+                usage = usage + response.usage
                 self._budget.charge(ctx.run_id, spec.cost_micro_usd(response.usage))
                 output = self._parse(request.schema, response)
                 if output is None:
@@ -154,24 +261,11 @@ class AIGateway:
                     if self._budget.exceeded(ctx.run_id):
                         raise GatewayError("budget_exceeded")
         except GatewayError as exc:
-            outcome = exc.code
-            self.metrics.incr(f"failed.{exc.code}")
-            await self._finish(request, spec, usage_total, attempts, started, outcome)
-            raise
-
-        latency_ms = await self._finish(request, spec, usage_total, attempts, started, outcome)
-        self.metrics.incr("calls_ok")
-        return GatewayResult(
-            output=output,
-            usage=usage_total,
-            cost_micro_usd=spec.cost_micro_usd(usage_total),
-            model=spec.id,
-            provider=spec.provider,
-            attempts=attempts,
-            latency_ms=latency_ms,
-            redactions=redactions,
-            request_id=ctx.request_id,
-        )
+            raise _CandidateError(exc, usage, attempts) from None
+        finally:
+            if reservation is not None and self._guard is not None:
+                self._guard.release(reservation)
+        return output, usage, attempts
 
     # ── steps ──────────────────────────────────────────────────────────────────────────────────
     def _prepare(self, request: GatewayRequest[Any]) -> tuple[tuple[ChatMessage, ...], dict[str, int]]:
@@ -196,12 +290,14 @@ class AIGateway:
             self.metrics.incr("redactions", sum(redactions.values()))
         return (ChatMessage("system", request.system), ChatMessage("user", user)), redactions
 
-    async def _call_with_retries(self, model_request: ModelRequest) -> tuple[ModelResponse, int]:
+    async def _call_with_retries(
+        self, provider: Provider, model_request: ModelRequest
+    ) -> tuple[ModelResponse, int]:
         last: ProviderError | None = None
         for attempt in range(1, self._config.max_attempts + 1):
             try:
                 async with asyncio.timeout(model_request.timeout_s):
-                    response = await self._provider.complete(model_request)
+                    response = await provider.complete(model_request)
                 self.metrics.incr("provider_calls")
                 return response, attempt
             except TimeoutError:
@@ -234,6 +330,7 @@ class AIGateway:
         self,
         request: GatewayRequest[Any],
         spec: ModelSpec | None,
+        provider: str,
         usage: Usage,
         attempts: int,
         started: float,
@@ -242,7 +339,6 @@ class AIGateway:
         latency_ms = int((time.monotonic() - started) * 1000)
         ctx = request.context
         model = spec.id if spec else "unresolved"
-        provider = spec.provider if spec else self._provider.name
         cost = spec.cost_micro_usd(usage) if spec else None
         self.metrics.incr("input_tokens", usage.input_tokens)
         self.metrics.incr("output_tokens", usage.output_tokens)
@@ -297,3 +393,11 @@ class AIGateway:
                 },
             )
         return latency_ms
+
+
+class _CandidateError(Exception):
+    """Internal: one candidate failed. Carries the error and what it already cost."""
+
+    def __init__(self, error: GatewayError, usage: Usage, attempts: int) -> None:
+        super().__init__(error.code)
+        self.error, self.usage, self.attempts = error, usage, attempts

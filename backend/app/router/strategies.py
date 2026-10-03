@@ -11,9 +11,11 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel
 
+from app.agents.registry import SpecialtyRegistry
 from app.ai.gateway import AIGateway, GatewayRequest
 from app.ai.types import CallContext
 from app.router.contracts import Candidate, Priority, Proposal, RouterInput
+from app.router.signals import SignalExtractor
 from app.schemas.common import SpecialistId
 
 
@@ -79,3 +81,39 @@ class LLMAssistedStrategy(ABC):
             ],
             missing=result.output.missing,
         )
+
+
+class RegistryRuleStrategy:
+    """The default, configuration-driven strategy: every enabled agent's `triggers` (registry/agents.yaml)
+    evaluated against the case's signals (registry/signals.yaml). It knows no specialty by name, so a new
+    specialist is selectable the moment its registry entry exists. Reasons are the trigger's fixed text plus a
+    count of matches; case content never enters the routing trace."""
+
+    name = "registry_triggers"
+
+    def __init__(self, registry: SpecialtyRegistry, extractor: SignalExtractor) -> None:
+        self._registry = registry
+        self._extractor = extractor
+
+    async def propose(self, routing_input: RouterInput) -> Proposal:
+        signals = self._extractor.extract(routing_input.case)
+        candidates: list[Candidate] = []
+        for spec in self._registry.specs():
+            if not spec.enabled:
+                continue
+            for trigger in spec.triggers:
+                if not signals.has(trigger.signal):
+                    continue
+                n = signals.count(trigger.signal)
+                reason = (
+                    trigger.reason
+                    if trigger.signal == "always"
+                    else f"{trigger.reason} ({n} matching mention{'s' if n != 1 else ''})"
+                )
+                candidates.append(Candidate(spec.id, trigger.priority, reason, self.name))
+        missing = (
+            []
+            if routing_input.case.medications or routing_input.case.symptoms
+            else ["The case has no symptoms or medicines recorded, so there is little to route on."]
+        )
+        return Proposal(candidates=candidates, missing=missing)
