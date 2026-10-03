@@ -1,0 +1,79 @@
+[
+  {
+    "id": "q1",
+    "audience": "current_doctor",
+    "priority": 1,
+    "category": "Testing",
+    "text": "My MRI report says no abnormality, but my discharge summary describes a small lesion. Can you ask the radiologist to clarify which is correct?",
+    "trigger": "Two documents describe the same scan differently.",
+    "linked_item_ids": [
+      "syn_8",
+      "mxa1"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q2",
+    "audience": "current_doctor",
+    "priority": 1,
+    "category": "Timing",
+    "text": "Is the repeat MRI in 3 months still needed if the radiologist confirms the original report?",
+    "trigger": "The follow-up plan is based on the discharge description.",
+    "linked_item_ids": [
+      "syn_15",
+      "mxa3"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q3",
+    "audience": "current_doctor",
+    "priority": 2,
+    "category": "Diagnosis",
+    "text": "How confident are you that my headaches are migraine with aura, given that the imaging question is open?",
+    "trigger": "The diagnosis is documented as suspected only.",
+    "linked_item_ids": [
+      "syn_11",
+      "syn_5"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q4",
+    "audience": "current_doctor",
+    "priority": 3,
+    "category": "Medicines",
+    "text": "I use ibuprofen on about 15 days a month. Could that be affecting my headaches?",
+    "trigger": "Medication Safety flagged frequent painkiller use.",
+    "linked_item_ids": [
+      "syn_14",
+      "ma2"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q5",
+    "audience": "second_opinion_doctor",
+    "priority": 1,
+    "category": "Testing",
+    "text": "Having seen the images, what do you see, and does it match the report or the discharge summary?",
+    "trigger": "An independent reading helps with the main conflict.",
+    "linked_item_ids": [
+      "syn_8",
+      "syn_12"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q6",
+    "audience": "second_opinion_doctor",
+    "priority": 2,
+    "category": "Next steps",
+    "text": "Which signs would make you want a faster follow-up scan?",
+    "trigger": "Helps you plan around the uncertainty.",
+    "linked_item_ids": [
+      "syn_10"
+    ],
+    "status": "not_asked"
+  }
+]

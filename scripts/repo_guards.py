@@ -6,10 +6,11 @@ Standard library only. Exit code 1 and a list of findings when a rule is broken.
 
   naming     The project is AdvisorAI. The old blueprint's working title must not appear in tracked files.
   secrets    No private keys, service-role/secret keys, provider API keys or committed .env files.
-  ai-scope   Until the AI phase starts, no AI provider SDK, provider key name, embeddings/pgvector, or
-             model-gateway code. This guard is DELIBERATE and temporary: the AI phase removes or relaxes the
-             `ai-scope` rule in its first pull request (see docs/handoff-ai-phase.md). Until then it keeps the
-             foundation honest: an accidental `pip install openai` fails the build.
+  ai-boundary  The AI gateway (backend/app/ai) is the only door to a model provider, and it speaks plain
+             HTTP. So: no provider SDK dependency or import anywhere, no bare provider key names (the key is
+             ADVISORAI_OPENAI_API_KEY, read in settings only), no provider endpoint outside the adapter,
+             config and tests, and no pgvector/vector column (embeddings are not chosen yet). This replaced
+             the Phase 2 rule that forbade any AI code; the boundary is now "AI only through the gateway".
 """
 
 import base64
@@ -62,7 +63,7 @@ _SECRET_PATTERNS: dict[str, re.Pattern[str]] = {
 }
 _JWT = re.compile(r"\beyJ[A-Za-z0-9_-]{8,}\.(eyJ[A-Za-z0-9_-]{8,})\.[A-Za-z0-9_-]{8,}")
 
-# ai-scope: package names (dependency files) and identifiers (code/config).
+# ai-boundary: package names (dependency files), identifiers (code/config) and provider endpoints.
 _AI_PACKAGES = re.compile(
     r"(?i)(?<![\w-])(openai|anthropic|@anthropic-ai/sdk|google-generativeai|google-genai|@google/generative-ai|"
     r"@google/genai|@ai-sdk/[\w-]+|litellm|langchain[\w-]*|llama[-_]index|cohere|mistralai|sentence-transformers|"
@@ -72,6 +73,16 @@ _AI_ENV_NAMES = re.compile(
     r"\b(OPENAI_API_KEY|ANTHROPIC_API_KEY|GEMINI_API_KEY|GOOGLE_API_KEY|AZURE_OPENAI\w*|COHERE_API_KEY|"
     r"MISTRAL_API_KEY|OPENROUTER_API_KEY|GROQ_API_KEY)\b"
 )
+_AI_ENDPOINTS = re.compile(
+    r"(?i)api\.openai\.com|api\.anthropic\.com|generativelanguage\.googleapis\.com|api\.cohere\.(?:ai|com)"
+)
+# The only files that may name a provider endpoint: the adapter, the settings default, the tests of both.
+_ENDPOINT_ALLOWLIST = {
+    "backend/app/ai/providers/openai.py",
+    "backend/app/core/config.py",
+    "backend/tests/unit/test_ai_openai_adapter.py",
+    "backend/tests/unit/test_ai_config.py",
+}
 _AI_SQL = re.compile(r"(?i)\bcreate\s+extension\b[^;]*\bvector\b|\bvector\s*\(\s*\d+\s*\)")
 _DEPENDENCY_FILES = {"pyproject.toml", "package.json", "requirements.txt", "requirements-dev.txt"}
 # Files that may name provider env vars: the Supabase CLI's own Studio setting, and the guard + its tests.
@@ -123,21 +134,35 @@ def scan(files: dict[str, str]) -> list[Finding]:
                     findings.append(Finding("secrets", path, number, "a service_role JWT"))
             if path in _AI_ALLOWLIST or suffix in _DOC_SUFFIXES:
                 continue
+            endpoint_ok = path in _ENDPOINT_ALLOWLIST or suffix == ".yaml" or name == ".env.example"
+            if _AI_ENDPOINTS.search(line) and not endpoint_ok:
+                findings.append(
+                    Finding("ai-boundary", path, number, "provider endpoint outside the gateway adapter")
+                )
             if name in _DEPENDENCY_FILES and _AI_PACKAGES.search(line):
                 findings.append(
-                    Finding("ai-scope", path, number, "AI provider/embedding dependency before the AI phase")
+                    Finding("ai-boundary", path, number, "AI provider SDK / embedding dependency (use HTTP)")
                 )
             elif suffix in {".py", ".ts", ".tsx", ".mts", ".mjs", ".js"} and re.search(
                 r"""(?:import|from|require\()\s*['"]?\s*(?:openai|anthropic|google\.generativeai|google\.genai|"""
                 r"""@anthropic-ai|@google/generative-ai|@ai-sdk|litellm|langchain|pgvector)\b""",
                 line,
             ):
-                findings.append(Finding("ai-scope", path, number, "AI provider import before the AI phase"))
+                findings.append(
+                    Finding("ai-boundary", path, number, "AI provider SDK import (use the gateway)")
+                )
             if _AI_ENV_NAMES.search(line):
-                findings.append(Finding("ai-scope", path, number, "AI provider key name before the AI phase"))
+                findings.append(
+                    Finding("ai-boundary", path, number, "bare AI provider key name (use the ADVISORAI_ one)")
+                )
             if suffix == ".sql" and _AI_SQL.search(line):
                 findings.append(
-                    Finding("ai-scope", path, number, "pgvector / vector column before the AI phase")
+                    Finding(
+                        "ai-boundary",
+                        path,
+                        number,
+                        "pgvector / vector column (embeddings are not chosen yet)",
+                    )
                 )
     return findings
 
@@ -173,7 +198,7 @@ def main(argv: Iterable[str] = ()) -> int:
     if findings:
         print(f"\n{len(findings)} finding(s).", file=sys.stderr)
         return 1
-    print("repo guards: ok (naming, secrets, ai-scope)")
+    print("repo guards: ok (naming, secrets, ai-boundary)")
     return 0
 
 

@@ -1,0 +1,199 @@
+{
+  "specialists": [
+    {
+      "id": "general_medicine",
+      "name": "General Medicine"
+    },
+    {
+      "id": "cardiology",
+      "name": "Cardiology"
+    },
+    {
+      "id": "interventional_cardiology",
+      "name": "Interventional Cardiology"
+    },
+    {
+      "id": "medication_safety",
+      "name": "Medication Safety"
+    }
+  ],
+  "rows": [
+    {
+      "id": "mx1",
+      "topic": "The troponin rise is clinically significant",
+      "relationship": "agreement",
+      "cells": {
+        "general_medicine": "supports",
+        "cardiology": "supports",
+        "interventional_cardiology": "supports",
+        "medication_safety": "not_assessed"
+      },
+      "summary": "The perspectives that assessed it agree. Agreement among reviewers is not treated as evidence on its own.",
+      "perspectives": [
+        {
+          "specialist": "general_medicine",
+          "reasoning": "A clearly raised value that needs follow-up."
+        },
+        {
+          "specialist": "cardiology",
+          "reasoning": "Raised well above the reference range, consistent with heart-muscle stress."
+        },
+        {
+          "specialist": "interventional_cardiology",
+          "reasoning": "Consistent with the documented narrowing."
+        }
+      ],
+      "item_ids": [
+        "cf1",
+        "cl_52"
+      ]
+    },
+    {
+      "id": "mx2",
+      "topic": "An angioplasty discussion is supported by the findings",
+      "relationship": "partial",
+      "cells": {
+        "general_medicine": "needs_context",
+        "cardiology": "supports",
+        "interventional_cardiology": "supports",
+        "medication_safety": "not_assessed"
+      },
+      "summary": "Cardiology views support discussing it. General Medicine wants more context first. Both views are kept.",
+      "perspectives": [
+        {
+          "specialist": "general_medicine",
+          "reasoning": "Reasonable to discuss, but the picture is incomplete without heart-function data."
+        },
+        {
+          "specialist": "cardiology",
+          "reasoning": "Findings are those in which this procedure is commonly discussed."
+        },
+        {
+          "specialist": "interventional_cardiology",
+          "reasoning": "Narrowing location is typical for this procedure."
+        }
+      ],
+      "item_ids": [
+        "cf4",
+        "ic1",
+        "gm2",
+        "cl_51"
+      ]
+    },
+    {
+      "id": "mx3",
+      "topic": "Timing: within 1–2 weeks, or planned later",
+      "relationship": "disagreement",
+      "cells": {
+        "general_medicine": "needs_context",
+        "cardiology": "needs_context",
+        "interventional_cardiology": "differs",
+        "medication_safety": "not_assessed"
+      },
+      "summary": "Interventional Cardiology raises a planned timeline as a reasonable discussion point; the treating cardiologist recommended 1–2 weeks. We don't pick a side. Which view fits depends on information not in the records.",
+      "perspectives": [
+        {
+          "specialist": "cardiology",
+          "reasoning": "Timing depends on current symptoms and heart function."
+        },
+        {
+          "specialist": "interventional_cardiology",
+          "reasoning": "If symptoms are stable, a planned approach after medicine optimisation and an echo may be reasonable."
+        },
+        {
+          "specialist": "general_medicine",
+          "reasoning": "Cannot judge urgency without current symptom information."
+        }
+      ],
+      "item_ids": [
+        "ic2",
+        "gm2",
+        "cu1",
+        "cl_54"
+      ]
+    },
+    {
+      "id": "mx4",
+      "topic": "Heart-pump function (LVEF) is known",
+      "relationship": "missing_info",
+      "cells": {
+        "general_medicine": "flags_issue",
+        "cardiology": "flags_issue",
+        "interventional_cardiology": "flags_issue",
+        "medication_safety": "not_assessed"
+      },
+      "summary": "All three flag this independently. No echocardiogram is in the records.",
+      "perspectives": [
+        {
+          "specialist": "general_medicine",
+          "reasoning": "Missing test that would help with timing."
+        },
+        {
+          "specialist": "cardiology",
+          "reasoning": "Missing LVEF information limits confidence."
+        },
+        {
+          "specialist": "interventional_cardiology",
+          "reasoning": "Normally part of procedure planning."
+        }
+      ],
+      "item_ids": [
+        "gmi1",
+        "cmi1",
+        "imi1"
+      ]
+    },
+    {
+      "id": "mx5",
+      "topic": "Antiplatelet medicines together with an NSAID",
+      "relationship": "medication_conflict",
+      "cells": {
+        "general_medicine": "not_assessed",
+        "cardiology": "needs_context",
+        "interventional_cardiology": "not_assessed",
+        "medication_safety": "flags_issue"
+      },
+      "summary": "Medication Safety flags the combination. Cardiology says its importance depends on the full plan.",
+      "perspectives": [
+        {
+          "specialist": "medication_safety",
+          "reasoning": "An NSAID taken with two antiplatelet medicines is associated with a higher bleeding tendency."
+        },
+        {
+          "specialist": "cardiology",
+          "reasoning": "Antiplatelet medicines are part of the plan, so the painkiller is the part to review."
+        }
+      ],
+      "item_ids": [
+        "ms2",
+        "cl_53"
+      ]
+    },
+    {
+      "id": "mx6",
+      "topic": "Blood sugar control matters around a procedure",
+      "relationship": "additional_context",
+      "cells": {
+        "general_medicine": "flags_issue",
+        "cardiology": "needs_context",
+        "interventional_cardiology": "not_assessed",
+        "medication_safety": "not_assessed"
+      },
+      "summary": "Raised by General Medicine; Cardiology treats it as additional context.",
+      "perspectives": [
+        {
+          "specialist": "general_medicine",
+          "reasoning": "HbA1c is above target and may affect recovery."
+        },
+        {
+          "specialist": "cardiology",
+          "reasoning": "Relevant context, not a reason on its own to change the plan."
+        }
+      ],
+      "item_ids": [
+        "gm1",
+        "cl_56"
+      ]
+    }
+  ]
+}

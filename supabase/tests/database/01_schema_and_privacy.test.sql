@@ -3,13 +3,13 @@ begin;
 create extension if not exists pgtap with schema extensions;
 select * from no_plan();
 
--- ── The 15 tables ───────────────────────────────────────────────────────────────────────────────
+-- ── The 16 tables (15 from Phase 2B + model_usage, the AI usage ledger) ───────────────────────────────────────────────────────────────────────────────
 select tables_are(
   'public',
   array['profiles', 'patients', 'cases', 'documents', 'document_pages', 'medical_records', 'facts',
         'timeline_events', 'medications', 'lab_results', 'diagnoses', 'procedures',
-        'workflow_runs', 'workflow_steps', 'audit_logs'],
-  'public schema has exactly the Phase 2B tables'
+        'workflow_runs', 'workflow_steps', 'model_usage', 'audit_logs'],
+  'public schema has exactly the expected tables'
 );
 
 -- ── RLS enabled AND forced on every table ───────────────────────────────────────────────────────
@@ -86,8 +86,8 @@ select is(
   (select coalesce(string_agg(table_name::text || ':' || privilege_type::text, ',' order by table_name::text, privilege_type::text), '')
      from information_schema.role_table_grants
     where table_schema = 'public' and grantee = 'app_system'),
-  'audit_logs:INSERT,workflow_runs:INSERT,workflow_runs:SELECT,workflow_steps:INSERT,workflow_steps:SELECT',
-  'app_system holds only the audit INSERT and the workflow run/step table privileges'
+  'audit_logs:INSERT,model_usage:INSERT,workflow_runs:INSERT,workflow_runs:SELECT,workflow_steps:INSERT,workflow_steps:SELECT',
+  'app_system holds only the audit INSERT, the model_usage INSERT and the workflow run/step table privileges'
 );
 select is(
   (select count(*)::int from information_schema.role_table_grants

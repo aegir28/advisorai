@@ -1,0 +1,147 @@
+{
+  "claims": [
+    {
+      "id": "cl_51",
+      "text": "Angioplasty is commonly discussed when troponin is raised and a significant narrowing is found.",
+      "kind": "external_evidence",
+      "agent": "cardiology",
+      "status": "supported",
+      "rationale": "Your records show both findings, and the reference summary describes this combination.",
+      "patient_fact_ids": [
+        "f_118",
+        "f_140"
+      ],
+      "external_source_ids": [
+        "src_cardio_12"
+      ]
+    },
+    {
+      "id": "cl_52",
+      "text": "Troponin I was 182 ng/L, above the lab's reference of below 34.",
+      "kind": "patient_fact",
+      "agent": "cardiology",
+      "status": "supported",
+      "rationale": "The value and unit match the lab report exactly.",
+      "patient_fact_ids": [
+        "f_118"
+      ],
+      "external_source_ids": []
+    },
+    {
+      "id": "cl_53",
+      "text": "Taking an NSAID together with antiplatelet medicines is associated with a higher chance of bleeding.",
+      "kind": "external_evidence",
+      "agent": "medication_safety",
+      "status": "supported",
+      "rationale": "All three medicines are on the prescription list and the reference summary describes the interaction.",
+      "patient_fact_ids": [
+        "f_m1",
+        "f_m2",
+        "f_m6"
+      ],
+      "external_source_ids": [
+        "src_drug_3"
+      ]
+    },
+    {
+      "id": "cl_54",
+      "text": "Treatment must happen urgently within 1–2 weeks.",
+      "kind": "interpretation",
+      "agent": "interventional_cardiology",
+      "status": "insufficient_evidence",
+      "rationale": "No current-symptom record or heart-function result is available to confirm or rule out urgency.",
+      "patient_fact_ids": [
+        "f_121"
+      ],
+      "external_source_ids": []
+    },
+    {
+      "id": "cl_55",
+      "text": "A planned approach after optimising medicines is reasonable to discuss.",
+      "kind": "interpretation",
+      "agent": "interventional_cardiology",
+      "status": "partially_supported",
+      "rationale": "The reference summary supports discussing it for stable symptoms, but stability is not documented.",
+      "patient_fact_ids": [
+        "f_sym1"
+      ],
+      "external_source_ids": [
+        "src_cardio_14"
+      ]
+    },
+    {
+      "id": "cl_56",
+      "text": "Higher HbA1c can influence recovery after a procedure.",
+      "kind": "external_evidence",
+      "agent": "general_medicine",
+      "status": "partially_supported",
+      "rationale": "The reference supports the general point; it can't say how much it matters for this person.",
+      "patient_fact_ids": [
+        "f_hba1c"
+      ],
+      "external_source_ids": [
+        "src_diab_2"
+      ]
+    },
+    {
+      "id": "cl_57",
+      "text": "An echocardiogram is needed before deciding.",
+      "kind": "interpretation",
+      "agent": "general_medicine",
+      "status": "unclear",
+      "rationale": "Perspectives differ on whether it would change the decision.",
+      "patient_fact_ids": [],
+      "external_source_ids": []
+    },
+    {
+      "id": "cl_58",
+      "text": "A published guideline recommends delaying angioplasty by 3 months.",
+      "kind": "external_evidence",
+      "agent": "interventional_cardiology",
+      "status": "insufficient_evidence",
+      "rationale": "The cited source could not be found in the evidence library.",
+      "patient_fact_ids": [],
+      "external_source_ids": [],
+      "removed": true,
+      "removal_reason": "Citation could not be resolved, so the claim was removed before it reached the report."
+    }
+  ],
+  "sources": [
+    {
+      "id": "src_cardio_12",
+      "title": "Sample summary: when invasive treatment is discussed in coronary artery disease",
+      "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+      "year": 2024,
+      "licence": "Prototype placeholder, not a real guideline",
+      "section": "§4 Discussing revascularisation",
+      "snippet": "Revascularisation is commonly discussed when a significant narrowing is found together with a rise in cardiac troponin. Timing may be planned or urgent depending on symptoms and heart function."
+    },
+    {
+      "id": "src_cardio_14",
+      "title": "Sample summary: medicines as part of care for stable coronary disease",
+      "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+      "year": 2024,
+      "licence": "Prototype placeholder, not a real guideline",
+      "section": "§2 Medicines first",
+      "snippet": "For people whose symptoms are stable, optimising medicines is often discussed alongside, or before, a procedure. The choice depends on the individual."
+    },
+    {
+      "id": "src_drug_3",
+      "title": "Sample summary: antiplatelet medicines and NSAIDs",
+      "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+      "year": 2023,
+      "licence": "Prototype placeholder, not a real drug label",
+      "section": "§3 Interactions",
+      "snippet": "Using NSAID painkillers together with antiplatelet medicines is associated with a higher chance of bleeding. A prescriber usually reviews this combination."
+    },
+    {
+      "id": "src_diab_2",
+      "title": "Sample summary: blood sugar control around procedures",
+      "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+      "year": 2024,
+      "licence": "Prototype placeholder, not a real guideline",
+      "section": "§1 Peri-procedure glucose",
+      "snippet": "Higher long-term blood sugar (HbA1c) can influence healing and recovery. Teams often review glucose control before planned procedures."
+    }
+  ]
+}

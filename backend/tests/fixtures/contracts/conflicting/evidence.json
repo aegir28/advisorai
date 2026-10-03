@@ -1,0 +1,102 @@
+{
+  "claims": [
+    {
+      "id": "cl_a1",
+      "text": "The MRI shows a small lesion in the right frontal lobe.",
+      "kind": "patient_fact",
+      "agent": "neurology",
+      "status": "contradicted",
+      "rationale": "The discharge summary says so, but the MRI report's own impression states no abnormality. Both are shown.",
+      "patient_fact_ids": [
+        "f_a2",
+        "f_a3"
+      ],
+      "external_source_ids": []
+    },
+    {
+      "id": "cl_a2",
+      "text": "The MRI report impression states no intracranial abnormality.",
+      "kind": "patient_fact",
+      "agent": "neurology",
+      "status": "supported",
+      "rationale": "The wording matches page 2 of the MRI report.",
+      "patient_fact_ids": [
+        "f_a2"
+      ],
+      "external_source_ids": []
+    },
+    {
+      "id": "cl_a3",
+      "text": "When documents disagree, a radiologist re-read is commonly requested.",
+      "kind": "external_evidence",
+      "agent": "neurology",
+      "status": "supported",
+      "rationale": "Described in the reference summary.",
+      "patient_fact_ids": [
+        "f_a2",
+        "f_a3"
+      ],
+      "external_source_ids": [
+        "src_neuro_7"
+      ]
+    },
+    {
+      "id": "cl_a4",
+      "text": "The headache pattern is consistent with migraine with aura.",
+      "kind": "interpretation",
+      "agent": "general_medicine",
+      "status": "partially_supported",
+      "rationale": "The pattern is commonly considered, but the imaging question is open.",
+      "patient_fact_ids": [
+        "f_a1",
+        "f_a6"
+      ],
+      "external_source_ids": [
+        "src_neuro_9"
+      ]
+    },
+    {
+      "id": "cl_a5",
+      "text": "Frequent painkiller use is associated with more frequent headaches in some people.",
+      "kind": "external_evidence",
+      "agent": "medication_safety",
+      "status": "supported",
+      "rationale": "Use on about 15 days a month is documented; the reference describes the association.",
+      "patient_fact_ids": [
+        "f_am2"
+      ],
+      "external_source_ids": [
+        "src_drug_8"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "src_neuro_7",
+      "title": "Sample summary: when an imaging report and a clinical summary disagree",
+      "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+      "year": 2024,
+      "licence": "Prototype placeholder, not a real guideline",
+      "section": "§5 Discrepant reports",
+      "snippet": "When two documents describe the same scan differently, a formal re-read or clarification from the reporting radiologist is commonly requested before conclusions are drawn."
+    },
+    {
+      "id": "src_neuro_9",
+      "title": "Sample summary: recurrent headaches with brief visual symptoms",
+      "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+      "year": 2023,
+      "licence": "Prototype placeholder, not a real guideline",
+      "section": "§1 Patterns",
+      "snippet": "Recurrent headaches with short-lasting visual symptoms are a pattern in which migraine with aura is commonly considered. A clinician confirms the cause."
+    },
+    {
+      "id": "src_drug_8",
+      "title": "Sample summary: frequent painkiller use and headaches",
+      "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+      "year": 2023,
+      "licence": "Prototype placeholder, not a real drug label",
+      "section": "§2 Frequency",
+      "snippet": "Using painkillers on many days each month is associated with more frequent headaches in some people. A prescriber usually reviews this."
+    }
+  ]
+}

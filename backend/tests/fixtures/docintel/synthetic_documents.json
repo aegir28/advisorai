@@ -1,0 +1,29 @@
+{
+  "_note": "SYNTHETIC. Fictional people, values and facilities. Not real patient data.",
+  "documents": {
+    "d_lab": {
+      "pages": [
+        "SYNTHETIC LABORATORY REPORT\nSample ID: SYN-0001\nTroponin I: 182 ng/L (reference below 34)\nHbA1c: 8.9 % (target below 7 %)",
+        "LDL cholesterol: 142 mg/dL\nComment: values are fictional test data."
+      ],
+      "classification": {"document_type": "lab", "confidence": "high"},
+      "facts": [
+        {"id": "x1", "category": "lab_result", "text": "Troponin I was 182 ng/L", "value": "182", "unit": "ng/L", "page": 1, "snippet": "Troponin I: 182 ng/L (reference below 34)", "entity": {"type": "lab_test", "text": "Troponin I"}},
+        {"id": "x2", "category": "lab_result", "text": "HbA1c was 8.9 %", "value": "8.9", "unit": "%", "page": 1, "snippet": "HbA1c: 8.9 % (target below 7 %)", "entity": {"type": "lab_test", "text": "HbA1c"}},
+        {"id": "x3", "category": "lab_result", "text": "LDL cholesterol was 142 mg/dL", "value": "142", "unit": "mg/dL", "page": 2, "snippet": "LDL cholesterol: 142 mg/dL", "entity": {"type": "lab_test", "text": "LDL cholesterol"}}
+      ]
+    },
+    "d_rx": {
+      "pages": ["SYNTHETIC PRESCRIPTION LIST\nAspirin 75 mg once daily\nMetformin 500 mg twice daily"],
+      "classification": {"document_type": "prescription", "confidence": "high"},
+      "facts": [
+        {"id": "y1", "category": "medication", "text": "Aspirin 75 mg once daily", "page": 1, "snippet": "Aspirin 75 mg once daily", "entity": {"type": "medication", "text": "Aspirin"}}
+      ]
+    },
+    "d_scan": {
+      "pages": [""],
+      "classification": {"document_type": "other", "confidence": "low"},
+      "facts": []
+    }
+  }
+}

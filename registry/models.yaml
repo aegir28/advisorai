@@ -1,0 +1,73 @@
+# Model registry: which concrete model serves which tier, per provider, and what it costs.
+# Read by backend/app/ai/registry.py. Provider is chosen by ADVISORAI_AI_PROVIDER ("fake" by default).
+#
+# TOMORROW: set the `model` of each openai route and the prices of each openai model (see
+# docs/handoff-ai-phase.md, "Enabling real calls"). An openai route whose model is still the REPLACE_ME
+# placeholder, or whose model is not `enabled`, is refused with `model_not_configured`: the gateway never
+# guesses a model name and never silently falls back to another provider.
+#
+# Prices are USD per 1,000,000 tokens. `priced: false` means "price not entered yet": usage is still counted,
+# the cost is recorded as unknown (NULL) instead of an invented number.
+version: 1
+
+tiers:
+  # tier 1 = cheap and fast (classification, extraction, routing aids)
+  # tier 2 = reasoning workhorse (specialist-style work, synthesis)
+  # tier 3 = highest quality, used sparingly (escalations)
+  1: {description: "cheap and fast"}
+  2: {description: "reasoning workhorse"}
+  3: {description: "highest quality, escalation only"}
+
+routes:
+  fake:
+    1: fake-small
+    2: fake-medium
+    3: fake-large
+  openai:
+    1: REPLACE_ME_TIER1_MODEL_ID
+    2: REPLACE_ME_TIER2_MODEL_ID
+    3: REPLACE_ME_TIER3_MODEL_ID
+
+models:
+  fake-small:
+    provider: fake
+    enabled: true
+    priced: true
+    input_per_mtok_usd: 0.10
+    output_per_mtok_usd: 0.40
+    max_output_tokens: 4096
+  fake-medium:
+    provider: fake
+    enabled: true
+    priced: true
+    input_per_mtok_usd: 1.00
+    output_per_mtok_usd: 4.00
+    max_output_tokens: 4096
+  fake-large:
+    provider: fake
+    enabled: true
+    priced: true
+    input_per_mtok_usd: 5.00
+    output_per_mtok_usd: 20.00
+    max_output_tokens: 4096
+  REPLACE_ME_TIER1_MODEL_ID:
+    provider: openai
+    enabled: false
+    priced: false
+    input_per_mtok_usd: 0
+    output_per_mtok_usd: 0
+    max_output_tokens: 4096
+  REPLACE_ME_TIER2_MODEL_ID:
+    provider: openai
+    enabled: false
+    priced: false
+    input_per_mtok_usd: 0
+    output_per_mtok_usd: 0
+    max_output_tokens: 4096
+  REPLACE_ME_TIER3_MODEL_ID:
+    provider: openai
+    enabled: false
+    priced: false
+    input_per_mtok_usd: 0
+    output_per_mtok_usd: 0
+    max_output_tokens: 4096

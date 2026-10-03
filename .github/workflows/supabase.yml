@@ -11,12 +11,14 @@ on:
       - "supabase/**"
       - "backend/**"
       - "workflows/**"
+      - "registry/**"
       - ".github/workflows/supabase.yml"
   pull_request:
     paths:
       - "supabase/**"
       - "backend/**"
       - "workflows/**"
+      - "registry/**"
       - ".github/workflows/supabase.yml"
 
 permissions:

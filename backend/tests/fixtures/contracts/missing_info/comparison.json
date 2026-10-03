@@ -1,0 +1,107 @@
+{
+  "opinion_a_label": "Your treating surgeon",
+  "opinion_b_label": "Second-opinion doctor",
+  "rows": [
+    {
+      "id": "cmp1",
+      "topic": "Surgery now",
+      "opinion_a": "Advises keyhole surgery on the right knee.",
+      "opinion_b": "Suggests deciding after the MRI report and a 6-week physiotherapy trial.",
+      "evidence_a": [
+        "f_k5"
+      ],
+      "evidence_b": [
+        "so_k2"
+      ],
+      "relationship": "differs",
+      "item_ids": [
+        "syn_6",
+        "so_k2"
+      ]
+    },
+    {
+      "id": "cmp2",
+      "topic": "MRI report",
+      "opinion_a": "Reviewed in clinic. No written report in your records.",
+      "opinion_b": "Asks for the written MRI report.",
+      "evidence_a": [
+        "f_k4"
+      ],
+      "evidence_b": [
+        "so_k1"
+      ],
+      "relationship": "new_info",
+      "item_ids": [
+        "syn_10",
+        "so_k1"
+      ]
+    },
+    {
+      "id": "cmp3",
+      "topic": "Non-surgical care",
+      "opinion_a": "Two physiotherapy sessions recorded.",
+      "opinion_b": "Proposes a structured 6-week trial.",
+      "evidence_a": [
+        "f_k3"
+      ],
+      "evidence_b": [
+        "so_k2"
+      ],
+      "relationship": "changed",
+      "item_ids": [
+        "syn_11",
+        "so_k2"
+      ]
+    },
+    {
+      "id": "cmp4",
+      "topic": "If catching continues",
+      "opinion_a": "Not discussed in writing.",
+      "opinion_b": "Surgery can be reconsidered.",
+      "evidence_a": [],
+      "evidence_b": [
+        "so_k3"
+      ],
+      "relationship": "agreement",
+      "item_ids": [
+        "syn_7",
+        "so_k3"
+      ]
+    },
+    {
+      "id": "cmp5",
+      "topic": "Regular ibuprofen",
+      "opinion_a": "Not discussed.",
+      "opinion_b": "Not discussed.",
+      "evidence_a": [],
+      "evidence_b": [],
+      "relationship": "unresolved",
+      "item_ids": [
+        "syn_15"
+      ]
+    }
+  ],
+  "next_questions": [
+    {
+      "audience": "Your current doctor",
+      "text": "Your second-opinion doctor suggests a 6-week physiotherapy trial first. Would that change your plan?",
+      "item_ids": [
+        "cmp1"
+      ]
+    },
+    {
+      "audience": "Either doctor",
+      "text": "Neither opinion mentions regular ibuprofen. Could we review it?",
+      "item_ids": [
+        "cmp5"
+      ]
+    }
+  ],
+  "answered_by_opinion": [
+    {
+      "question_id": "q2",
+      "note": "The second opinion proposes a 6-week physiotherapy trial.",
+      "status": "partially_answered"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "selected": [
+    {
+      "specialist": "general_medicine",
+      "priority": "mandatory",
+      "reason": "Always included to give a broad view."
+    },
+    {
+      "specialist": "orthopedics",
+      "priority": "mandatory",
+      "reason": "Knee imaging and a surgical suggestion are documented."
+    },
+    {
+      "specialist": "medication_safety",
+      "priority": "mandatory",
+      "reason": "A medicine list is present."
+    }
+  ],
+  "not_selected": [
+    {
+      "name": "Cardiology",
+      "why": "No heart-related findings."
+    },
+    {
+      "name": "Neurology",
+      "why": "No neurological findings."
+    }
+  ],
+  "missing_for_routing": [
+    "Written MRI report",
+    "Weight-bearing X-ray views"
+  ]
+}

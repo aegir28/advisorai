@@ -1,66 +1,155 @@
-# Handoff: starting the AI / API-key phase
+# Handoff: the AI infrastructure is built; plug in the design
 
-Read first: the architecture blueprint (Part 2 agentic AI, Part 3 reasoning & verification, Part 5 AI
-infrastructure, Part 7 engineering), then ADRs 0004-0010. This document says what is ready, what is not, and the
-order to start in.
+Everything that can be built **before** an API key and a clinical workflow exist is built and tested. What is left
+is the part that needs people: the keys, the model choices, the workflow, the prompts, and the clinical judgement.
+Nothing here designs, decides or implements clinical reasoning. Read [ADR 0011](adr/0011-ai-gateway-and-pii-boundary.md)
+for the why; this page is the how.
 
-## State at handoff
+> Synthetic data only. No real patient data. No production medical claims. The prototype's data mode is locked
+> to `synthetic_only` (ADR 0004) and de-identification here is a safety net, not a licence to use real data.
 
-| Area | State |
+## 1. What is already implemented
+
+| Area | What exists | Where |
+| --- | --- | --- |
+| **AI gateway** | The only door to a model: de-identify, residual-PII block, tier routing, per-run budget, timeout, bounded retries with backoff, structured-output validation with bounded re-asks, token and cost metering, usage row, audit, metrics, request/run/case/node correlation | `backend/app/ai/gateway.py` |
+| Provider abstraction | `Provider` protocol; deterministic `FakeProvider` (default); `OpenAIProvider` over plain HTTPS (Responses API, `store: false`, JSON-Schema output), **no vendor SDK** | `app/ai/provider.py`, `app/ai/providers/` |
+| Model config | Tier 1/2/3 to model per provider, enablement, prices, placeholders refused | `registry/models.yaml`, `app/ai/registry.py` |
+| Usage ledger | `public.model_usage` (RLS forced, INSERT-only for the system role, owners read their own), audit action `ai.call`, log redaction of `sk-` keys | migration `20261006000001`, `app/ai/usage.py` |
+| **PII boundary** | Rule-based de-identification of free text and a residual check that blocks a prompt that still contains an identifier | `app/safety/deidentify.py` |
+| **Document intelligence** | Upload validation (existing), local text-layer extraction (pypdf, no OCR), page/document metadata (`needs_ocr` flag), classification / fact / entity extraction contracts, **provenance check** (a fact must quote text that really is on its page) | `app/docintel/` |
+| **Workflow integration** | `AINode`: generic AI step that calls the gateway with full correlation and maps failures to the engine's retry / critical / partial handling. Node registration point (empty). | `app/workflow/ai_node.py`, `app/workflow/nodes.py` |
+| **Specialty contracts** | Input (`specialty_input.v1` = de-identified `case.v1` + routing reason + allowed sources), output (the existing `specialist_report.v1`), metadata registry for the five specialties (all **disabled**), prompt store, deterministic report validator | `app/agents/`, `registry/agents.yaml` |
+| **Router infrastructure** | Strategy pipeline (deterministic `RuleStrategy`, abstract `LLMAssistedStrategy`), registry filter, guardrails, **max-active-agents** cap. Ships **no rules**; with none plugged in it selects nobody and says why | `app/router/` |
+| **Evidence / RAG contracts** | `EvidenceItem` (patient passage or external reference), retrieval query/result, `EvidenceRetriever` and `ClaimVerifier` interfaces, structural claim checks, a keyword test double. No embeddings, no vector store | `app/evidence/`, `app/schemas/evidence.py` |
+| **Output contracts** | Backend models for synthesis, personalised questions, second-opinion comparison, evidence/claims, routing plan, cross-review, validated against the frontend's fixtures (so the UI can already render them) | `app/schemas/`, `backend/tests/contract/test_ai_output_shapes.py` |
+| Tests | 100+ new deterministic tests, all on the fake provider; DB tests on real PostgreSQL | `backend/tests/`, `supabase/tests/database/05_model_usage.test.sql` |
+| Operator tools | `python -m app.ai.demo`, `python -m app.ai.status`, `python -m app.ai.smoke` | `backend/app/ai/` |
+
+Still true from before: Google sign-in is wired but disabled in `config.toml` (live round-trip unverified), the
+workflow worker is **off**, no node type is registered, the frontend uses its mock by default, and
+`POST /cases/{id}/analysis` does not exist yet.
+
+## 2. Where to add the API key
+
+**Backend environment only.** Never in `frontend/`, never `NEXT_PUBLIC_*`, never committed.
+
+```bash
+# backend/.env  (git-ignored; copy from backend/.env.example)
+ADVISORAI_AI_PROVIDER=openai
+ADVISORAI_OPENAI_API_KEY=sk-...        # your key
+```
+
+- Read once, in `Settings` (`app/core/config.py`) as a `SecretStr`; it never appears in `repr`, logs, errors or
+  the frontend. `ADVISORAI_AI_PROVIDER=openai` **without** a key refuses to start. A key shorter than 20
+  characters is rejected as obviously wrong.
+- On Render: add `ADVISORAI_OPENAI_API_KEY` as an environment secret (see `docs/deployment.md`). The repo guard
+  fails CI if a key-shaped string is committed.
+
+## 3. Where provider / model configuration lives
+
+| What | Where |
 | --- | --- |
-| Database | 10 migrations, 15 tables, RLS enabled + forced everywhere, composite owner FKs, append-only audit, private bucket, synthetic-only `CHECK`s. Migrations assert their own invariants. |
-| Auth | Google via Supabase Auth wired (frontend adapter, JWKS verification, consent on the profile). **Provider disabled in `config.toml`; a live Google round-trip was not exercised.** Mock auth stays the default. |
-| API | `/me`, `/me/consent`, `/cases` (CRUD, safety check), `/cases/{id}/documents` (signed upload, validate, list, remove), `/analysis/{run_id}`. |
-| Upload | Two-step signed-URL upload; server-side validation (real type from bytes, size, SHA-256, pages, duplicates). No OCR. |
-| Workflow | Definitions, lease-based queue, engine (retry/timeout/idempotent), worker (off by default), run/step persistence. **Zero node types registered.** |
-| Frontend | Switchable mock ↔ HTTP; AI-dependent calls answer "no results" / `ApiNotAvailableError`. |
-| Security | RLS everywhere, request-scoped user context, separate `app_system` login with narrow grants, security headers, body limit, secrets hygiene tests, repo guards. |
-| CI | `backend`, `frontend`, `supabase` (real stack), `guards`. |
+| Which provider is active | `ADVISORAI_AI_PROVIDER` (`fake` default, or `openai`) |
+| Timeout, retries, re-asks, per-run budget | `ADVISORAI_AI_REQUEST_TIMEOUT_SECONDS` (60), `..._AI_MAX_ATTEMPTS` (3), `..._AI_SCHEMA_RETRIES` (1), `..._AI_RUN_BUDGET_USD` (0.50; 0 = off) |
+| **Tier to model, enablement, prices** | **`registry/models.yaml`** |
+| Base URL (proxy / Azure-style gateway) | `ADVISORAI_OPENAI_BASE_URL` |
+| Per-agent tier and timeout | `registry/agents.yaml` |
 
-## Recommended starting point (in this order)
+Tiers: 1 cheap/fast, 2 reasoning workhorse, 3 highest quality (escalation). In `registry/models.yaml` the three
+`openai` routes point at `REPLACE_ME_TIERn_MODEL_ID` placeholders on purpose: replace the **route** *and* the
+matching **model entry** (same id), set `enabled: true`, enter the two per-million-token prices and `priced: true`.
+A placeholder or disabled route is refused with `model_not_configured`; an unpriced model still works and records
+its cost as unknown (NULL). Run `uv run python -m app.ai.status` to see what is still open.
 
-1. **First PR: ADR + relax the `ai-scope` guard + the AI gateway skeleton, with a mocked provider.**
-   - ADR 0011: provider choice (blueprint: OpenAI behind a provider-agnostic adapter), model map (`registry/models.yaml`,
-     tier 1/2/3), budget (≈ ₹5,000), de-identification rules, `store=false`.
-   - Remove/relax the `ai-scope` rule in `scripts/repo_guards.py` and its tests in the same PR.
-   - `backend/app/ai/`: `gateway.py` (de-identify → meter → validate → call), `model_router.py`, `adapters/openai.py`
-     behind a `Provider` protocol, and a **recorded-response fake provider** so tests stay free (blueprint p. 53).
-   - Migration: `model_usage` (+ RLS; written on the system path, new `SystemOperation`), audit `ai.call`.
-   - Provider key: `ADVISORAI_OPENAI_API_KEY` as `SecretStr` in `Settings`, backend environment only, added to
-     `.env.example` empty and to production-required settings. Never in the frontend, never logged (extend the log
-     redactor to its prefix).
-   - **De-identification first.** `cases.concern`, `cases.proposed_treatment` and `documents.title` are free text a
-     person typed and can contain identity. They must pass through `safety/deidentify.py` before reaching any prompt.
-2. **Phase 7: extraction (Milestone A: upload → extracted case → timeline, no specialist AI).**
-   - Local text/OCR first (PyMuPDF / pdfplumber / Tesseract; blueprint p. 41), vision fallback behind the gateway.
-   - Node types `docintel.*` and `ai.classify_docs` / `ai.extract_facts`; write `document_pages`, `facts`,
-     `timeline_events`, `medications`, `lab_results`, `diagnoses`, and the `case.v1` snapshot in `medical_records`.
-     These tables exist with RLS; nothing writes them yet, so each write path needs a system operation + grants.
-   - Author `workflows/case_analysis.v1.yaml` (14 nodes) and register the node types; add
-     `POST /cases/{id}/analysis` (`202 + run_id`) calling `WorkflowService.enqueue_analysis`; flip
-     `ADVISORAI_WORKER_ENABLED` on; replace `startAnalysis` / `getTimeline` in `createHttpApi`.
-3. Then blueprint phases 8-11 in order (router + 5 specialists, evidence / `pgvector` / verifier / cross-review,
-   questions, reviewer + patient report), 12 (PDF), 14 (benchmark scorer on `evals/`), each gated by its benchmark.
+## 4. Where the clinical workflow DAG goes
 
-Do not skip 1: the gateway is the only door to a provider, and de-identification is a precondition, not a feature.
+The workflow is data; the engine already exists. Add it in four steps (`workflows/README.md` has the same list):
 
-## Things the next phase inherits (known gaps, none hidden)
+1. **Write nodes.** For a model call subclass `AINode` (`app/workflow/ai_node.py`): `build_request` returns a
+   `GatewayRequest` (output schema, system prompt, segments, tier) and `handle_output` receives the **validated**
+   output. Free text goes in `PromptSegment(text, "free_text")` so it is de-identified; fixed developer text is
+   `"template"`.
+2. **Register them** in `app/workflow/nodes.py::register_nodes`, e.g. `registry.register("agent.cardiology", node)`.
+3. **Define the DAG** in `workflows/case_analysis.v1.yaml`: node ids, types, `after:` dependencies, `retries`,
+   `timeout_s`, `critical`. **Which specialty runs before or after another is yours to design**; the engine runs
+   layers in parallel and refuses an unregistered type, a cycle, or more than 14 nodes.
+4. **Start it**: add `POST /cases/{id}/analysis` (returns `202 + run_id`, calls the existing
+   `WorkflowService.enqueue_analysis`), set `ADVISORAI_WORKER_ENABLED=true`, and point the frontend's
+   `startAnalysis` at it. Note: a run has exactly 14 steps (`run.v1`), so a definition served through `/analysis`
+   needs 14 nodes today.
 
-- **Not verified against the real stack in the build environment:** `supabase start` / `db reset` / `db lint` /
-  `test db` and the two Storage API integration tests (images could not be pulled). Everything else was run on
-  native PostgreSQL 16 with stubbed `auth`/`storage` (`supabase/native/`). **Check the `supabase` CI job result
-  first.** The browser's multipart `PUT` to a real signed upload URL and a live Google round-trip are also unverified.
-- Docker image not built (registry rate limit); the start command was run natively.
-- Per-user **rate limiting** is not implemented. Add before any public exposure.
-- **Stale `pending_upload` sweep** (indexed, not scheduled): a worker task once real workflows exist.
-- **Admin role + `/admin/metrics`**: not defined; observability queries in `docs/observability.md` stand in.
-- `run.v1` has exactly 14 steps; a definition served through `/analysis` must have 14 nodes.
-- `queued` is internal and presented as `running` with progress 0 (ADR 0008).
-- Audit of completed operations is best-effort (ADR 0007); the audit row for a released signed URL is not.
-- `ADVISORAI_DATA_MODE` accepts only `synthetic_only`; real data needs a migration + ADR (ADR 0004).
-- Benchmark ground truth is bootstrapped from the prototype's fictional fixtures, not clinician-reviewed.
+What the engine already gives every node: step persistence, idempotent reuse (same inputs, same provider means no
+repeat call), retry for `RetryableError`, timeout, critical vs non-critical (failed vs partial), lease-based
+worker, audit of start/finish. What `AINode` adds: usage rows tied to the run and node, error mapping, fixed
+person-safe step notes.
 
-## Commands
+## 5. Where specialist-agent prompts go
+
+`backend/app/agents/prompts/<specialty>/v1.md` (see that folder's README). Five placeholder files exist; the
+prompt store refuses a placeholder (`prompt_not_written`), so an agent without a real prompt cannot run.
+
+- Enable an agent in `registry/agents.yaml` (`enabled: true`), set `version` and `tier`.
+- Implement the agent (a class with `spec` and `async run(payload: SpecialtyInput, context) -> SpecialistReport`),
+  typically an `AINode`-style call that asks the gateway for `SpecialistReport` and then runs
+  `validate_specialist_report(report, payload, spec)`. Attach it with `registry.attach(agent)`.
+- `SpecialtyRegistry.readiness(PromptStore())` (and `python -m app.ai.status`) lists exactly what blocks each of
+  the five: `disabled`, `prompt_not_written`, `no_implementation`.
+- The router rules/strategies are also yours: plug a `RuleStrategy` or an `LLMAssistedStrategy` and guardrails
+  into `Router(...)` (`app/router/`). `max_active_agents` caps concurrency.
+
+## 6. Where real OpenAI calls are enabled
+
+Nowhere in code. It is configuration plus one check:
+
+1. Put the key in `backend/.env` (section 2) and set `ADVISORAI_AI_PROVIDER=openai`.
+2. Fill the tier-1 route and model in `registry/models.yaml` (section 3).
+3. `cd backend && uv run python -m app.ai.status` shows what is still open.
+4. **Smoke test**: `uv run python -m app.ai.smoke 1` makes one tiny call with a fixed fictional sentence and prints
+   provider, model, tokens, cost. **The OpenAI adapter has only ever run against a mocked transport**, so this is
+   where a wrong field name or parameter would show up. If it fails, `FAILED: <code>` tells you which stage:
+   `provider_auth_failed` (key), `provider_bad_request` (request shape or model id), `provider_bad_response`
+   (response parsing in `OpenAIProvider._parse`), `model_not_configured` (registry).
+5. Real calls are made by whatever node or router strategy you wire to the gateway; none exist until you add them.
+
+## 7. Run the deterministic fake-provider demo
+
+```bash
+cd backend && uv sync --locked --extra dev
+uv run python -m app.ai.demo     # de-identification, retry, schema validation, cost, PII block, agent readiness
+uv run python -m app.ai.status   # the activation checklist
+uv run python -m app.ai.smoke    # one call through the gateway (fake provider by default)
+uv run --no-sync pytest          # the whole suite; add ADVISORAI_TEST_ADMIN_DATABASE_URL for the DB-backed tests
+```
+
+## 8. Tomorrow, in order
+
+1. Decide the workflow with your mentor; write it as nodes + `workflows/case_analysis.v1.yaml` (section 4).
+2. Write the five prompts (section 5) and the router rules; enable the agents.
+3. Key + model ids + prices; run `status`, then `smoke` (sections 2, 3, 6).
+4. Add `POST /cases/{id}/analysis`, enable the worker, run one **synthetic** case end to end and check
+   `model_usage` and the audit log (queries in `docs/observability.md`).
+5. Decide the embedding model / vector store **only if** you need retrieval; that needs a migration and relaxing
+   the `ai-boundary` guard's pgvector rule in the same pull request.
+
+## 9. Known gaps and unverified items (none hidden)
+
+- **OpenAI adapter vs the live API: unverified** (mock transport only). `strict` JSON-Schema mode is off by default
+  because pydantic schemas are not always strict-compatible; try `strict_schema=True` if you want it.
+- **De-identification is rule-based and best-effort** (emails, phones, IDs, labelled names, titled names, labelled
+  DOB, URLs, labelled addresses). It will miss unlabelled names. Do not use real data.
+- Extraction is **text layer only**; there is no OCR and no vision. `DocumentMetadata.needs_ocr` reports the gap.
+- Which claims are removed from a report, what counts as "supported", and the confidence rubric are yours to
+  define: the contracts only check structure (`check_claim_structure`, `validate_specialist_report`).
+- Persistence for facts, timeline and medications still has no write path (tables and RLS exist); each needs a
+  system operation and grants, like `model_usage` did.
+- Carried over: the real Supabase stack (`supabase start`, `db reset`, `db lint`, `test db`) and the two Storage
+  integration tests were run in CI, not in the build environment here; the DB tests in this delivery ran on the
+  native PostgreSQL substitute (`supabase/native/`). Per-user rate limiting, the stale-upload sweeper and an admin
+  role are not built. The UX-polish PR (#11) merged into the Phase 2F branch **after** develop had taken that
+  branch, so those frontend fixes are not in develop until that branch is merged again.
+
+## 10. Commands
 
 ```bash
 # database + backend (real stack, where Docker works)

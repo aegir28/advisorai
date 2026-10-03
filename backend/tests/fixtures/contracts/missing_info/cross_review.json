@@ -1,0 +1,88 @@
+{
+  "specialists": [
+    {
+      "id": "general_medicine",
+      "name": "General Medicine"
+    },
+    {
+      "id": "orthopedics",
+      "name": "Orthopedics"
+    },
+    {
+      "id": "medication_safety",
+      "name": "Medication Safety"
+    }
+  ],
+  "rows": [
+    {
+      "id": "mxk1",
+      "topic": "A meniscus tear has been confirmed",
+      "relationship": "missing_info",
+      "cells": {
+        "general_medicine": "flags_issue",
+        "orthopedics": "flags_issue",
+        "medication_safety": "not_assessed"
+      },
+      "summary": "Both perspectives note that the document that would confirm this (the MRI report) is missing.",
+      "perspectives": [
+        {
+          "specialist": "general_medicine",
+          "reasoning": "The records suggest a tear but do not contain the report that would confirm it."
+        },
+        {
+          "specialist": "orthopedics",
+          "reasoning": "The consultation says the MRI was reviewed in clinic, but there is no written report."
+        }
+      ],
+      "item_ids": [
+        "okm1",
+        "ok2"
+      ]
+    },
+    {
+      "id": "mxk2",
+      "topic": "Non-surgical care has been tried for long enough",
+      "relationship": "missing_info",
+      "cells": {
+        "general_medicine": "flags_issue",
+        "orthopedics": "needs_context",
+        "medication_safety": "not_assessed"
+      },
+      "summary": "Only two physiotherapy sessions are recorded. Whether other approaches were tried is not documented.",
+      "perspectives": [
+        {
+          "specialist": "general_medicine",
+          "reasoning": "Two sessions is a short trial."
+        },
+        {
+          "specialist": "orthopedics",
+          "reasoning": "May have been discussed in clinic; not written down."
+        }
+      ],
+      "item_ids": [
+        "gk1",
+        "gkm1"
+      ]
+    },
+    {
+      "id": "mxk3",
+      "topic": "Regular ibuprofen use is relevant",
+      "relationship": "additional_context",
+      "cells": {
+        "general_medicine": "flags_issue",
+        "orthopedics": "not_assessed",
+        "medication_safety": "not_assessed"
+      },
+      "summary": "Raised by General Medicine. The Medication Safety perspective could not complete, so this was not cross-checked.",
+      "perspectives": [
+        {
+          "specialist": "general_medicine",
+          "reasoning": "Three months of regular ibuprofen is worth reviewing with the prescriber."
+        }
+      ],
+      "item_ids": [
+        "gk2"
+      ]
+    }
+  ]
+}

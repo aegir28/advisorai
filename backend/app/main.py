@@ -23,6 +23,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
+from app.ai.factory import build_gateway
+from app.ai.usage import PostgresUsageSink
 from app.api.router import api_v1
 from app.audit.writer import AuditWriter
 from app.auth.jwks import JwksKeyProvider, KeyProvider
@@ -42,6 +44,7 @@ from app.storage.gateway import StorageGateway, SupabaseStorageGateway
 from app.storage.service import DocumentUrlService
 from app.workflow.definitions import DefinitionRegistry
 from app.workflow.engine import Engine, NodeRegistry
+from app.workflow.nodes import register_nodes
 from app.workflow.repository import WorkflowRepository
 from app.workflow.worker import Worker
 
@@ -95,7 +98,11 @@ def create_app(
     )
 
     definitions = DefinitionRegistry.from_directory(settings.workflows_dir)
-    node_registry = NodeRegistry()  # empty until the AI phase registers node types
+    ai_gateway = build_gateway(
+        settings, sink=PostgresUsageSink(database) if database is not None else None, audit=audit
+    )
+    node_registry = NodeRegistry()
+    register_nodes(node_registry, ai_gateway)  # empty until clinical nodes are added (app/workflow/nodes.py)
     workflow_repo = WorkflowRepository(database) if database is not None else None
     workflows = (
         WorkflowService(database, workflow_repo, definitions)
@@ -164,6 +171,7 @@ def create_app(
     app.state.documents = documents
     app.state.workflows = workflows
     app.state.node_registry = node_registry
+    app.state.ai_gateway = ai_gateway
     app.state.definitions = definitions
     register_exception_handlers(app)
     app.include_router(api_v1)

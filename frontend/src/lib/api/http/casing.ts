@@ -37,6 +37,26 @@ export const DOMAIN_TO_WIRE: Readonly<Record<string, string>> = {
   // Trace
   itemId: "item_id",
   externalSource: "external_source",
+  // AI output shapes (evidence/claims, synthesis, questions, comparison, routing): no endpoint serves them yet,
+  // but the backend models exist (backend/app/schemas) and the fixture exporter needs their wire spelling.
+  patientFactIds: "patient_fact_ids",
+  externalSourceIds: "external_source_ids",
+  removalReason: "removal_reason",
+  derivedFrom: "derived_from",
+  escalationReason: "escalation_reason",
+  linkedItemIds: "linked_item_ids",
+  itemIds: "item_ids",
+  opinionALabel: "opinion_a_label",
+  opinionBLabel: "opinion_b_label",
+  opinionA: "opinion_a",
+  opinionB: "opinion_b",
+  evidenceA: "evidence_a",
+  evidenceB: "evidence_b",
+  nextQuestions: "next_questions",
+  answeredByOpinion: "answered_by_opinion",
+  questionId: "question_id",
+  notSelected: "not_selected",
+  missingForRouting: "missing_for_routing",
 };
 
 /**

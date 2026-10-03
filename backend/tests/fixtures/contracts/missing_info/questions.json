@@ -1,0 +1,79 @@
+[
+  {
+    "id": "q1",
+    "audience": "current_doctor",
+    "priority": 1,
+    "category": "Testing",
+    "text": "Can I have a copy of the written MRI report? Does it confirm a meniscus tear?",
+    "trigger": "No written MRI report is in your records, and it is the main thing that would confirm the tear.",
+    "linked_item_ids": [
+      "syn_10",
+      "mxk1"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q2",
+    "audience": "current_doctor",
+    "priority": 1,
+    "category": "Alternatives",
+    "text": "How much non-surgical treatment do you usually try first, and would a longer physiotherapy trial be reasonable in my case?",
+    "trigger": "Only two physiotherapy sessions are recorded.",
+    "linked_item_ids": [
+      "syn_11",
+      "syn_9"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q3",
+    "audience": "current_doctor",
+    "priority": 2,
+    "category": "Diagnosis",
+    "text": "Is my pain more likely to come from a tear or from wear in the joint, and how can we tell?",
+    "trigger": "The records don't separate these two causes.",
+    "linked_item_ids": [
+      "syn_8",
+      "oku2"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q4",
+    "audience": "current_doctor",
+    "priority": 3,
+    "category": "Medicines",
+    "text": "I've taken ibuprofen three times a day for about three months. Should we review that?",
+    "trigger": "Regular ibuprofen use was raised by General Medicine.",
+    "linked_item_ids": [
+      "syn_15",
+      "gk2"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q5",
+    "audience": "second_opinion_doctor",
+    "priority": 1,
+    "category": "Testing",
+    "text": "Having seen the MRI, do you see a tear that matches my symptoms of catching?",
+    "trigger": "A second reading of the missing MRI would address the main gap.",
+    "linked_item_ids": [
+      "syn_10"
+    ],
+    "status": "not_asked"
+  },
+  {
+    "id": "q6",
+    "audience": "second_opinion_doctor",
+    "priority": 2,
+    "category": "Timing",
+    "text": "If I try non-surgical care first, what would tell us it is time to reconsider surgery?",
+    "trigger": "Helps you plan around the uncertainty rather than decide now.",
+    "linked_item_ids": [
+      "syn_16",
+      "syn_7"
+    ],
+    "status": "not_asked"
+  }
+]

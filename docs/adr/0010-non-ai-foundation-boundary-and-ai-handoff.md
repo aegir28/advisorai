@@ -16,7 +16,7 @@ To keep that boundary from eroding by accident, CI runs `scripts/repo_guards.py`
 
 1. **naming**: the project is AdvisorAI; the old blueprint's working title is refused everywhere.
 2. **secrets**: no private keys, service-role/secret keys, provider keys or committed `.env` files.
-3. **ai-scope** (temporary, deliberate): no AI provider SDK, provider key name, `pgvector`/`vector` column or
+3. **ai-scope** (temporary, deliberate; **replaced by `ai-boundary` in [ADR 0011](0011-ai-gateway-and-pii-boundary.md)**): no AI provider SDK, provider key name, `pgvector`/`vector` column or
    gateway code. The AI phase removes or relaxes this rule **in its first pull request**, in the same change that
    adds the first provider dependency, so the relaxation is explicit and reviewable rather than a CI surprise.
 

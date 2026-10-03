@@ -46,6 +46,8 @@ class SystemOperation(StrEnum):
     # workflow_steps (migration 20261005000001) and nothing else beyond the audit INSERT.
     WORKFLOW_ENQUEUE = "workflow.enqueue"
     WORKFLOW_RUN = "workflow.run"
+    # AI usage ledger (migration 20261006000001): `app_system` gets INSERT on model_usage, nothing else new.
+    AI_USAGE_RECORD = "ai.usage_record"
 
 
 def create_engine(database_url: SecretStr) -> AsyncEngine:

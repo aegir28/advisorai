@@ -1,0 +1,78 @@
+{
+  "claims": [
+    {
+      "id": "clk1",
+      "text": "Ibuprofen 400 mg three times a day is on the current medicine list.",
+      "kind": "patient_fact",
+      "agent": "general_medicine",
+      "status": "supported",
+      "rationale": "The value matches the prescription image.",
+      "patient_fact_ids": [
+        "f_km1"
+      ],
+      "external_source_ids": []
+    },
+    {
+      "id": "clk2",
+      "text": "Keyhole surgery is commonly discussed for a confirmed tear with catching, after non-surgical care.",
+      "kind": "external_evidence",
+      "agent": "orthopedics",
+      "status": "partially_supported",
+      "rationale": "The reference supports the general statement; the tear is not confirmed and non-surgical care is poorly documented.",
+      "patient_fact_ids": [
+        "f_k1",
+        "f_k2",
+        "f_k3"
+      ],
+      "external_source_ids": [
+        "src_ortho_5"
+      ]
+    },
+    {
+      "id": "clk3",
+      "text": "A meniscus tear is present.",
+      "kind": "interpretation",
+      "agent": "orthopedics",
+      "status": "insufficient_evidence",
+      "rationale": "The MRI report that would confirm this is not in the records.",
+      "patient_fact_ids": [
+        "f_k4"
+      ],
+      "external_source_ids": [
+        "src_ortho_6"
+      ]
+    },
+    {
+      "id": "clk4",
+      "text": "The X-ray shows medial joint space narrowing.",
+      "kind": "patient_fact",
+      "agent": "orthopedics",
+      "status": "unclear",
+      "rationale": "The scan quality is low and the measurement is marked uncertain.",
+      "patient_fact_ids": [
+        "f_xr1"
+      ],
+      "external_source_ids": []
+    }
+  ],
+  "sources": [
+    {
+      "id": "src_ortho_5",
+      "title": "Sample summary: arthroscopy for meniscus symptoms",
+      "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+      "year": 2024,
+      "licence": "Prototype placeholder, not a real guideline",
+      "section": "§2 When surgery is discussed",
+      "snippet": "Keyhole surgery is commonly discussed when a confirmed tear causes locking or catching, usually after a period of non-surgical care. It is generally less helpful for pain caused mainly by wear-related changes."
+    },
+    {
+      "id": "src_ortho_6",
+      "title": "Sample summary: role of imaging before knee surgery",
+      "publisher": "AdvisorAI sample evidence library (synthetic placeholder)",
+      "year": 2023,
+      "licence": "Prototype placeholder, not a real guideline",
+      "section": "§1 Imaging",
+      "snippet": "MRI is commonly used to confirm a suspected meniscus tear and to look for other causes of pain before surgery is planned."
+    }
+  ]
+}

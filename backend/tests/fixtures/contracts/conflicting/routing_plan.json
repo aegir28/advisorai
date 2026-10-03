@@ -1,0 +1,32 @@
+{
+  "selected": [
+    {
+      "specialist": "general_medicine",
+      "priority": "mandatory",
+      "reason": "Always included to give a broad view."
+    },
+    {
+      "specialist": "neurology",
+      "priority": "mandatory",
+      "reason": "Recurrent headaches with visual symptoms and an MRI discrepancy."
+    },
+    {
+      "specialist": "medication_safety",
+      "priority": "mandatory",
+      "reason": "A medicine list is present."
+    }
+  ],
+  "not_selected": [
+    {
+      "name": "Cardiology",
+      "why": "No heart-related findings."
+    },
+    {
+      "name": "Orthopedics",
+      "why": "No bone or joint findings."
+    }
+  ],
+  "missing_for_routing": [
+    "Radiologist clarification of the MRI"
+  ]
+}

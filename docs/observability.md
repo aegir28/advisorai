@@ -36,9 +36,30 @@ from workflow_runs where finished_at is not null group by status;
 select id, attempts, locked_until from workflow_runs where status = 'running' and locked_until < now();
 ```
 
-## Deferred to the AI phase or later (and why)
+## AI gateway (ADR 0011)
 
-- `model_usage` / `api_usage` tables (tokens, cost, latency per model call): they need the AI gateway.
+Every model call leaves, and only leaves, ids, counters and codes:
+
+- **`public.model_usage`**: one row per call. Owners can read their own; the backend writes on the system path.
+
+```sql
+-- Spend and volume per day and model (cost is NULL for models with no price entered yet)
+select date_trunc('day', created_at) d, model, count(*) calls, sum(input_tokens) tin, sum(output_tokens) tout,
+       sum(cost_micro_usd) / 1e6 as usd
+from model_usage group by 1, 2 order by 1 desc;
+-- Failure mix
+select outcome, count(*) from model_usage group by 1 order by 2 desc;
+-- Calls that needed retries
+select count(*) filter (where attempts > 1) retried, count(*) total from model_usage;
+```
+
+- **Audit**: action `ai.call` (model, provider, tier, attempts, outcome, step). **Logs**: `advisorai.ai` lines with
+  outcome, model, tier, tokens, latency and ids; never a prompt, response or document text.
+- **In-process counters** (`gateway.metrics.snapshot()`): `calls_ok`, `provider_calls`, `provider_errors`, `retries`,
+  `schema_failures`, `pii_blocked`, `redactions`, `input_tokens`, `output_tokens`, `cost_micro_usd`, `failed.<code>`.
+
+## Deferred (and why)
+
 - `GET /admin/metrics` and the internal ops page: they need an admin role, which is not defined yet. Until then the
   queries above are the dashboard.
 - An error tracker (blueprint: a free-tier tool "configured to scrub request bodies"). When added it **must** scrub

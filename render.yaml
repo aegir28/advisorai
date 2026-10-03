@@ -26,3 +26,5 @@ services:
       - {key: ADVISORAI_SUPABASE_JWT_ISSUER, sync: false}        # https://<project>.supabase.co/auth/v1
       - {key: ADVISORAI_SUPABASE_SERVICE_ROLE_KEY, sync: false}  # backend only; Storage API; never the frontend
       - {key: ADVISORAI_AUDIT_IP_HMAC_SECRET, sync: false}       # >= 32 random characters
+      - {key: ADVISORAI_AI_PROVIDER, value: fake}                # switch to `openai` only with a key and real model ids
+      - {key: ADVISORAI_OPENAI_API_KEY, sync: false}             # backend only; leave unset until real calls are enabled

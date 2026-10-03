@@ -4,7 +4,7 @@
 - [`frontend-data-contract.md`](frontend-data-contract.md): what the frontend expects from the backend.
 - [`deployment.md`](deployment.md): free-tier deployment foundations and the secrets map.
 - [`observability.md`](observability.md): what is logged, measured and deliberately not.
-- [`handoff-ai-phase.md`](handoff-ai-phase.md): **start here for the AI / API-key phase.**
+- [`handoff-ai-phase.md`](handoff-ai-phase.md): **start here.** What is built, where the key / model config / workflow / prompts go, and how to turn real calls on.
 
 The architecture blueprint (product scope, agentic workflow, verification, security and build plan)
 is the source of truth for the product. It is maintained outside this repository for now.
@@ -21,3 +21,4 @@ is the source of truth for the product. It is maintained outside this repository
 - [`adr/0008-workflow-persistence-and-worker.md`](adr/0008-workflow-persistence-and-worker.md): job queue, step persistence, engine and worker foundation (no AI nodes).
 - [`adr/0009-google-auth-and-frontend-http-integration.md`](adr/0009-google-auth-and-frontend-http-integration.md): Google sign-in via Supabase Auth, the frontend HTTP API, request hardening.
 - [`adr/0010-non-ai-foundation-boundary-and-ai-handoff.md`](adr/0010-non-ai-foundation-boundary-and-ai-handoff.md): the non-AI foundation is complete; the boundary guard and the extension points.
+- [`adr/0011-ai-gateway-and-pii-boundary.md`](adr/0011-ai-gateway-and-pii-boundary.md): the AI gateway, de-identification boundary, usage ledger and the workflow/agent/router/evidence seams (no clinical decisions).
