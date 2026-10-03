@@ -29,7 +29,7 @@ function Sentence({ item }: { item: ReportItem }) {
       <div className="flex flex-wrap items-center gap-2">
         <KindTag kind={item.kind} plain />
         {item.flag && <FlagMarker flag={item.flag} />}
-        {item.evidenceIds.map((id) => <EvidenceChip key={id} itemId={id} />)}
+        {item.evidenceIds.map((id) => <EvidenceChip key={id} itemId={id} describes={item.text} />)}
       </div>
     </div>
   );
@@ -50,7 +50,7 @@ const MedicinesSection: FC<{ section: ReportSection }> = ({ section }) => (
             <p className="font-medium">{m.text}</p>
             <p className="text-sm text-muted-foreground">{m.meta?.dose}</p>
           </div>
-          {m.evidenceIds.map((id) => <EvidenceChip key={id} itemId={id} />)}
+          {m.evidenceIds.map((id) => <EvidenceChip key={id} itemId={id} describes={m.text} />)}
         </li>
       ))}
     </ul>
@@ -69,7 +69,7 @@ const TimelineSection: FC<{ section: ReportSection }> = ({ section }) => (
           <p className="text-[1.05rem] leading-relaxed">{e.text}</p>
           <div className="flex flex-wrap items-center gap-2">
             {e.flag && <FlagMarker flag={e.flag} label={isGap ? undefined : "Two versions in your records"} />}
-            {e.evidenceIds.map((id) => <EvidenceChip key={id} itemId={id} />)}
+            {e.evidenceIds.map((id) => <EvidenceChip key={id} itemId={id} describes={e.text} />)}
           </div>
         </li>
       );
@@ -115,7 +115,7 @@ const QuestionsSection: FC<{ section: ReportSection }> = ({ section }) => (
           <p className="text-[1.05rem] leading-snug">{q.text}</p>
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span>{q.meta?.category}</span>
-            {q.evidenceIds.map((id) => <EvidenceChip key={id} itemId={id} label="Why this question" />)}
+            {q.evidenceIds.map((id) => <EvidenceChip key={id} itemId={id} label="Why this question" describes={q.text} />)}
           </div>
         </div>
       </li>
@@ -128,7 +128,7 @@ const ReferencesSection: FC<{ section: ReportSection }> = ({ section }) => (
     {section.items.map((r) => (
       <li key={r.id} className="flex flex-wrap items-start justify-between gap-3 text-sm">
         <p className="min-w-0 flex-1 basis-60">{r.text}</p>
-        {r.evidenceIds.map((id) => <EvidenceChip key={id} itemId={id} />)}
+        {r.evidenceIds.map((id) => <EvidenceChip key={id} itemId={id} describes={r.text} />)}
       </li>
     ))}
     <li className="text-xs text-muted-foreground">Prototype note: reference summaries here are synthetic placeholders, not real guidelines.</li>

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import type { Question, QuestionAudience, QuestionStatus } from "@/domain/types";
 import { tk } from "@/i18n";
+import { createDebouncedSaver } from "@/lib/debounced-saver";
 import { cn } from "@/lib/utils";
 import { EvidenceChip } from "./evidence-chip";
 
@@ -45,6 +46,19 @@ export function QuestionItem({ question, onChange, index, startHere }: { questio
   const [why, setWhy] = useState(false);
   const [noteOpen, setNoteOpen] = useState(!!question.note);
   const [note, setNote] = useState(question.note ?? "");
+  const savedNote = useRef(question.note ?? "");
+  const onChangeRef = useRef(onChange);
+  useEffect(() => { onChangeRef.current = onChange; });
+  // Save while typing (debounced), and never lose the last keystrokes on blur or navigation.
+  const saver = useMemo(
+    () => createDebouncedSaver<string>((value) => {
+      if (value === savedNote.current) return;
+      savedNote.current = value;
+      onChangeRef.current({ note: value });
+    }, 500),
+    [],
+  );
+  useEffect(() => () => saver.flush(), [saver]);
 
   const copy = async () => {
     try {
@@ -83,7 +97,7 @@ export function QuestionItem({ question, onChange, index, startHere }: { questio
           <div className="space-y-2 text-muted-foreground">
             <p>{question.trigger}</p>
             <div className="flex flex-wrap gap-2">
-              {question.linkedItemIds.map((id) => <EvidenceChip key={id} itemId={id} />)}
+              {question.linkedItemIds.map((id) => <EvidenceChip key={id} itemId={id} describes={question.text} />)}
             </div>
           </div>
         )}
@@ -92,8 +106,8 @@ export function QuestionItem({ question, onChange, index, startHere }: { questio
             aria-label="Your note about this question"
             placeholder="What did the doctor say? (saved only on this device in the prototype)"
             value={note}
-            onChange={(e) => setNote(e.target.value)}
-            onBlur={() => note !== (question.note ?? "") && onChange({ note })}
+            onChange={(e) => { setNote(e.target.value); saver.schedule(e.target.value); }}
+            onBlur={() => saver.flush()}
             className="min-h-20 rounded-2xl bg-card px-3"
           />
         )}

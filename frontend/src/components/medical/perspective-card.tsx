@@ -11,7 +11,7 @@ export function FindingCard({ finding }: { finding: Finding }) {
       <p className="text-[1.05rem] leading-relaxed">{finding.statement}</p>
       <div className="flex flex-wrap items-center gap-2">
         <KindTag kind={finding.kind} plain />
-        <EvidenceChip itemId={finding.id} />
+        <EvidenceChip itemId={finding.id} describes={finding.statement} />
       </div>
     </li>
   );
@@ -70,7 +70,7 @@ export function PerspectiveCard({ report, defaultOpen }: { report: SpecialistRep
                 <li key={c.id} className={cn("space-y-2 rounded-2xl border p-4", flagSurface.disagreement)}>
                   <FlagMarker flag="disagreement" />
                   <p>{c.description}</p>
-                  <EvidenceChip itemId={c.id} />
+                  <EvidenceChip itemId={c.id} describes={c.description} />
                 </li>
               ))}
             </ul>
@@ -86,7 +86,7 @@ export function PerspectiveCard({ report, defaultOpen }: { report: SpecialistRep
                   <FlagMarker flag="uncertain" />
                   <p>{u.text}</p>
                   {u.resolvableBy && <p className="text-sm text-muted-foreground">Could be clarified by: {u.resolvableBy}</p>}
-                  <EvidenceChip itemId={u.id} />
+                  <EvidenceChip itemId={u.id} describes={u.text} />
                 </li>
               ))}
             </ul>
@@ -102,7 +102,7 @@ export function PerspectiveCard({ report, defaultOpen }: { report: SpecialistRep
                   <FlagMarker flag="missing" />
                   <p className="font-medium">{m.item}</p>
                   <p className="text-muted-foreground">{m.whyItMatters}</p>
-                  <EvidenceChip itemId={m.id} />
+                  <EvidenceChip itemId={m.id} describes={m.item} />
                 </li>
               ))}
             </ul>
