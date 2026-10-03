@@ -1,0 +1,128 @@
+{
+  "id": "advisorai-run-stage",
+  "name": "AdvisorAI · 10 Run stage",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "run_id"
+            },
+            {
+              "name": "stage_id"
+            }
+          ]
+        }
+      },
+      "id": "3776b0a3-1bc4-5251-9425-cce203d09b7b",
+      "name": "When called",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { run_id, stage_id } = $json;\nreturn [{ json: { run_id, stage_id, path: `/internal/orchestrator/v1/runs/${run_id}/stages/${stage_id}`, body: '', timeout_ms: 180000 } }];\n"
+      },
+      "id": "898309bc-5363-5717-8691-4c124fbab64d",
+      "name": "Build call",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "advisorai-signed-call",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "e01c7efa-92cb-5844-9b79-f5ee5bcda796",
+      "name": "Signed call",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const r = $input.first().json;\nconst meta = $('Build call').first().json;\nif (!r.ok) return [{ json: { run_id: meta.run_id, stage: meta.stage_id, status: 'failed', code: r.code || 'orchestrator_http_error', retryable: true, counts: {}, flags: {} } }];\nreturn [{ json: r.result }];\n"
+      },
+      "id": "c541666b-9dac-5ebd-91d4-338bb1213551",
+      "name": "Shape result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "When called": {
+      "main": [
+        [
+          {
+            "node": "Build call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build call": {
+      "main": [
+        [
+          {
+            "node": "Signed call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Signed call": {
+      "main": [
+        [
+          {
+            "node": "Shape result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false
+  },
+  "pinData": {},
+  "meta": {
+    "description": "Reusable. Runs ONE backend stage by id (safety/intake, document intelligence, context assembly, routing, evidence verification, cross-agent review, interim reviewer, questions, final report). The backend does the work and is idempotent per stage, so a retry never re-bills.",
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [
+    {
+      "name": "advisorai"
+    }
+  ]
+}

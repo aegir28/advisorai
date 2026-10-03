@@ -1,0 +1,147 @@
+{
+  "id": "advisorai-signed-call",
+  "name": "AdvisorAI · 05 Signed backend call",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "path"
+            },
+            {
+              "name": "body"
+            },
+            {
+              "name": "timeout_ms"
+            }
+          ]
+        }
+      },
+      "id": "5bcd61a5-44b0-5687-a733-5f2e49d61a67",
+      "name": "When called",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require('crypto');\nconst secret = $env.ADVISORAI_N8N_HMAC_SECRET;\nconst base = String($env.ADVISORAI_API_BASE_URL || '').replace(/\\/$/, '');\nif (!secret || !base) throw new Error('advisorai_env_missing');\nconst { path } = $json; const body = $json.body || '';\nif (!String(path).startsWith('/internal/orchestrator/v1/')) throw new Error('path_not_allowed');\nconst ts = String(Math.floor(Date.now() / 1000));\nconst hash = crypto.createHash('sha256').update(body).digest('hex');\nconst sig = crypto.createHmac('sha256', secret).update(`${ts}.POST.${path}.${hash}`).digest('hex');\nreturn [{ json: { url: base + path, body, ts, sig, timeout: Number($json.timeout_ms) || 60000 } }];\n"
+      },
+      "id": "ddef8fa2-25fb-5364-90bb-93c1ae57dc59",
+      "name": "Sign request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Advisorai-Timestamp",
+              "value": "={{ $json.ts }}"
+            },
+            {
+              "name": "X-Advisorai-Signature",
+              "value": "={{ $json.sig }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.body }}",
+        "options": {
+          "timeout": "={{ $json.timeout }}"
+        }
+      },
+      "id": "aa10a8f0-4cad-55cf-9b9b-6fd089f49bf4",
+      "name": "POST to backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const j = $input.first().json;\nif (j.error || !j.schema_version) {\n  return [{ json: { ok: false, code: 'orchestrator_http_error', retryable: true } }];\n}\nreturn [{ json: { ok: true, result: j } }];\n"
+      },
+      "id": "3c18d78e-36dc-5783-b2b7-5d9999aeb18a",
+      "name": "Normalize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "When called": {
+      "main": [
+        [
+          {
+            "node": "Sign request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sign request": {
+      "main": [
+        [
+          {
+            "node": "POST to backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST to backend": {
+      "main": [
+        [
+          {
+            "node": "Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false
+  },
+  "pinData": {},
+  "meta": {
+    "description": "Reusable. Sends one HMAC-signed POST to the backend capability API and returns {ok, result|code}. Retries transient failures (policy: registry/orchestration.yaml). Holds no credential in the file.",
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [
+    {
+      "name": "advisorai"
+    }
+  ]
+}
