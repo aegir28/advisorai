@@ -15,7 +15,7 @@ import pytest
 
 from app.agents.registry import SpecialtyRegistry
 from app.orchestration.policy import OrchestrationPolicy
-from app.orchestration.stages import STAGE_IDS
+from app.orchestration.workflows import WorkflowRegistry
 
 ROOT = Path(__file__).resolve().parents[3] / "n8n"
 FILES = sorted((ROOT / "workflows").glob("*.json"))
@@ -45,7 +45,7 @@ def test_the_expected_workflows_exist() -> None:
         "advisorai-00-master.json",
         "advisorai-05-signed-call.json",
         "advisorai-10-run-stage.json",
-        "advisorai-20-specialist-fanout.json",
+        "advisorai-20-fanout-stage.json",
         "advisorai-90-error-recovery.json",
     ]
 
@@ -107,14 +107,59 @@ def test_secrets_come_only_from_the_environment_and_urls_only_from_the_backend_b
         }
 
 
-def test_no_workflow_names_a_specialty_and_only_the_fanout_stage_is_special_cased() -> None:
-    registry_ids = [s.id for s in SpecialtyRegistry.from_file().specs()]
-    for name, text in RAW.items():
-        assert not [i for i in registry_ids if i in text], name
-    named = {
-        stage for text in RAW.values() for stage in STAGE_IDS if re.search(rf"['\"`]{stage}['\"`]", text)
+def test_no_workflow_names_a_specialty_a_stage_or_a_clinical_branch() -> None:
+    registry = SpecialtyRegistry.from_file()
+    workflows = WorkflowRegistry.from_file()
+    stage_ids = {s for w in workflows.ids() for s in workflows.get(w).stage_ids}
+    flags = {
+        f
+        for w in workflows.ids()
+        for st in workflows.get(w).stages
+        for f in (*st.flags, *([st.when] if st.when else []))
     }
-    assert named == {"specialist_fanout"}
+    handlers = {st.handler for w in workflows.ids() for st in workflows.get(w).stages}
+    names = {s.id for s in registry.specs()} | stage_ids | flags | handlers
+    for name, text in RAW.items():
+        quoted = [n for n in names if re.search(rf"['\"`\s.]{n}['\"`\s.:]", text)]
+        assert not quoted, (name, quoted)
+
+
+def test_the_master_decides_from_descriptor_metadata_not_from_a_stage_name() -> None:
+    master = RAW["advisorai-00-master.json"]
+    assert "specialist_fanout" not in master and "specialist" not in master.lower().replace("specialty", "")
+    flow = FLOWS["advisorai-00-master.json"]
+    fan_if = next(n for n in flow["nodes"] if n["name"] == "Fan-out stage?")
+    assert fan_if["parameters"]["conditions"]["conditions"][0]["leftValue"] == "={{ $json.kind }}"
+    assert fan_if["parameters"]["conditions"]["conditions"][0]["rightValue"] == "fanout"
+    evaluate = next(n for n in flow["nodes"] if n["name"] == "Evaluate condition")["parameters"]["jsCode"]
+    assert "s.when" in evaluate and "flags[s.when]" in evaluate  # the condition is data from `begin`
+    # the three outcomes (run / skip / abort) each have their own branch; skip goes through the generic stage flow
+    switch = next(n for n in flow["nodes"] if n["name"] == "Action")
+    assert [r["outputKey"] for r in switch["parameters"]["rules"]["values"]] == ["run", "skip", "abort"]
+    skip = next(n for n in flow["nodes"] if n["name"] == "Skip stage")
+    assert skip["parameters"]["workflowId"]["value"] == "advisorai-run-stage"
+    run_stage = next(n for n in FLOWS["advisorai-10-run-stage.json"]["nodes"] if n["name"] == "Build call")
+    assert (
+        "action === 'skip'" in run_stage["parameters"]["jsCode"]
+        and "condition_not_met" in run_stage["parameters"]["jsCode"]
+    )
+
+
+def test_stage_retry_and_timeout_come_from_the_descriptors_not_from_constants() -> None:
+    build = next(n for n in FLOWS["advisorai-10-run-stage.json"]["nodes"] if n["name"] == "Build call")[
+        "parameters"
+    ]["jsCode"]
+    for field in ("timeout_seconds", "retries", "backoff_seconds"):
+        assert field in build
+    evaluate = next(
+        n for n in FLOWS["advisorai-00-master.json"]["nodes"] if n["name"] == "Evaluate condition"
+    )["parameters"]["jsCode"]
+    for field in ("timeout_seconds", "retries", "backoff_seconds"):
+        assert f"s.{field}" in evaluate
+    signed = next(n for n in FLOWS["advisorai-05-signed-call.json"]["nodes"] if n["name"] == "Sign and call")[
+        "parameters"
+    ]["jsCode"]
+    assert "max_tries" in signed and "backoff_ms" in signed and "timeout_ms" in signed
 
 
 def test_every_backend_path_the_workflows_call_is_a_real_post_route() -> None:
@@ -134,25 +179,22 @@ def test_every_backend_path_the_workflows_call_is_a_real_post_route() -> None:
         assert any(p.match(path) for p in patterns), path
 
 
-def test_retry_and_timeout_settings_match_the_orchestration_policy() -> None:
+def test_fanout_item_retries_match_the_policy_defaults() -> None:
     policy = OrchestrationPolicy.from_file()
-    signed = FLOWS["advisorai-05-signed-call.json"]["nodes"]
-    http = next(n for n in signed if n["type"] == "n8n-nodes-base.httpRequest")
-    assert http["maxTries"] == policy.retry.stage_retries + 1
-    assert http["waitBetweenTries"] == policy.retry.backoff_seconds * 1000
-    stage = next(n for n in FLOWS["advisorai-10-run-stage.json"]["nodes"] if n["name"] == "Build call")
-    assert f"timeout_ms: {policy.timeouts.stage_seconds * 1000}" in stage["parameters"]["jsCode"]
-    fan = next(n for n in FLOWS["advisorai-20-specialist-fanout.json"]["nodes"] if "parallel" in n["name"])
+    fan = next(n for n in FLOWS["advisorai-20-fanout-stage.json"]["nodes"] if "parallel" in n["name"])
+    assert fan["maxTries"] == policy.retry.stage_retries + 1
+    assert fan["waitBetweenTries"] == policy.retry.backoff_seconds * 1000
     # concurrency comes from the backend's plan (policy.limits.max_parallel_agents), never a literal in JSON
     assert fan["parameters"]["options"]["batching"]["batch"]["batchSize"] == "={{ $json.max_parallel }}"
 
 
 def test_the_requests_are_signed_the_way_the_backend_verifies_them() -> None:
-    code = next(n for n in FLOWS["advisorai-05-signed-call.json"]["nodes"] if n["name"] == "Sign request")
+    code = next(n for n in FLOWS["advisorai-05-signed-call.json"]["nodes"] if n["name"] == "Sign and call")
     js = code["parameters"]["jsCode"]
     assert (
         "`${ts}.POST.${path}.${hash}`" in js and "createHmac('sha256'" in js and "sha256').update(body)" in js
     )
+    assert "status >= 400 && status < 500" in js  # a 4xx is a decision, never retried
     assert "X-Advisorai-Signature" in RAW["advisorai-05-signed-call.json"]
     master = RAW["advisorai-00-master.json"]
     assert "timingSafeEqual" in master and "orchestration_start.v1" in master  # inbound verification
@@ -160,7 +202,7 @@ def test_the_requests_are_signed_the_way_the_backend_verifies_them() -> None:
 
 def test_the_master_stops_on_failed_or_cancelled_stages_and_always_finishes() -> None:
     flow = FLOWS["advisorai-00-master.json"]
-    decide = next(n for n in flow["nodes"] if n["name"] == "Continue?")["parameters"]["jsCode"]
+    decide = next(n for n in flow["nodes"] if n["name"] == "Update flags")["parameters"]["jsCode"]
     assert (
         "'failed'" in decide
         and "'cancelled'" in decide
@@ -182,9 +224,13 @@ def test_the_committed_json_is_exactly_what_the_generator_produces() -> None:
         "advisorai-00-master.json": gen.master(),
         "advisorai-05-signed-call.json": gen.signed_call(),
         "advisorai-10-run-stage.json": gen.run_stage(),
-        "advisorai-20-specialist-fanout.json": gen.fanout(),
+        "advisorai-20-fanout-stage.json": gen.fanout(),
         "advisorai-90-error-recovery.json": gen.error_recovery(),
     }
     for name, flow in produced.items():
         assert flow.export() == FLOWS[name], f"{name} is stale: run python3 n8n/tools/generate_workflows.py"
-    assert (gen.STAGE_TIMEOUT_MS, gen.AGENT_TIMEOUT_MS) == (180_000, 120_000)
+    policy = OrchestrationPolicy.from_file()
+    assert (
+        policy.retry.stage_retries + 1,
+        policy.retry.backoff_seconds * 1000,
+    ) == (gen.MAX_TRIES, gen.BACKOFF_MS)

@@ -53,7 +53,7 @@ select throws_ok($$update public.workflow_runs set status = 'failed' where id = 
 select lives_ok($$update public.workflow_runs set status = 'failed', failure = '{"title":"Stopped","body":"Why"}' where id = 'a5000000-0000-4000-8000-000000000001'$$, 'a failed run with a failure is allowed');
 select throws_ok($$update public.workflow_runs set status = 'exploded' where id = 'a5000000-0000-4000-8000-000000000001'$$, '23514', null, 'an unknown run status is refused');
 select throws_ok($$update public.workflow_runs set progress = 1.5 where id = 'a5000000-0000-4000-8000-000000000001'$$, '23514', null, 'progress above 1 is refused');
-select throws_ok($$insert into public.workflow_steps (owner_user_id, case_id, run_id, n, node) values ('aaaaaaaa-0000-4000-8000-000000000001', 'a2000000-0000-4000-8000-000000000001', 'a5000000-0000-4000-8000-000000000001', 15, 'x')$$, '23514', null, 'step 15 does not exist (run.v1 has 14)');
+select throws_ok($$insert into public.workflow_steps (owner_user_id, case_id, run_id, n, node) values ('aaaaaaaa-0000-4000-8000-000000000001', 'a2000000-0000-4000-8000-000000000001', 'a5000000-0000-4000-8000-000000000001', 65, 'x')$$, '23514', null, 'step 65 does not exist (workflow definitions are capped at 64 stages)');
 insert into public.workflow_steps (owner_user_id, case_id, run_id, n, node) values
   ('aaaaaaaa-0000-4000-8000-000000000001', 'a2000000-0000-4000-8000-000000000001', 'a5000000-0000-4000-8000-000000000001', 1, 'x');
 select throws_ok($$insert into public.workflow_steps (owner_user_id, case_id, run_id, n, node) values ('aaaaaaaa-0000-4000-8000-000000000001', 'a2000000-0000-4000-8000-000000000001', 'a5000000-0000-4000-8000-000000000001', 1, 'y')$$, '23505', null, 'a run cannot have two step 1s');

@@ -15,18 +15,20 @@ from app.db import cases as case_repo
 from app.db.database import Database
 from app.orchestration.contracts import OrchestrationStart
 from app.orchestration.n8n_client import N8nClient, OrchestratorUnavailableError
-from app.orchestration.stages import DEFINITION_ID
 from app.orchestration.store import OrchestrationStore
+from app.orchestration.workflows import WorkflowConfigError, WorkflowRegistry
 from app.schemas.errors import ErrorCode
 from app.services.cases import case_not_found
 
 
 class AnalysisStarter:
-    def __init__(self, database: Database, store: OrchestrationStore, n8n: N8nClient) -> None:
-        self._db, self._store, self._n8n = database, store, n8n
+    def __init__(
+        self, database: Database, store: OrchestrationStore, n8n: N8nClient, workflows: WorkflowRegistry
+    ) -> None:
+        self._db, self._store, self._n8n, self._wf = database, store, n8n, workflows
 
     async def start(
-        self, user: CurrentUser, case_id: uuid.UUID, idempotency_key: str
+        self, user: CurrentUser, case_id: uuid.UUID, idempotency_key: str, workflow: str = "case_analysis"
     ) -> tuple[uuid.UUID, bool]:
         async with self._db.user_session(user) as conn:
             if await case_repo.get_case(conn, user.user_id, case_id) is None:
@@ -51,7 +53,13 @@ class AnalysisStarter:
             ).first()
         if ready < 1:
             raise AppError(ErrorCode.CONFLICT, "Add at least one document before starting.", status_code=409)
-        run_id, created = await self._store.create_run(user.user_id, case_id, idempotency_key, DEFINITION_ID)
+        try:
+            definition = self._wf.get(workflow)
+        except WorkflowConfigError:
+            raise AppError(ErrorCode.VALIDATION_ERROR, "Unknown analysis type.", status_code=400) from None
+        run_id, created = await self._store.create_run(
+            user.user_id, case_id, idempotency_key, definition.id, definition.stage_ids, definition.version
+        )
         if not created:
             return run_id, False  # a retry of the same request: same run, no second trigger
         if active is not None:
@@ -74,7 +82,7 @@ class AnalysisStarter:
                     schema_version="orchestration_start.v1",
                     run_id=str(run_id),
                     case_id=str(case_id),
-                    workflow="case_analysis",
+                    workflow=definition.id,
                     resume=False,
                 )
             )
@@ -103,7 +111,7 @@ class AnalysisStarter:
             row = (
                 await conn.execute(
                     text(
-                        "select case_id, status from public.workflow_runs where id = :r and owner_user_id = :o"
+                        "select case_id, status, definition from public.workflow_runs where id = :r and owner_user_id = :o"
                     ),
                     {"r": run_id, "o": user.user_id},
                 )
@@ -118,7 +126,7 @@ class AnalysisStarter:
                     schema_version="orchestration_start.v1",
                     run_id=str(run_id),
                     case_id=str(row[0]),
-                    workflow="case_analysis",
+                    workflow=str(row[2]),
                     resume=True,
                 )
             )

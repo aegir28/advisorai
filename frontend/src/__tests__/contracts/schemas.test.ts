@@ -152,10 +152,14 @@ describe("run.v1", () => {
     void _omit;
     expect(AnalysisRunSchema.safeParse(rest).success).toBe(false);
   });
-  it("rejects a run that does not have exactly 14 ordered steps", () => {
-    const r = validRun();
-    r.steps = r.steps.slice(0, 13);
-    expect(AnalysisRunSchema.safeParse(r).success).toBe(false);
+  it("accepts a run of any length whose steps are numbered 1..N in order, and rejects the rest", () => {
+    const shorter = validRun();
+    shorter.steps = shorter.steps.slice(0, 6);
+    expect(AnalysisRunSchema.safeParse(shorter).success).toBe(true);
+    const gap = validRun();
+    gap.steps = gap.steps.filter((s) => s.n !== 5);
+    expect(AnalysisRunSchema.safeParse(gap).success).toBe(false);
+    expect(AnalysisRunSchema.safeParse({ ...validRun(), steps: [] }).success).toBe(false);
   });
   it("rejects a failed run that does not explain itself", () => {
     expect(AnalysisRunSchema.safeParse({ ...validRun(), status: "failed" }).success).toBe(false);

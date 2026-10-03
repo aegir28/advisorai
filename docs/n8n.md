@@ -5,11 +5,25 @@
 
 | Workflow (id) | Role |
 |---|---|
-| `advisorai-00-master` | Webhook `POST /webhook/advisorai-case-analysis`. Verifies the signed start, answers 202, begins the run, loops the stages, always finishes. Error workflow = 90. |
-| `advisorai-05-signed-call` | The only place a backend request is built and HMAC-signed; retries per policy. |
-| `advisorai-10-run-stage` | Runs one stage by id (safety/intake, documents, context, routing, verification, cross-review, interim reviewer, questions, final report). |
-| `advisorai-20-specialist-fanout` | Fan-out/in: asks the backend for the plan (from the registry) and runs specialists in parallel batches of `max_parallel`. |
+| `advisorai-00-master` | Webhook `POST /webhook/advisorai-case-analysis`. Verifies the signed start, answers 202, calls `begin` (which selects the workflow definition), then executes the returned stage descriptors one by one, and always finishes. Error workflow = 90. |
+| `advisorai-05-signed-call` | The only place a backend request is built, HMAC-signed and retried (retries, backoff and timeout come from the caller). |
+| `advisorai-10-run-stage` | Runs, or skips, ONE stage by id. It does not know what the stage does. |
+| `advisorai-20-fanout-stage` | For any `kind=fanout` stage: runs the stage, gets its work items from the backend, runs them in parallel batches of `max_parallel`, fans in. |
 | `advisorai-90-error-recovery` | On a crashed master execution, tells the backend to fail that run (content-free). |
+
+## How the master decides (all from backend metadata)
+`begin` returns `workflow`, `stages[]` (`id`, `kind`, `critical`, `when`, `depends_on`, `retries`,
+`backoff_seconds`, `timeout_seconds`), `completed_stages` and the `flags` of stages already finished (a resumed
+run). For each stage the master: (1) evaluates `when` against the flags it has accumulated (each stage result
+carries the flags it set); (2) `when` false → `POST .../stages/{id}/skip` (`condition_not_met`; the backend
+re-checks and refuses with 409 if its own flags disagree, which fails the run safely); (3) `kind=fanout` → the
+fan-out sub-workflow (`POST .../stages/{id}`, `.../stages/{id}/plan`, `.../stages/{id}/items/{item}`); otherwise
+`POST .../stages/{id}`; (4) merges the result's flags; (5) stops only on `failed` or `cancelled` (the backend
+decides what is critical; non-critical failures return `unavailable`). The master contains no specialty, stage or
+clinical-branch name (a test enforces it). **Adding, removing, re-ordering or conditionally skipping a stage, or
+adding another fan-out stage, is an edit to `registry/workflows.yaml` only** (see `registry/README.md`).
+Fan-out *item* calls use the HTTP node's static retry settings (n8n cannot make them dynamic); they mirror the
+policy defaults and a test fails if they drift.
 
 ## Environment variables (n8n side)
 `ADVISORAI_API_BASE_URL` (backend origin, no path), `ADVISORAI_N8N_HMAC_SECRET` (same value as the backend's),
@@ -26,13 +40,14 @@ proxy must not rewrite it.
 ## Endpoints
 Public: `POST /api/v1/cases/{id}/analysis` (header `Idempotency-Key`), `POST /analysis/{id}/cancel`,
 `POST /analysis/{id}/resume`, `GET /analysis/{id}` (status), `GET /analysis/{id}/report`.
-Internal (signed, hidden from OpenAPI): `/internal/orchestrator/v1/runs/{id}/begin|stages/{stage}|plan|agents/{agent}|finish`,
+Internal (signed, hidden from OpenAPI): `/internal/orchestrator/v1/runs/{id}/begin`, `/runs/{id}/stages/{stage}`,
+`/stages/{stage}/skip`, `/stages/{stage}/plan`, `/stages/{stage}/items/{item}`, `/runs/{id}/finish`,
 `/executions/{execution}/fail`.
 
 ## Local development
 1. Backend: `cd backend && uv run uvicorn app.main:app`, with the n8n variables above and `AI_PROVIDER=fake`.
 2. n8n: `npx n8n` (or Docker) with the environment above; import each file:
-   `n8n import:workflow --input=n8n/workflows/advisorai-00-master.json` (repeat for all five).
+   `n8n import:workflow --input=n8n/workflows/advisorai-00-master.json` (repeat for all five). Code nodes call the backend with `this.helpers.httpRequest`; this has not been run in a live n8n.
 3. Activate in this order: 05, 10, 20, 90, then 00. Deactivate 00 first to stop accepting runs.
 4. Without n8n: tests drive the same API with `drive()` (`backend/tests/orch_support.py`).
 

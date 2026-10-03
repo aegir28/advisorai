@@ -13,8 +13,8 @@ from app.ai.providers.fake import FakeProvider
 from app.ai.types import ModelRequest
 from app.orchestration.policy import OrchestrationPolicy
 from app.orchestration.service import OrchestrationService
-from app.orchestration.stages import STAGE_IDS
 from app.orchestration.store import CaseInputs, DocInfo, InMemoryOrchestrationStore
+from app.orchestration.workflows import WorkflowRegistry
 from app.router.signals import SignalExtractor
 from app.storage.gateway import ObjectNotFoundError, StoragePath
 from tests.ai_support import make_gateway
@@ -224,6 +224,8 @@ async def make_rig(
     pdf: bytes | None = None,
     enabled: tuple[str, ...] = ("general_medicine", "medication_safety"),
     config: Any = None,
+    workflows: WorkflowRegistry | None = None,
+    workflow: str = "case_analysis",
     concern: str = "I want a second opinion on my diabetes treatment.",
 ) -> Rig:
     store = InMemoryOrchestrationStore()
@@ -237,7 +239,11 @@ async def make_rig(
         "F",
         [DocInfo(str(DOC), "lab", "ready", f"{OWNER}/{CASE}/{DOC}", "application/pdf", 1000, 1)],
     )
-    run_id, _ = await store.create_run(OWNER, CASE, "test-key-0001", "case_analysis")
+    workflows = workflows or WorkflowRegistry.from_file()
+    definition = workflows.get(workflow)
+    run_id, _ = await store.create_run(
+        OWNER, CASE, "test-key-0001", definition.id, definition.stage_ids, definition.version
+    )
     provider = FakeProvider(responder=default_responder(responders))
     gateway, provider, sink, _ = make_gateway(provider, config=config)
     registry = SpecialtyRegistry.from_file()
@@ -250,24 +256,35 @@ async def make_rig(
         registry,
         OrchestrationPolicy.from_file(),
         SignalExtractor.from_file(),
+        workflows,
         storage=FakeStorage({DOC: pdf if pdf is not None else make_pdf([PAGE])}),
     )
     return Rig(service, store, provider, run_id, sink)
 
 
 async def drive(rig: Rig) -> dict[str, str]:
-    """The reference orchestrator: what the n8n master workflow does, in Python. Returns stage -> status."""
+    """The reference orchestrator: what the n8n master workflow does, in Python, from the stage descriptors the
+    backend returns (kind, `when`, flags). It names no stage. Returns stage id -> status, plus `finish`."""
     svc, run_id = rig.service, rig.run_id
-    await svc.begin(run_id)
+    begin = await svc.begin(run_id)
+    flags = dict(begin.flags)
     out: dict[str, str] = {}
-    for stage_id in STAGE_IDS:
-        result = await svc.run_stage(run_id, stage_id)
-        out[stage_id] = result.status
-        if result.status == "failed":
+    for stage in begin.stages:
+        if stage.id in begin.completed_stages:
+            continue
+        if stage.when is not None and not flags.get(stage.when, False):
+            result = await svc.skip_stage(run_id, stage.id, "condition_not_met")
+        elif stage.kind == "fanout":
+            result = await svc.run_stage(run_id, stage.id)
+            if result.status != "failed":
+                plan = await svc.fanout_plan(run_id, stage.id)
+                for item in plan.items:  # n8n: parallel batches of plan.max_parallel
+                    await svc.run_item(run_id, stage.id, item.id)
+        else:
+            result = await svc.run_stage(run_id, stage.id)
+        out[stage.id] = result.status
+        flags.update(result.flags)
+        if result.status in {"failed", "cancelled"}:
             break
-        if stage_id == "specialist_fanout":
-            plan = await svc.run_plan(run_id)
-            for agent in plan.agents:  # n8n: SplitInBatches, max_parallel at a time
-                await svc.run_agent(run_id, agent.id)
     out["finish"] = (await svc.finish(run_id)).status
     return out

@@ -117,5 +117,16 @@ select is(tests.try_as(null, $$select coalesce(sum(cost_micro_usd), 0) from publ
 select is(tests.try_as(null, $$select model from public.model_usage$$, 'app_system'), 'err:42501', 'but not read any other column of usage');
 select is(tests.try_as(null, $$select * from public.model_usage$$, 'app_system'), 'err:42501', 'nor select *');
 
+-- ── steps come from the workflow definition: the number of steps is no longer fixed at 14 ───────
+select lives_ok($$insert into public.workflow_steps (owner_user_id, case_id, run_id, n, node)
+  values ('dddddddd-0000-4000-8000-000000000001', 'dddddddd-2000-4000-8000-000000000001', 'dddddddd-3000-4000-8000-000000000001', 15, 'a_fifteenth_stage')$$,
+  'a run may have more than 14 steps');
+select throws_ok($$insert into public.workflow_steps (owner_user_id, case_id, run_id, n, node)
+  values ('dddddddd-0000-4000-8000-000000000001', 'dddddddd-2000-4000-8000-000000000001', 'dddddddd-3000-4000-8000-000000000001', 65, 'too_many')$$,
+  '23514', null, 'but not more than the loader maximum (64)');
+select throws_ok($$insert into public.workflow_steps (owner_user_id, case_id, run_id, n, node)
+  values ('dddddddd-0000-4000-8000-000000000001', 'dddddddd-2000-4000-8000-000000000001', 'dddddddd-3000-4000-8000-000000000001', 0, 'zero')$$,
+  '23514', null, 'and step numbers start at 1');
+
 select * from finish();
 rollback;

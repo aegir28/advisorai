@@ -5,17 +5,7 @@
   "nodes": [
     {
       "parameters": {
-        "inputSource": "workflowInputs",
-        "workflowInputs": {
-          "values": [
-            {
-              "name": "run_id"
-            },
-            {
-              "name": "stage_id"
-            }
-          ]
-        }
+        "inputSource": "passthrough"
       },
       "id": "3776b0a3-1bc4-5251-9425-cce203d09b7b",
       "name": "When called",
@@ -28,7 +18,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const { run_id, stage_id } = $json;\nreturn [{ json: { run_id, stage_id, path: `/internal/orchestrator/v1/runs/${run_id}/stages/${stage_id}`, body: '', timeout_ms: 180000 } }];\n"
+        "jsCode": "const { run_id, stage_id, action, timeout_seconds, retries, backoff_seconds } = $json;\nconst skip = action === 'skip';\nconst path = `/internal/orchestrator/v1/runs/${run_id}/stages/${stage_id}` + (skip ? '/skip' : '');\nconst body = skip ? JSON.stringify({ schema_version: 'skip_request.v1', reason: 'condition_not_met' }) : '';\nreturn [{ json: { run_id, stage_id, path, body, timeout_ms: Number(timeout_seconds) * 1000,\n  max_tries: Number(retries) + 1, backoff_ms: Number(backoff_seconds) * 1000 } }];\n"
       },
       "id": "898309bc-5363-5717-8691-4c124fbab64d",
       "name": "Build call",
@@ -63,7 +53,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const r = $input.first().json;\nconst meta = $('Build call').first().json;\nif (!r.ok) return [{ json: { run_id: meta.run_id, stage: meta.stage_id, status: 'failed', code: r.code || 'orchestrator_http_error', retryable: true, counts: {}, flags: {} } }];\nreturn [{ json: r.result }];\n"
+        "jsCode": "const r = $input.first().json;\nconst meta = $('Build call').first().json;\nif (!r.ok) return [{ json: { run_id: meta.run_id, stage: meta.stage_id, status: 'failed', code: r.code || 'orchestrator_http_error', retryable: !!r.retryable, counts: {}, flags: {} } }];\nreturn [{ json: r.result }];\n"
       },
       "id": "c541666b-9dac-5ebd-91d4-338bb1213551",
       "name": "Shape result",
@@ -117,7 +107,7 @@
   },
   "pinData": {},
   "meta": {
-    "description": "Reusable. Runs ONE backend stage by id (safety/intake, document intelligence, context assembly, routing, evidence verification, cross-agent review, interim reviewer, questions, final report). The backend does the work and is idempotent per stage, so a retry never re-bills.",
+    "description": "Reusable. Runs, or skips, ONE stage of whatever workflow the backend described. It does not know what the stage does: the backend resolves the handler and is idempotent per stage, so a retry never re-bills. Input: run_id, stage_id, action (run|skip), timeout_seconds, retries, backoff_seconds.",
     "templateCredsSetupCompleted": true
   },
   "tags": [

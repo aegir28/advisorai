@@ -370,8 +370,8 @@ export const RunStatusSchema = z.enum(["running", "complete", "partial", "failed
 export const RunOutcomeSchema = z.enum(["complete", "partial", "failed"]);
 
 export const RunStepSchema = z.object({
-  /** 1..14, title from i18n key run.s{n} */
-  n: z.number().int().min(1).max(14),
+  /** 1..N in workflow order (case_analysis has 14), title from i18n key run.s{n} */
+  n: z.number().int().min(1).max(64),
   status: StepStatusSchema,
   note: z.string().optional(),
 });
@@ -391,8 +391,8 @@ export const AnalysisRunSchema = z
     /** Present when the run finished with gaps. */
     warnings: z.array(z.string()),
   })
-  .refine((r) => r.steps.length === 14 && r.steps.every((s, i) => s.n === i + 1), {
-    message: "a run has exactly the 14 workflow steps, numbered 1..14 in order",
+  .refine((r) => r.steps.length >= 1 && r.steps.every((s, i) => s.n === i + 1), {
+    message: "a run has at least one step, numbered 1..N in order",
     path: ["steps"],
   })
   .refine((r) => r.status !== "failed" || !!r.failure, {

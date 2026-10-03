@@ -277,9 +277,15 @@ class TestTrace:
 
 
 class TestRun:
-    def test_rejects_the_wrong_number_or_order_of_steps(self) -> None:
+    def test_accepts_any_length_but_rejects_gaps_empty_and_wrong_order(self) -> None:
         payload = doc("run.v1.json")
-        payload["steps"] = payload["steps"][:13]
+        payload["steps"] = payload["steps"][:6]  # a shorter workflow (steps come from its definition)
+        AnalysisRun.model_validate(payload)
+        payload = doc("run.v1.json")
+        del payload["steps"][4]  # a gap in the numbering
+        reject(AnalysisRun, payload)
+        payload = doc("run.v1.json")
+        payload["steps"] = []
         reject(AnalysisRun, payload)
         payload = doc("run.v1.json")
         payload["steps"][0], payload["steps"][1] = payload["steps"][1], payload["steps"][0]

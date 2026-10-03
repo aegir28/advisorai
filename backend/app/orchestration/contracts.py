@@ -56,7 +56,7 @@ class OrchestrationStart(WireModel):
     schema_version: Literal["orchestration_start.v1"]
     run_id: Id
     case_id: Id
-    workflow: Literal["case_analysis", "second_opinion"]
+    workflow: Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]{1,47}$")]
     resume: bool
 
 
@@ -71,32 +71,51 @@ class StageResult(WireModel):
     # True when n8n may retry this stage (a transient provider/storage failure), False when a retry cannot help.
     retryable: bool
     counts: dict[str, int]
-    # Branch conditions decided by the backend from registry/orchestration.yaml, e.g. extra_verification.
+    # Flags this stage set (declared in its `flags` in registry/workflows.yaml). n8n accumulates them and
+    # evaluates each later stage's `when` against them.
     flags: dict[str, bool]
+    # For a skipped stage: the flag whose value was false.
+    condition: str | None = None
 
 
-class PlannedAgent(WireModel):
-    id: SpecialistId
-    priority: Literal["mandatory", "optional"]
-    timeout_s: int
+class FanoutItem(WireModel):
+    """One unit of work of a fan-out stage (for example one specialist). `id` is opaque to n8n."""
+
+    id: Id
+    timeout_s: Annotated[int, Field(ge=5, le=900)]
 
 
-class RunPlan(WireModel):
-    schema_version: Literal["run_plan.v1"]
+class FanoutPlan(WireModel):
+    schema_version: Literal["fanout_plan.v1"]
     run_id: Id
-    agents: list[PlannedAgent]
-    max_parallel: int
-    extra_verification: bool
-    missing_info_branch: bool
+    stage: Id
+    items: list[FanoutItem]
+    max_parallel: Annotated[int, Field(ge=1, le=20)]
 
 
-class AgentResult(WireModel):
-    schema_version: Literal["agent_result.v1"]
+class ItemResult(WireModel):
+    schema_version: Literal["item_result.v1"]
     run_id: Id
-    agent_id: SpecialistId
+    stage: Id
+    item_id: Id
     status: Literal["ok", "unavailable", "failed", "cancelled"]
     cached: bool
     code: str | None = None
+
+
+class StageDescriptor(WireModel):
+    """What n8n is told about a stage. Everything n8n does with it is generic: it reads `kind` to pick the
+    call pattern, evaluates `when` against the flags it has seen, and applies the retry/timeout values. It never
+    needs to know what the stage means."""
+
+    id: Id
+    kind: Literal["single", "fanout"]
+    critical: bool
+    when: str | None = None
+    depends_on: list[Id]
+    retries: Annotated[int, Field(ge=0, le=5)]
+    backoff_seconds: Annotated[int, Field(ge=0, le=300)]
+    timeout_seconds: Annotated[int, Field(ge=10, le=900)]
 
 
 class BeginRequest(WireModel):
@@ -109,14 +128,17 @@ class BeginRequest(WireModel):
 class BeginResult(WireModel):
     schema_version: Literal["begin_result.v1"]
     run_id: Id
-    workflow: Literal["case_analysis", "second_opinion"]
-    stages: list[Id]
+    workflow: Id
+    workflow_version: Annotated[int, Field(ge=1)]
+    stages: list[StageDescriptor]
     completed_stages: list[Id]
-    stage_retries: int
-    backoff_seconds: int
-    stage_timeout_seconds: int
-    agent_timeout_seconds: int
-    max_parallel_agents: int
+    # Flags set by stages that already finished (a resumed run starts with them).
+    flags: dict[str, bool]
+
+
+class SkipRequest(WireModel):
+    schema_version: Literal["skip_request.v1"]
+    reason: Annotated[str, Field(pattern=r"^[a-z][a-z0-9_]{0,63}$")]
 
 
 class FinishResult(WireModel):

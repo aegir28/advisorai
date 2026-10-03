@@ -22,8 +22,8 @@ from app.orchestration.contracts import (
 )
 from app.orchestration.policy import OrchestrationPolicy, PolicyError
 from app.orchestration.promptstore import PromptError, load, specialist_prompt
-from app.orchestration.stages import STAGE_IDS, STAGES, stage
 from app.orchestration.store import CaseInputs, DocInfo, InMemoryOrchestrationStore
+from app.orchestration.workflows import WorkflowRegistry
 from app.schemas.evidence import Claim
 from app.schemas.specialist_report import SpecialistReport
 from app.schemas.synthesis import SynthesisReviewer
@@ -94,12 +94,10 @@ def test_the_policy_file_loads_and_a_bad_policy_is_a_coded_error(tmp_path) -> No
         OrchestrationPolicy.from_file(bad)
 
 
-def test_there_are_fourteen_stages_questions_before_report_and_ids_are_unique() -> None:
-    assert len(STAGES) == 14 and len(set(STAGE_IDS)) == 14
-    assert STAGE_IDS.index("personalized_questions") < STAGE_IDS.index("final_report")
-    assert stage("routing").n == 6
-    with pytest.raises(KeyError):
-        stage("nope")
+def test_the_standard_workflow_is_loaded_from_config_with_questions_before_the_report() -> None:
+    ids = WorkflowRegistry.from_file().get("case_analysis").stage_ids
+    assert len(set(ids)) == len(ids)
+    assert ids.index("personalized_questions") < ids.index("final_report")
 
 
 def test_the_shared_specialist_prompt_takes_its_focus_from_the_registry_and_forbids_unsafe_advice() -> None:
@@ -480,8 +478,8 @@ async def test_the_store_is_idempotent_per_run_and_refuses_writes_after_the_run_
     store.inputs[CASE] = CaseInputs(
         CASE, OWNER, "c", None, None, 40, "M", [DocInfo("d", "lab", "ready", "p", None, None, None)]
     )
-    run, created = await store.create_run(OWNER, CASE, "key-000001", "case_analysis")
-    again, created2 = await store.create_run(OWNER, CASE, "key-000001", "case_analysis")
+    run, created = await store.create_run(OWNER, CASE, "key-000001", "case_analysis", ["a"])
+    again, created2 = await store.create_run(OWNER, CASE, "key-000001", "case_analysis", ["a"])
     assert (created, created2, run == again) == (True, False, True)
     _, new = await store.put_artifact(run, "k", "-", "k.v1", "ok", {"n": 1})
     b, new2 = await store.put_artifact(run, "k", "-", "k.v1", "ok", {"n": 2})

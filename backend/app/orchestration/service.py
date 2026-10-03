@@ -11,6 +11,7 @@ import json
 import logging
 import uuid
 from collections.abc import Awaitable, Callable
+from dataclasses import dataclass
 from typing import Any
 
 from pydantic import BaseModel, ValidationError
@@ -33,22 +34,23 @@ from app.docintel.extract import ExtractionError, PypdfTextExtractor
 from app.orchestration import comparison, crossreview, questions, report, review, verification
 from app.orchestration.context import build_case_context, record_text
 from app.orchestration.contracts import (
-    AgentResult,
     BeginResult,
     CaseContext,
     ComparisonModelOutput,
     DocumentBrief,
     FactsModelOutput,
+    FanoutItem,
+    FanoutPlan,
     FinishResult,
-    PlannedAgent,
+    ItemResult,
     QuestionsModelOutput,
     ReviewModelOutput,
     RoutingArtifact,
-    RunPlan,
     RunSummary,
     SimplifiedModelOutput,
     SpecialistArtifact,
     SpecialistModelOutput,
+    StageDescriptor,
     StageResult,
     SynthesisArtifact,
     VerificationArtifact,
@@ -56,9 +58,16 @@ from app.orchestration.contracts import (
 )
 from app.orchestration.policy import OrchestrationPolicy
 from app.orchestration.promptstore import PromptError, load, specialist_prompt
-from app.orchestration.stages import STAGE_IDS, STAGES, stage
 from app.orchestration.store import CaseInputs, OrchestrationStore, RunRecord
 from app.orchestration.wire import make
+from app.orchestration.workflows import (
+    StageDef,
+    StageKind,
+    WorkflowConfigError,
+    WorkflowDef,
+    WorkflowRegistry,
+    resolved,
+)
 from app.router.contracts import RouterInput
 from app.router.guardrails import RequireReasonGuardrail
 from app.router.router import Router
@@ -81,6 +90,7 @@ MAX_DOC_BYTES = 15 * 1024 * 1024
 MAX_PAGE_CHARS = 6000
 MAX_DOC_CHARS = 24000
 TEXT_ARTIFACT, FACTS_ARTIFACT = "document_text", "facts"
+_FINISHED = frozenset({"done", "warning", "skipped"})
 
 
 class StageError(Exception):
@@ -91,7 +101,37 @@ class StageError(Exception):
         self.code, self.retryable = code, retryable
 
 
-_Handler = Callable[[RunRecord], Awaitable[tuple[str, str | None, dict[str, int], dict[str, bool]]]]
+Outcome = tuple[str, str | None, dict[str, int], dict[str, bool]]
+SingleFn = Callable[[RunRecord, StageDef], Awaitable[Outcome]]
+PlanFn = Callable[[RunRecord, StageDef], Awaitable[list[FanoutItem]]]
+ItemFn = Callable[[RunRecord, StageDef, str], Awaitable[tuple[str, str | None, bool]]]
+
+
+@dataclass(frozen=True, slots=True)
+class Handler:
+    """A backend capability a workflow stage can name. `single` handlers do one call; a fan-out handler plans
+    work items and runs one item at a time. The same handler can back many stages with different `params`."""
+
+    single: SingleFn | None = None
+    plan: PlanFn | None = None
+    item: ItemFn | None = None
+
+    @property
+    def kinds(self) -> list[StageKind]:
+        out: list[StageKind] = []
+        if self.single:
+            out.append("single")
+        if self.plan and self.item:
+            out.append("fanout")
+        return out
+
+
+def _plain(fn: Callable[[RunRecord], Awaitable[Outcome]]) -> SingleFn:
+    async def call(run: RunRecord, stage: StageDef) -> Outcome:
+        del stage
+        return await fn(run)
+
+    return call
 
 
 def _dump(model: BaseModel) -> dict[str, Any]:
@@ -106,6 +146,7 @@ class OrchestrationService:
         registry: SpecialtyRegistry,
         policy: OrchestrationPolicy,
         extractor: SignalExtractor,
+        workflows: WorkflowRegistry,
         *,
         storage: StorageGateway | None = None,
         prompts: PromptStore | None = None,
@@ -114,61 +155,105 @@ class OrchestrationService:
         self._store, self._gw, self._reg, self._policy = store, gateway, registry, policy
         self._extractor, self._storage, self._prompts = extractor, storage, prompts or PromptStore()
         self._text = text_extractor or PypdfTextExtractor()
-        self._handlers: dict[str, _Handler] = {
-            "intake_safety": self._intake,
-            "document_text": self._document_text,
-            "vision_ocr": self._vision_ocr,
-            "fact_extraction": self._fact_extraction,
-            "case_structuring": self._case_structuring,
-            "routing": self._routing,
-            "specialist_fanout": self._fanout,
-            "specialist_collect": self._collect,
-            "evidence_retrieval": self._evidence_retrieval,
-            "evidence_verification": self._verification,
-            "cross_review": self._cross_review,
-            "interim_review": self._interim_review,
-            "personalized_questions": self._questions,
-            "final_report": self._final_report,
+        self._wf = workflows
+        self._handlers: dict[str, Handler] = {
+            "intake_safety": Handler(single=_plain(self._intake)),
+            "document_text": Handler(single=_plain(self._document_text)),
+            "vision_ocr": Handler(single=_plain(self._vision_ocr)),
+            "fact_extraction": Handler(single=_plain(self._fact_extraction)),
+            "case_structuring": Handler(single=_plain(self._case_structuring)),
+            "routing": Handler(single=_plain(self._routing)),
+            "specialist_fanout": Handler(plan=self._specialist_plan, item=self._specialist_item),
+            "specialist_collect": Handler(single=_plain(self._collect)),
+            "evidence_retrieval": Handler(single=_plain(self._evidence_retrieval)),
+            "evidence_verification": Handler(single=_plain(self._verification)),
+            "cross_review": Handler(single=_plain(self._cross_review)),
+            "interim_review": Handler(single=_plain(self._interim_review)),
+            "personalized_questions": Handler(single=_plain(self._questions)),
+            "final_report": Handler(single=_plain(self._final_report)),
+            "second_opinion_compare": Handler(single=_plain(self._second_opinion_compare)),
+            "checkpoint": Handler(single=_plain(self._checkpoint)),
         }
+        # A misconfigured workflow is refused at startup, not discovered mid-run.
+        self._wf.check_handlers({name: h.kinds for name, h in self._handlers.items()})
 
     # ═══ run lifecycle ═══════════════════════════════════════════════════════════════════════════════
+    async def _definition(self, run: RunRecord) -> WorkflowDef:
+        try:
+            return self._wf.get(run.definition)
+        except WorkflowConfigError:
+            raise StageError("workflow_unknown") from None
+
     async def begin(self, run_id: uuid.UUID, execution_id: str | None = None) -> BeginResult:
         run = await self._run(run_id)
+        wf = await self._definition(run)
         await self._store.mark_running(run_id, execution_id)
-        done = [
-            s
-            for s, (status, _, _) in (await self._store.step_statuses(run_id)).items()
-            if status in {"done", "skipped", "warning"}
-        ]
-        p = self._policy
+        steps = await self._store.step_statuses(run_id)
+        done = {s for s, (status, _, _) in steps.items() if status in _FINISHED}
         return BeginResult(
             schema_version="begin_result.v1",
             run_id=str(run.id),
-            workflow="case_analysis",
-            stages=list(STAGE_IDS),
-            completed_stages=[s for s in STAGE_IDS if s in done],
-            stage_retries=p.retry.stage_retries,
-            backoff_seconds=p.retry.backoff_seconds,
-            stage_timeout_seconds=p.timeouts.stage_seconds,
-            agent_timeout_seconds=p.timeouts.agent_seconds,
-            max_parallel_agents=p.limits.max_parallel_agents,
+            workflow=wf.id,
+            workflow_version=wf.version,
+            stages=[self._descriptor(s) for s in wf.stages],
+            completed_stages=[s for s in wf.stage_ids if s in done],
+            flags=await self._flags(run, wf),
         )
 
+    def _descriptor(self, stage: StageDef) -> StageDescriptor:
+        retries, backoff, timeout = resolved(stage, self._policy)
+        return make(
+            StageDescriptor,
+            id=stage.id,
+            kind=stage.kind,
+            critical=stage.critical,
+            when=stage.when,
+            depends_on=list(stage.depends_on),
+            retries=retries,
+            backoff_seconds=backoff,
+            timeout_seconds=timeout,
+        )
+
+    async def _flags(self, run: RunRecord, wf: WorkflowDef) -> dict[str, bool]:
+        """Every flag set by a stage that has finished, in workflow order (a later stage may overwrite)."""
+        flags: dict[str, bool] = {}
+        for stage in wf.stages:
+            art = await self._store.get_artifact(run.id, "stage", stage.id)
+            if art is not None:
+                flags.update({k: bool(v) for k, v in art.payload.get("flags", {}).items()})
+        return flags
+
     async def run_stage(self, run_id: uuid.UUID, stage_id: str) -> StageResult:
+        run = await self._run(run_id)
+        wf = await self._definition(run)
         try:
-            spec = stage(stage_id)
+            spec = wf.stage(stage_id)
         except KeyError:
             raise StageError("unknown_stage") from None
-        run = await self._run(run_id)
         cached = await self._store.get_artifact(run_id, "stage", stage_id)
         if cached is not None:
             return StageResult.model_validate({**cached.payload, "cached": True})
         if run.cancel_requested or run.status not in ("queued", "running"):
             await self._store.set_step(run_id, stage_id, "skipped", note="cancelled")
             return self._result(run_id, stage_id, "cancelled", "run_cancelled")
+        steps = await self._store.step_statuses(run_id)
+        if any(steps.get(dep, ("pending", None, None))[0] not in _FINISHED for dep in spec.depends_on):
+            return await self._failed(run_id, stage_id, spec.critical, "dependency_not_met", False)
+        flags = await self._flags(run, wf)
+        if spec.when is not None and not flags.get(spec.when, False):
+            return await self._record_skip(run_id, spec)
         await self._store.set_step(run_id, stage_id, "running")
+        handler = self._handlers[spec.handler]
         try:
-            status, code, counts, flags = await self._handlers[stage_id](run)
+            if spec.kind == "fanout":
+                assert handler.plan is not None
+                items = await handler.plan(run, spec)
+                await self._store_plan(run, spec, items)
+                status, code, counts = "ok", None, {"items": len(items)}
+                set_flags: dict[str, bool] = {}
+            else:
+                assert handler.single is not None
+                status, code, counts, set_flags = await handler.single(run, spec)
         except StageError as exc:
             return await self._failed(run_id, stage_id, spec.critical, exc.code, exc.retryable)
         except GatewayError as exc:
@@ -176,7 +261,9 @@ class OrchestrationService:
         except (ValidationError, KeyError, ValueError):
             logger.exception("orchestration stage failed", extra={"stage": stage_id})
             return await self._failed(run_id, stage_id, spec.critical, "stage_internal_error", False)
-        result = self._result(run_id, stage_id, status, code, counts=counts, flags=flags)
+        # A stage may only set flags it declared: an undeclared flag would be invisible to `when` checks.
+        set_flags = {k: v for k, v in set_flags.items() if k in spec.flags}
+        result = self._result(run_id, stage_id, status, code, counts=counts, flags=set_flags)
         await self._store.set_step(
             run_id,
             stage_id,
@@ -188,11 +275,52 @@ class OrchestrationService:
         )
         return result
 
+    async def skip_stage(self, run_id: uuid.UUID, stage_id: str, reason: str) -> StageResult:
+        """n8n evaluated a stage's `when` as false and asks to skip it. The backend stays the authority: it
+        re-evaluates and refuses (409) if its own flags say the stage should run."""
+        run = await self._run(run_id)
+        wf = await self._definition(run)
+        try:
+            spec = wf.stage(stage_id)
+        except KeyError:
+            raise StageError("unknown_stage") from None
+        cached = await self._store.get_artifact(run_id, "stage", stage_id)
+        if cached is not None:
+            return StageResult.model_validate({**cached.payload, "cached": True})
+        flags = await self._flags(run, wf)
+        if reason != "condition_not_met" or spec.when is None or flags.get(spec.when, False):
+            raise StageError("skip_condition_mismatch")
+        return await self._record_skip(run_id, spec)
+
+    async def _record_skip(self, run_id: uuid.UUID, spec: StageDef) -> StageResult:
+        result = make(
+            StageResult,
+            schema_version="stage_result.v1",
+            run_id=str(run_id),
+            stage=spec.id,
+            status="skipped",
+            cached=False,
+            code="condition_not_met",
+            retryable=False,
+            counts={},
+            flags={},
+            condition=spec.when,
+        )
+        await self._store.set_step(run_id, spec.id, "skipped", note=f"condition_not_met:{spec.when}")
+        await self._store.put_artifact(
+            run_id, "stage", spec.id, "stage_result.v1", "ok", _dump(result), reason_code="condition_not_met"
+        )
+        return result
+
     async def finish(self, run_id: uuid.UUID) -> FinishResult:
         run = await self._run(run_id)
         steps = await self._store.step_statuses(run_id)
-        critical = {s.id for s in STAGES if s.critical}
+        wf = await self._definition(run)
+        critical = {s.id for s in wf.stages if s.critical}
         failed_critical = [s for s, (st, _, _) in steps.items() if st == "failed" and s in critical]
+        unfinished = [
+            s for s in critical if steps.get(s, ("pending", None, None))[0] not in _FINISHED | {"failed"}
+        ]
         warnings = [
             f"{s}: {code or note or 'incomplete'}"
             for s, (st, note, code) in steps.items()
@@ -205,7 +333,7 @@ class OrchestrationService:
                 "title": "The analysis was stopped",
                 "body": "You stopped this analysis. Nothing further was processed.",
             }
-        elif failed_critical or not all(s in steps for s in critical):
+        elif failed_critical or unfinished:
             status, failure = (
                 "failed",
                 {
@@ -324,7 +452,7 @@ class OrchestrationService:
     async def _document_text(self, run: RunRecord) -> tuple[str, str | None, dict[str, int], dict[str, bool]]:
         inputs = await self._inputs(run)
         if not inputs.documents:
-            return "skipped", "no_documents", {"documents": 0}, {}
+            return "skipped", "no_documents", {"documents": 0}, {"needs_ocr": False}
         if self._storage is None:
             raise StageError("storage_unavailable", retryable=True)
         extractor, readable, unreadable = self._text, 0, 0
@@ -356,16 +484,15 @@ class OrchestrationService:
             ("ok" if unreadable == 0 else "unavailable"),
             ("some_documents_unreadable" if unreadable else None),
             {"readable": readable, "unreadable": unreadable},
-            {},
+            {"needs_ocr": unreadable > 0},
         )
 
-    async def _vision_ocr(self, run: RunRecord) -> tuple[str, str | None, dict[str, int], dict[str, bool]]:
-        # OCR / vision extraction is not implemented: the stage says so instead of pretending.
-        unreadable = await self._store.get_artifact(run.id, "stage", "document_text")
-        n = unreadable.payload.get("counts", {}).get("unreadable", 0) if unreadable else 0
-        if n:
-            return "unavailable", "ocr_not_available", {"unreadable": n}, {}
-        return "skipped", "ocr_not_needed", {}, {}
+    async def _vision_ocr(self, run: RunRecord) -> Outcome:
+        # Runs only when the workflow's `when: needs_ocr` is true. OCR / vision extraction is not implemented:
+        # the stage says so instead of pretending.
+        stage = await self._store.get_artifact(run.id, "stage", "document_text")
+        n = stage.payload.get("counts", {}).get("unreadable", 0) if stage else 0
+        return "unavailable", "ocr_not_available", {"unreadable": n}, {}
 
     async def _fact_extraction(
         self, run: RunRecord
@@ -441,7 +568,12 @@ class OrchestrationService:
         unreadable = len(inputs.documents) - len(briefs)
         ctx = build_case_context(inputs, facts, briefs, max(unreadable, 0))
         await self._save(run, "case_context", ctx, "case_context.v1")
-        return "ok", None, {"facts": len(facts), "evidence_items": len(ctx.evidence_index)}, {}
+        return (
+            "ok",
+            None,
+            {"facts": len(facts), "evidence_items": len(ctx.evidence_index)},
+            {"missing_info_branch": self._missing_info(ctx)},
+        )
 
     # ═══ stage 6: routing ════════════════════════════════════════════════════════════════════════════
     async def _routing(self, run: RunRecord) -> tuple[str, str | None, dict[str, int], dict[str, bool]]:
@@ -464,77 +596,97 @@ class OrchestrationService:
             ),
             "routing_plan.v1",
         )
-        return "ok", None, {"selected": len(decision.plan.selected)}, self._flags(ctx)
+        return "ok", None, {"selected": len(decision.plan.selected)}, {}
 
-    def _flags(self, ctx: CaseContext) -> dict[str, bool]:
-        c = self._policy.conditions
-        return {
-            "missing_info_branch": len(ctx.evidence_index) < c.missing_info_branch_if_evidence_items_below,
-        }
+    def _missing_info(self, ctx: CaseContext) -> bool:
+        floor = self._policy.conditions.missing_info_branch_if_evidence_items_below
+        return len(ctx.evidence_index) < floor
 
-    async def run_plan(self, run_id: uuid.UUID) -> RunPlan:
-        run = await self._run(run_id)
-        routing = await self._load(run, "routing_plan", RoutingArtifact)
-        ctx = await self._load(run, "case_context", CaseContext)
-        agents = [
-            PlannedAgent(
-                id=s.specialist, priority=s.priority, timeout_s=self._reg.spec(s.specialist).timeout_s
-            )
-            for s in routing.plan.selected
-        ]
-        verification_done = await self._store.get_artifact(run_id, "verification")
-        extra = False
-        if verification_done is not None:
-            extra = (
-                VerificationArtifact.model_validate(verification_done.payload).counts.get("contradicted", 0)
-                >= self._policy.conditions.extra_verification_if_contradicted_at_least
-            )
-        return RunPlan(
-            schema_version="run_plan.v1",
-            run_id=str(run_id),
-            agents=agents,
+    # ═══ generic fan-out: plan the items, run one item at a time ═════════════════════════════════════
+    async def _store_plan(self, run: RunRecord, spec: StageDef, items: list[FanoutItem]) -> None:
+        plan = FanoutPlan(
+            schema_version="fanout_plan.v1",
+            run_id=str(run.id),
+            stage=spec.id,
+            items=items,
             max_parallel=self._policy.limits.max_parallel_agents,
-            extra_verification=extra,
-            missing_info_branch=self._flags(ctx)["missing_info_branch"],
+        )
+        await self._store.put_artifact(run.id, "fanout_plan", spec.id, "fanout_plan.v1", "ok", _dump(plan))
+
+    async def fanout_plan(self, run_id: uuid.UUID, stage_id: str) -> FanoutPlan:
+        run = await self._run(run_id)
+        wf = await self._definition(run)
+        try:
+            spec = wf.stage(stage_id)
+        except KeyError:
+            raise StageError("unknown_stage") from None
+        if spec.kind != "fanout":
+            raise StageError("not_a_fanout_stage")
+        art = await self._store.get_artifact(run_id, "fanout_plan", stage_id)
+        if art is None:
+            handler = self._handlers[spec.handler]
+            assert handler.plan is not None
+            await self._store_plan(run, spec, await handler.plan(run, spec))
+            art = await self._store.get_artifact(run_id, "fanout_plan", stage_id)
+        assert art is not None
+        return FanoutPlan.model_validate(art.payload)
+
+    async def run_item(self, run_id: uuid.UUID, stage_id: str, item_id: str) -> ItemResult:
+        run = await self._run(run_id)
+        plan = await self.fanout_plan(run_id, stage_id)
+        if item_id not in {i.id for i in plan.items}:
+            raise StageError("item_not_planned")
+        if run.cancel_requested or run.status not in ("queued", "running"):
+            return self._item_result(run_id, stage_id, item_id, "cancelled", "run_cancelled", False)
+        spec = (await self._definition(run)).stage(stage_id)
+        handler = self._handlers[spec.handler]
+        assert handler.item is not None
+        status, code, cached = await handler.item(run, spec, item_id)
+        return self._item_result(run_id, stage_id, item_id, status, code, cached)
+
+    def _item_result(
+        self, run_id: uuid.UUID, stage_id: str, item_id: str, status: str, code: str | None, cached: bool
+    ) -> ItemResult:
+        return make(
+            ItemResult,
+            schema_version="item_result.v1",
+            run_id=str(run_id),
+            stage=stage_id,
+            item_id=item_id,
+            status=status,
+            cached=cached,
+            code=code,
         )
 
-    async def _fanout(self, run: RunRecord) -> tuple[str, str | None, dict[str, int], dict[str, bool]]:
-        plan = await self.run_plan(run.id)
-        return "ok", None, {"agents": len(plan.agents)}, {"missing_info_branch": plan.missing_info_branch}
+    # ═══ the specialist fan-out handler (a registry-driven set of items) ═════════════════════════════
+    async def _specialist_plan(self, run: RunRecord, spec: StageDef) -> list[FanoutItem]:
+        routing = await self._load(run, "routing_plan", RoutingArtifact)
+        want = str(spec.params.get("priority", "all"))
+        return [
+            FanoutItem(id=s.specialist, timeout_s=self._reg.spec(s.specialist).timeout_s)
+            for s in routing.plan.selected
+            if want in {"all", s.priority}
+        ]
 
-    # ═══ stages 7-8: specialists ═════════════════════════════════════════════════════════════════════
-    async def run_agent(self, run_id: uuid.UUID, agent_id: str) -> AgentResult:
-        run = await self._run(run_id)
-        cached = await self._store.get_artifact(run_id, "specialist", agent_id)
+    async def _specialist_item(
+        self, run: RunRecord, spec: StageDef, agent_id: str
+    ) -> tuple[str, str | None, bool]:
+        del spec
+        cached = await self._store.get_artifact(run.id, "specialist", agent_id)
         if cached is not None:
             art = SpecialistArtifact.model_validate(cached.payload)
-            return self._agent_result(run_id, agent_id, art.status, art.reason_code, True)
-        if run.cancel_requested or run.status not in ("queued", "running"):
-            return self._agent_result(run_id, agent_id, "cancelled", "run_cancelled", False)
+            return art.status, art.reason_code, True
         routing = await self._load(run, "routing_plan", RoutingArtifact)
         selected = next((s for s in routing.plan.selected if s.specialist == agent_id), None)
         if selected is None:
-            raise StageError("agent_not_planned")
+            raise StageError("item_not_planned")
         outcome = await self._execute_agent(run, selected.specialist, selected.priority, selected.reason)
         await self._save(
             run, "specialist", outcome, "specialist_artifact.v1", key=agent_id, status=outcome.status
         )
         if outcome.status != "ok":
             logger.warning("specialist unavailable", extra={"agent": agent_id, "code": outcome.reason_code})
-        return self._agent_result(run_id, agent_id, outcome.status, outcome.reason_code, False)
-
-    def _agent_result(
-        self, run_id: uuid.UUID, agent_id: str, status: str, code: str | None, cached: bool
-    ) -> AgentResult:
-        return make(
-            AgentResult,
-            schema_version="agent_result.v1",
-            run_id=str(run_id),
-            agent_id=agent_id,
-            status=status,
-            cached=cached,
-            code=code,
-        )
+        return outcome.status, outcome.reason_code, False
 
     @staticmethod
     def _unavailable(agent_id: str, code: str, status: str = "unavailable") -> SpecialistArtifact:
@@ -663,11 +815,8 @@ class OrchestrationService:
         return (
             status,
             ("some_specialists_unavailable" if unavailable else None),
-            {
-                "ok": ok,
-                "unavailable": unavailable,
-            },
-            {},
+            {"ok": ok, "unavailable": unavailable},
+            {"enough_specialists": ok >= self._policy.limits.min_specialists_for_cross_review},
         )
 
     async def _reports(self, run: RunRecord) -> tuple[list[SpecialistReport], list[str]]:
@@ -749,18 +898,20 @@ class OrchestrationService:
             return claims  # the deterministic floor stands
         return verification.apply_model_results(claims, result.output.results)
 
-    async def _cross_review(self, run: RunRecord) -> tuple[str, str | None, dict[str, int], dict[str, bool]]:
+    async def _cross_review(self, run: RunRecord) -> Outcome:
         ctx = await self._load(run, "case_context", CaseContext)
         reports, _ = await self._reports(run)
         ver = await self._load(run, "verification", VerificationArtifact)
-        if len(reports) < self._policy.limits.min_specialists_for_cross_review:
-            empty = CrossReviewData(specialists=[], rows=[])
-            await self._save(run, "cross_review", empty, "cross_review.v1", status="skipped")
-            return "skipped", "too_few_specialists", {"rows": 0}, {}
         data = crossreview.cross_review(reports, ver.claims, ctx.evidence_index, self._medication(reports))
         await self._save(run, "cross_review", data, "cross_review.v1")
         disagreements = sum(1 for r in data.rows if r.relationship in {"disagreement", "medication_conflict"})
-        return "ok", None, {"rows": len(data.rows), "disagreements": disagreements}, {}
+        esc = self._policy.conditions.review_escalation
+        return (
+            "ok",
+            None,
+            {"rows": len(data.rows), "disagreements": disagreements},
+            {"escalate_review": disagreements >= esc.if_disagreements_at_least},
+        )
 
     # ═══ stage 12: interim clinical review ═══════════════════════════════════════════════════════════
     async def _interim_review(
@@ -768,14 +919,18 @@ class OrchestrationService:
     ) -> tuple[str, str | None, dict[str, int], dict[str, bool]]:
         reports, _ = await self._reports(run)
         ver = await self._load(run, "verification", VerificationArtifact)
-        cross = await self._load(run, "cross_review", CrossReviewData)
-        ok_ids, removed = review.known_ids(ver.claims, cross, reports)
-        disagreements = sum(
-            1 for r in cross.rows if r.relationship in {"disagreement", "medication_conflict"}
+        # The cross-review stage may have been skipped by the workflow (`when: enough_specialists`): then
+        # there are no cross-review rows, and the reviewer works from the verified claims alone.
+        cross_art = await self._store.get_artifact(run.id, "cross_review")
+        cross = (
+            CrossReviewData.model_validate(cross_art.payload)
+            if cross_art is not None
+            else CrossReviewData(specialists=[], rows=[])
         )
-        esc = self._policy.conditions.review_escalation
-        escalated = disagreements >= esc.if_disagreements_at_least
-        tier = esc.tier if escalated else 2
+        ok_ids, removed = review.known_ids(ver.claims, cross, reports)
+        wf = await self._definition(run)
+        escalated = (await self._flags(run, wf)).get("escalate_review", False)
+        tier = self._policy.conditions.review_escalation.tier if escalated else 2
         reviewer = make(
             SynthesisReviewer,
             label="AI reviewer (not a doctor)",
@@ -865,7 +1020,7 @@ class OrchestrationService:
             agents_ok=[r.specialist for r in reports],
             agents_unavailable=down,
             unreadable_documents=ctx.unreadable_documents,
-            missing_info_branch=self._flags(ctx)["missing_info_branch"],
+            missing_info_branch=self._missing_info(ctx),
             removed_claims=sum(1 for c in ver.claims if c.removed),
         )
         await self._save(run, "run_summary", summary, "run_summary.v1")
@@ -936,6 +1091,17 @@ class OrchestrationService:
         ):
             return simplified, True
         return built, False
+
+    # ═══ small generic handlers ═════════════════════════════════════════════════════════════════════
+    async def _second_opinion_compare(self, run: RunRecord) -> Outcome:
+        # Skeleton of the second-opinion workflow: the comparison stage is not built yet and says so.
+        del run
+        return "unavailable", "comparison_not_implemented", {}, {}
+
+    async def _checkpoint(self, run: RunRecord) -> Outcome:
+        """Does nothing and succeeds. Lets a workflow mark a point in the graph (and tests build graphs)."""
+        del run
+        return "ok", None, {}, {}
 
     # ═══ read side (owner API) ═══════════════════════════════════════════════════════════════════════
     async def final_report(self, run_id: uuid.UUID) -> PatientReport | None:

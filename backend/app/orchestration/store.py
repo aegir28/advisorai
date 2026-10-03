@@ -12,13 +12,13 @@ Idempotency lives here: `put_artifact` for an existing (run, kind, key) returns 
 import copy
 import json
 import uuid
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
 from sqlalchemy import text
 
 from app.db.database import Database, SystemOperation
-from app.orchestration.stages import DEFINITION_VERSION, STAGES
 
 STEP_OF_STAGE_STATUS = {
     "ok": "done",
@@ -76,9 +76,16 @@ class Artifact:
 
 class OrchestrationStore(Protocol):
     async def create_run(
-        self, owner: uuid.UUID, case_id: uuid.UUID, idempotency_key: str, workflow: str
+        self,
+        owner: uuid.UUID,
+        case_id: uuid.UUID,
+        idempotency_key: str,
+        workflow: str,
+        stage_ids: Sequence[str],
+        version: int = 1,
     ) -> tuple[uuid.UUID, bool]:
-        """(run id, created). The same (case, key) returns the existing run with created=False."""
+        """(run id, created). One step row per stage id, in order (`n` = position). The same (case, key)
+        returns the existing run with created=False."""
         ...
 
     async def get_run(self, run_id: uuid.UUID) -> RunRecord | None: ...
@@ -136,14 +143,20 @@ class InMemoryOrchestrationStore:
         self.inputs: dict[uuid.UUID, CaseInputs] = {}  # case id -> inputs (seeded by tests)
 
     async def create_run(
-        self, owner: uuid.UUID, case_id: uuid.UUID, idempotency_key: str, workflow: str
+        self,
+        owner: uuid.UUID,
+        case_id: uuid.UUID,
+        idempotency_key: str,
+        workflow: str,
+        stage_ids: Sequence[str],
+        version: int = 1,
     ) -> tuple[uuid.UUID, bool]:
         for run_id, run in self.runs.items():
             if run.record.case_id == case_id and run.key == idempotency_key:
                 return run_id, False
         run_id = uuid.uuid4()
         record = RunRecord(run_id, case_id, owner, "queued", "n8n", workflow, False)
-        self.runs[run_id] = _MemRun(record, idempotency_key, {s.id: ("pending", None, None) for s in STAGES})
+        self.runs[run_id] = _MemRun(record, idempotency_key, {s: ("pending", None, None) for s in stage_ids})
         return run_id, True
 
     async def get_run(self, run_id: uuid.UUID) -> RunRecord | None:
@@ -245,7 +258,13 @@ class PostgresOrchestrationStore:
         self._db = database
 
     async def create_run(
-        self, owner: uuid.UUID, case_id: uuid.UUID, idempotency_key: str, workflow: str
+        self,
+        owner: uuid.UUID,
+        case_id: uuid.UUID,
+        idempotency_key: str,
+        workflow: str,
+        stage_ids: Sequence[str],
+        version: int = 1,
     ) -> tuple[uuid.UUID, bool]:
         async with self._db.system_session(SystemOperation.ORCHESTRATION) as conn:
             run_id = (
@@ -260,7 +279,7 @@ class PostgresOrchestrationStore:
                         "o": owner,
                         "c": case_id,
                         "d": workflow,
-                        "v": str(DEFINITION_VERSION),
+                        "v": str(version),
                         "k": idempotency_key,
                     },
                 )
@@ -275,13 +294,13 @@ class PostgresOrchestrationStore:
                     )
                 ).scalar_one()
                 return existing, False
-            for stage in STAGES:
+            for n, stage_id in enumerate(stage_ids, start=1):
                 await conn.execute(
                     text(
                         "insert into public.workflow_steps (owner_user_id, case_id, run_id, n, node)"
                         " values (:o, :c, :r, :n, :node)"
                     ),
-                    {"o": owner, "c": case_id, "r": run_id, "n": stage.n, "node": stage.id},
+                    {"o": owner, "c": case_id, "r": run_id, "n": n, "node": stage_id},
                 )
             return run_id, True
 
@@ -355,10 +374,10 @@ class PostgresOrchestrationStore:
             await conn.execute(
                 text(
                     "update public.workflow_runs set progress = least(1, (select count(*) filter"
-                    " (where status in ('done', 'warning', 'skipped'))::numeric / :total from public.workflow_steps"
-                    " where run_id = :r)) where id = :r"
+                    " (where status in ('done', 'warning', 'skipped'))::numeric / greatest(count(*), 1)"
+                    " from public.workflow_steps where run_id = :r)) where id = :r"
                 ),
-                {"r": run_id, "total": len(STAGES)},
+                {"r": run_id},
             )
 
     async def step_statuses(self, run_id: uuid.UUID) -> dict[str, tuple[str, str | None, str | None]]:

@@ -114,7 +114,7 @@ async def test_a_signed_call_drives_a_stage_and_returns_only_ids_statuses_and_co
 @pytest.mark.anyio
 async def test_unknown_run_and_unknown_stage_are_clean_errors() -> None:
     client, rig = await client_for_rig()
-    p = f"{PREFIX}/runs/{uuid.uuid4()}/plan"
+    p = f"{PREFIX}/runs/{uuid.uuid4()}/stages/intake_safety"
     assert client.post(p, headers=signed("POST", p)).status_code == 404
     p = f"{PREFIX}/runs/{rig.run_id}/stages/not_a_stage"  # type: ignore[attr-defined]
     assert client.post(p, headers=signed("POST", p)).status_code == 400
@@ -191,3 +191,43 @@ async def test_error_recovery_fails_the_run_of_a_crashed_execution_once_and_only
     assert client.post(fail, headers=signed("POST", fail)).status_code == 404  # nothing active any more
     nope = f"{PREFIX}/executions/never-started/fail"
     assert client.post(nope, headers=signed("POST", nope)).status_code == 404
+
+
+@pytest.mark.anyio
+async def test_begin_returns_stage_descriptors_and_a_condition_is_skipped_or_refused_through_the_api() -> (
+    None
+):
+    client, rig = await client_for_rig()
+    rid = rig.run_id  # type: ignore[attr-defined]
+
+    def post(path: str, body: bytes = b"") -> Any:
+        return client.post(
+            path, content=body, headers={**signed("POST", path, body), "Content-Type": "application/json"}
+        )
+
+    begin = post(
+        f"{PREFIX}/runs/{rid}/begin", b'{"schema_version":"begin_request.v1","execution_id":"exec-2"}'
+    ).json()
+    by_id = {s["id"]: s for s in begin["stages"]}
+    assert begin["workflow"] == "case_analysis" and by_id["specialist_fanout"]["kind"] == "fanout"
+    assert (
+        by_id["vision_ocr"]["when"] == "needs_ocr" and by_id["cross_review"]["when"] == "enough_specialists"
+    )
+    assert all(
+        {"retries", "backoff_seconds", "timeout_seconds", "critical", "depends_on"} <= set(s)
+        for s in begin["stages"]
+    )
+    for stage in ("intake_safety", "document_text"):
+        assert post(f"{PREFIX}/runs/{rid}/stages/{stage}").status_code == 200
+    skip = f"{PREFIX}/runs/{rid}/stages/vision_ocr/skip"
+    body = b'{"schema_version":"skip_request.v1","reason":"condition_not_met"}'
+    done = post(skip, body)
+    assert done.status_code == 200 and done.json()["status"] == "skipped"
+    assert done.json()["code"] == "condition_not_met" and done.json()["condition"] == "needs_ocr"
+    steps = await rig.store.step_statuses(rid)  # type: ignore[attr-defined]
+    assert steps["vision_ocr"] == ("skipped", "condition_not_met:needs_ocr", None)
+    # A stage without a condition (or whose flag is true) cannot be skipped: the backend is the authority.
+    refused = post(f"{PREFIX}/runs/{rid}/stages/fact_extraction/skip", body)
+    assert refused.status_code == 409
+    # plan is only for fan-out stages
+    assert post(f"{PREFIX}/runs/{rid}/stages/routing/plan").status_code == 400

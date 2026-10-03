@@ -1,8 +1,9 @@
 # Orchestration policy: the knobs of the n8n-sequenced pipeline (ADR 0012). Read by backend/app/orchestration/policy.py
 # and handed to n8n when a run begins, so retries, timeouts and fan-out limits live HERE, not inside workflow JSON.
 #
-# Conditional execution is decided by the backend from these thresholds and returned to n8n as plain booleans
-# (`extra_verification`, `missing_info_branch`); n8n only branches on them. Nothing here names a specialty.
+# Thresholds here are turned into FLAGS by stages (`enough_specialists`, `escalate_review`, `missing_info_branch`,
+# `extra_verification`); which stage is conditional on which flag is in registry/workflows.yaml (`when`). Per-stage
+# retry/timeout overrides also live there; the values below are the defaults. Nothing here names a specialty.
 version: 1
 
 limits:

@@ -16,7 +16,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const id = String($json.execution.id).replace(/[^A-Za-z0-9_.:-]/g, '');\nreturn [{ json: { path: `/internal/orchestrator/v1/executions/${id}/fail`, body: '', timeout_ms: 30000 } }];\n"
+        "jsCode": "const id = String($json.execution.id).replace(/[^A-Za-z0-9_.:-]/g, '');\nreturn [{ json: { path: `/internal/orchestrator/v1/executions/${id}/fail`, body: '', timeout_ms: 30000, max_tries: 3, backoff_ms: 5000 } }];\n"
       },
       "id": "6c922f6f-0c96-527f-ba8d-8432f5a97fde",
       "name": "Build call",

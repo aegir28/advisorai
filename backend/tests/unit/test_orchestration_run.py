@@ -7,7 +7,7 @@ import pytest
 
 from app.ai.types import ProviderUnavailableError
 from app.orchestration.contracts import CaseContext, SpecialistArtifact, SynthesisArtifact
-from app.orchestration.stages import STAGE_IDS
+from app.orchestration.workflows import WorkflowRegistry
 from app.schemas.report import PatientReport
 from tests.orch_support import DOC, F_MED, Rig, drive, make_rig, specialist_json
 
@@ -34,11 +34,11 @@ async def test_a_full_run_completes_and_produces_a_nineteen_section_report() -> 
     assert run is not None and run.status in {"complete", "partial"}
 
 
-async def test_every_stage_has_a_step_status_and_the_run_has_exactly_the_fourteen_stages() -> None:
+async def test_every_stage_of_the_selected_workflow_has_a_step_status() -> None:
     rig = await make_rig()
     await drive(rig)
     steps = await rig.store.step_statuses(rig.run_id)
-    assert list(STAGE_IDS) == [s for s in STAGE_IDS if s in steps] and len(STAGE_IDS) == 14
+    assert list(steps) == WorkflowRegistry.from_file().get("case_analysis").stage_ids
     assert all(status != "running" for status, _, _ in steps.values())
 
 
@@ -68,11 +68,11 @@ async def test_a_stage_retried_returns_the_stored_result_and_is_not_billed_again
 async def test_an_agent_rerun_is_idempotent() -> None:
     rig = await make_rig()
     await rig.service.begin(rig.run_id)
-    for stage_id in STAGE_IDS[:7]:
+    for stage_id in WorkflowRegistry.from_file().get("case_analysis").stage_ids[:7]:
         await rig.service.run_stage(rig.run_id, stage_id)
-    first = await rig.service.run_agent(rig.run_id, "general_medicine")
+    first = await rig.service.run_item(rig.run_id, "specialist_fanout", "general_medicine")
     calls = len(rig.provider.requests)
-    second = await rig.service.run_agent(rig.run_id, "general_medicine")
+    second = await rig.service.run_item(rig.run_id, "specialist_fanout", "general_medicine")
     assert (first.cached, second.cached) == (False, True) and len(rig.provider.requests) == calls
 
 
@@ -234,6 +234,7 @@ async def test_a_new_specialist_is_a_registry_entry_not_a_code_change() -> None:
         SpecialtyRegistry([*base, new]),
         rig.service._policy,
         rig.service._extractor,
+        rig.service._wf,
         storage=rig.service._storage,
     )
     rig2 = Rig(svc, rig.store, rig.provider, rig.run_id, rig.usage)

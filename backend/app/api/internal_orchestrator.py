@@ -13,11 +13,12 @@ from fastapi import APIRouter, Depends, Request
 from app.core.config import Settings
 from app.core.errors import AppError
 from app.orchestration.contracts import (
-    AgentResult,
     BeginRequest,
     BeginResult,
+    FanoutPlan,
     FinishResult,
-    RunPlan,
+    ItemResult,
+    SkipRequest,
     StageResult,
 )
 from app.orchestration.service import OrchestrationService, StageError
@@ -62,7 +63,7 @@ router = APIRouter(
 def _raise(exc: StageError) -> AppError:
     if exc.code == "run_not_found":
         return AppError(ErrorCode.NOT_FOUND, exc.code, status_code=404)
-    if exc.code.endswith("_missing"):
+    if exc.code.endswith("_missing") or exc.code == "skip_condition_mismatch":
         return AppError(ErrorCode.CONFLICT, exc.code, status_code=409)
     return AppError(ErrorCode.VALIDATION_ERROR, exc.code, status_code=400)
 
@@ -83,18 +84,26 @@ async def run_stage(run_id: uuid.UUID, stage_id: str, service: ServiceDep) -> St
         raise _raise(exc) from None
 
 
-@router.post("/runs/{run_id}/plan")
-async def plan(run_id: uuid.UUID, service: ServiceDep) -> RunPlan:
+@router.post("/runs/{run_id}/stages/{stage_id}/skip")
+async def skip_stage(run_id: uuid.UUID, stage_id: str, body: SkipRequest, service: ServiceDep) -> StageResult:
     try:
-        return await service.run_plan(run_id)
+        return await service.skip_stage(run_id, stage_id, body.reason)
     except StageError as exc:
         raise _raise(exc) from None
 
 
-@router.post("/runs/{run_id}/agents/{agent_id}")
-async def run_agent(run_id: uuid.UUID, agent_id: str, service: ServiceDep) -> AgentResult:
+@router.post("/runs/{run_id}/stages/{stage_id}/plan")
+async def fanout_plan(run_id: uuid.UUID, stage_id: str, service: ServiceDep) -> FanoutPlan:
     try:
-        return await service.run_agent(run_id, agent_id)
+        return await service.fanout_plan(run_id, stage_id)
+    except StageError as exc:
+        raise _raise(exc) from None
+
+
+@router.post("/runs/{run_id}/stages/{stage_id}/items/{item_id}")
+async def run_item(run_id: uuid.UUID, stage_id: str, item_id: str, service: ServiceDep) -> ItemResult:
+    try:
+        return await service.run_item(run_id, stage_id, item_id)
     except StageError as exc:
         raise _raise(exc) from None
 

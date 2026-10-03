@@ -1,18 +1,11 @@
 {
-  "id": "advisorai-specialist-fanout",
-  "name": "AdvisorAI · 20 Specialist fan-out",
+  "id": "advisorai-fanout-stage",
+  "name": "AdvisorAI · 20 Fan-out stage",
   "active": false,
   "nodes": [
     {
       "parameters": {
-        "inputSource": "workflowInputs",
-        "workflowInputs": {
-          "values": [
-            {
-              "name": "run_id"
-            }
-          ]
-        }
+        "inputSource": "passthrough"
       },
       "id": "dbf54256-784c-5649-bbaf-95baf3581839",
       "name": "When called",
@@ -25,28 +18,12 @@
     },
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "a1",
-              "name": "run_id",
-              "value": "={{ $json.run_id }}",
-              "type": "string"
-            },
-            {
-              "id": "a2",
-              "name": "stage_id",
-              "value": "specialist_fanout",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
+        "jsCode": "return [{ json: { ...$json, action: 'run' } }];\n"
       },
       "id": "fc1189e1-9784-5ea1-8ca6-76d79080bef7",
       "name": "Stage input",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
         240,
         0
@@ -106,7 +83,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const run_id = $('Stage input').first().json.run_id;\nreturn [{ json: { run_id, path: `/internal/orchestrator/v1/runs/${run_id}/plan`, body: '', timeout_ms: 180000 } }];\n"
+        "jsCode": "const input = $('Stage input').first().json;\nconst path = `/internal/orchestrator/v1/runs/${input.run_id}/stages/${input.stage_id}/plan`;\nreturn [{ json: { path, body: '', timeout_ms: Number(input.timeout_seconds) * 1000,\n  max_tries: Number(input.retries) + 1, backoff_ms: Number(input.backoff_seconds) * 1000 } }];\n"
       },
       "id": "6f5597d7-6438-5d4e-96be-0f855a2d81d1",
       "name": "Build plan call",
@@ -141,14 +118,44 @@
     },
     {
       "parameters": {
-        "jsCode": "const r = $input.first().json;\nconst run_id = $('Stage input').first().json.run_id;\nif (!r.ok) return [];\nconst plan = r.result;\nconst crypto = require('crypto');\nconst secret = $env.ADVISORAI_N8N_HMAC_SECRET;\nconst base = String($env.ADVISORAI_API_BASE_URL || '').replace(/\\/$/, '');\nreturn plan.agents.map((a) => {\n  const path = `/internal/orchestrator/v1/runs/${run_id}/agents/${a.id}`;\n  const ts = String(Math.floor(Date.now() / 1000));\n  const hash = crypto.createHash('sha256').update('').digest('hex');\n  const sig = crypto.createHmac('sha256', secret).update(`${ts}.POST.${path}.${hash}`).digest('hex');\n  return { json: { agent_id: a.id, url: base + path, ts, sig, max_parallel: plan.max_parallel, timeout: Math.max(Number(a.timeout_s) * 1000, 10000) } };\n});\n"
+        "jsCode": "const r = $input.first().json;\nconst input = $('Stage input').first().json;\nif (!r.ok) return [{ json: { plan_failed: true, code: r.code } }];\nconst plan = r.result;\nif (!plan.items.length) return [{ json: { empty: true } }];\nconst crypto = require('crypto');\nconst secret = $env.ADVISORAI_N8N_HMAC_SECRET;\nconst base = String($env.ADVISORAI_API_BASE_URL || '').replace(/\\/$/, '');\nreturn plan.items.map((it) => {\n  const path = `/internal/orchestrator/v1/runs/${input.run_id}/stages/${input.stage_id}/items/${it.id}`;\n  const ts = String(Math.floor(Date.now() / 1000));\n  const hash = crypto.createHash('sha256').update('').digest('hex');\n  const sig = crypto.createHmac('sha256', secret).update(`${ts}.POST.${path}.${hash}`).digest('hex');\n  return { json: { item_id: it.id, url: base + path, ts, sig, max_parallel: plan.max_parallel, timeout: Math.max(Number(it.timeout_s) * 1000, 10000) } };\n});\n"
       },
-      "id": "63f8e2de-46b4-54ca-b346-d2cf7bd5b346",
-      "name": "One item per specialist",
+      "id": "dbd085d9-bacf-52d5-a6db-32aa2cb02ec1",
+      "name": "One item per work item",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
         1440,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "c9a98fa3-62a0-52bc-b3fa-675a0f85cdc7",
+      "name": "Anything to run?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1680,
         -120
       ]
     },
@@ -179,13 +186,13 @@
           }
         }
       },
-      "id": "4557426b-b503-576d-9025-f781d85d511d",
-      "name": "Run specialists (parallel batches)",
+      "id": "b7638b81-31f1-545f-8644-ac862f0793f0",
+      "name": "Run items (parallel batches)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1680,
-        -120
+        1920,
+        -200
       ],
       "retryOnFail": true,
       "maxTries": 3,
@@ -194,26 +201,39 @@
     },
     {
       "parameters": {
-        "jsCode": "// Every outcome is data. A failed or timed-out specialist is counted, never thrown: the backend already\n// stored it as 'unavailable' (or will, at collection, as 'not_run'); the run continues.\nconst items = $input.all().map((i) => i.json);\nconst bad = items.filter((j) => j.error || j.status !== 'ok').length;\nreturn [{ json: { status: 'ok', agents: items.length, unavailable: bad } }];\n"
+        "jsCode": "// Every outcome is data. A failed or timed-out item is counted, never thrown: the backend already stored it\n// as 'unavailable' (or will, at collection); the run continues.\nconst stage = $('Run fan-out stage').first().json;\nconst results = $input.all().map((i) => i.json);\nconst bad = results.filter((j) => j.error || j.status !== 'ok').length;\nreturn [{ json: { ...stage, status: 'ok', counts: { ...(stage.counts || {}), unavailable_items: bad } } }];\n"
       },
       "id": "3a8a7809-9a30-505c-9e43-507eea1d0da0",
       "name": "Fan in",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
+        2160,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// An empty plan is a valid outcome (for example no optional items). Pass the stage result through.\nconst stage = $('Run fan-out stage').first().json;\nconst failed = !!$('One item per work item').first().json.plan_failed;\nreturn [{ json: failed ? { ...stage, status: 'failed', code: 'plan_failed', retryable: false } : stage }];\n"
+      },
+      "id": "ff6c31e2-3871-54a5-aada-0e79354896e5",
+      "name": "Nothing to run",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
         1920,
-        -120
+        40
       ]
     },
     {
       "parameters": {},
-      "id": "0cc239b7-91f9-54c5-90f3-5540e6e8cca3",
-      "name": "Fan-out failed",
+      "id": "4b938e29-0cbc-5532-83b7-5660eee8ff85",
+      "name": "Stage failed",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
         960,
-        120
+        160
       ]
     }
   ],
@@ -262,7 +282,7 @@
         ],
         [
           {
-            "node": "Fan-out failed",
+            "node": "Stage failed",
             "type": "main",
             "index": 0
           }
@@ -284,25 +304,43 @@
       "main": [
         [
           {
-            "node": "One item per specialist",
+            "node": "One item per work item",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "One item per specialist": {
+    "One item per work item": {
       "main": [
         [
           {
-            "node": "Run specialists (parallel batches)",
+            "node": "Anything to run?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Run specialists (parallel batches)": {
+    "Anything to run?": {
+      "main": [
+        [
+          {
+            "node": "Run items (parallel batches)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Nothing to run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run items (parallel batches)": {
       "main": [
         [
           {
@@ -321,7 +359,7 @@
   },
   "pinData": {},
   "meta": {
-    "description": "Reusable. Asks the backend for the run plan (the specialists chosen from the REGISTRY, never named here), runs them in parallel batches of plan.max_parallel, and fans in. One specialist failing never fails the run: the backend records it as unavailable and the run continues.",
+    "description": "Reusable. For any stage of kind=fanout: runs the stage, asks the backend for its work items (for example the specialists chosen from the REGISTRY; never named here), runs them in parallel batches of max_parallel and fans in. An item failing never fails the run: the backend records it as unavailable.",
     "templateCredsSetupCompleted": true
   },
   "tags": [

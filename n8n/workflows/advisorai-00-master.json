@@ -1,6 +1,6 @@
 {
   "id": "advisorai-master",
-  "name": "AdvisorAI · 00 Master case analysis",
+  "name": "AdvisorAI · 00 Master orchestration",
   "active": false,
   "nodes": [
     {
@@ -77,7 +77,7 @@
       "typeVersion": 1.1,
       "position": [
         720,
-        160
+        200
       ]
     },
     {
@@ -99,7 +99,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const run_id = $('Verify signature').first().json.run_id;\nconst body = JSON.stringify({ schema_version: 'begin_request.v1', execution_id: String($execution.id) });\nreturn [{ json: { run_id, path: `/internal/orchestrator/v1/runs/${run_id}/begin`, body, timeout_ms: 30000 } }];\n"
+        "jsCode": "const run_id = $('Verify signature').first().json.run_id;\nconst body = JSON.stringify({ schema_version: 'begin_request.v1', execution_id: String($execution.id) });\nreturn [{ json: { run_id, path: `/internal/orchestrator/v1/runs/${run_id}/begin`, body, timeout_ms: 30000, max_tries: 3, backoff_ms: 5000 } }];\n"
       },
       "id": "268338ef-3bfc-5573-a4ef-e29e3e7792ea",
       "name": "Build begin call",
@@ -134,7 +134,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const r = $input.first().json;\nconst run_id = $('Verify signature').first().json.run_id;\nif (!r.ok) return [{ json: { run_id, stage_id: '__abort__' } }];\nconst done = new Set(r.result.completed_stages);\nreturn r.result.stages.filter((s) => !done.has(s)).map((s) => ({ json: { run_id, stage_id: s } }));\n"
+        "jsCode": "// One item per stage the backend described (minus those a resumed run already finished).\nconst r = $input.first().json;\nconst run_id = $('Verify signature').first().json.run_id;\nif (!r.ok) return [{ json: { run_id, abort: true, code: r.code, id: 'begin', kind: 'single', flags: {} } }];\nconst done = new Set(r.result.completed_stages);\nreturn r.result.stages.filter((s) => !done.has(s.id)).map((s) => ({ json: { run_id, ...s, flags: r.result.flags } }));\n"
       },
       "id": "79aae417-3b2b-598e-8a29-d32f59f731cf",
       "name": "Stages still to run",
@@ -161,6 +161,102 @@
     },
     {
       "parameters": {
+        "jsCode": "// Flags seen so far = those from `begin` plus what each finished stage reported. `when` is the stage's\n// condition (a flag name from the workflow definition); the backend re-checks any skip we ask for.\nconst s = $json;\nconst flags = $('Update flags').isExecuted ? $('Update flags').last().json.flags : (s.flags || {});\nconst action = s.abort ? 'abort' : (s.when && !flags[s.when] ? 'skip' : 'run');\nreturn [{ json: { run_id: s.run_id, stage_id: s.id, kind: s.kind, action, flags,\n  timeout_seconds: s.timeout_seconds, retries: s.retries, backoff_seconds: s.backoff_seconds, code: s.code || null } }];\n"
+      },
+      "id": "17c92bbc-57bb-5f36-abdb-e9806b1a8ea7",
+      "name": "Evaluate condition",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "r0",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "run",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "run"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "r1",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "skip",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "skip"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "r2",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "abort",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "abort"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "18de2612-e0b4-50bd-a405-960d4d439922",
+      "name": "Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2160,
+        -80
+      ]
+    },
+    {
+      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": true,
@@ -169,8 +265,8 @@
           "conditions": [
             {
               "id": "c1",
-              "leftValue": "={{ $json.stage_id }}",
-              "rightValue": "specialist_fanout",
+              "leftValue": "={{ $json.kind }}",
+              "rightValue": "fanout",
               "operator": {
                 "type": "string",
                 "operation": "equals"
@@ -180,13 +276,13 @@
           "combinator": "and"
         }
       },
-      "id": "11319176-07c2-59e9-967f-6a01505141e2",
-      "name": "Specialist stage?",
+      "id": "b5ee45b1-9421-50ec-9a50-ee3a9b4e27fa",
+      "name": "Fan-out stage?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1920,
-        -160
+        2400,
+        -200
       ]
     },
     {
@@ -194,7 +290,7 @@
         "source": "database",
         "workflowId": {
           "__rl": true,
-          "value": "advisorai-specialist-fanout",
+          "value": "advisorai-fanout-stage",
           "mode": "id"
         },
         "mode": "once",
@@ -202,13 +298,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "ea78813f-6196-5a07-a841-c61484cf8510",
-      "name": "Fan-out specialists",
+      "id": "7934710c-a084-530e-8e42-548f356e97a3",
+      "name": "Run fan-out stage",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.1,
       "position": [
-        2160,
-        -260
+        2640,
+        -300
       ]
     },
     {
@@ -229,21 +325,56 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.1,
       "position": [
-        2160,
-        -60
+        2640,
+        -120
       ]
     },
     {
       "parameters": {
-        "jsCode": "// Stop the loop on a failed (critical) or cancelled stage; everything else, including 'unavailable' and\n// 'skipped', continues. The backend decides what is critical; n8n only reads the status.\nconst s = $input.first().json;\nconst stop = s.stage_id === '__abort__' || s.status === 'failed' || s.status === 'cancelled';\nreturn [{ json: { stop, stage: s.stage || null, status: s.status || null } }];\n"
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "advisorai-run-stage",
+          "mode": "id"
+        },
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        }
       },
-      "id": "0e0d68d3-a500-5e50-9fb8-5e10328d1d2a",
-      "name": "Continue?",
+      "id": "dd3e34e9-2496-557a-ab2f-3854da64d558",
+      "name": "Skip stage",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        2640,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// begin failed: there is nothing to run. Report it as a failed stage so the run is finished honestly.\nreturn [{ json: { run_id: $json.run_id, stage: 'begin', status: 'failed', code: $json.code || 'begin_failed', retryable: false, counts: {}, flags: {} } }];\n"
+      },
+      "id": "0e7b8f31-1da8-56c2-9ff4-564f6fe1913c",
+      "name": "Abort",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2400,
-        -160
+        2640,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Accumulate the flags a stage set and decide whether to go on. Only a failed or cancelled stage stops the\n// loop; the backend decides what is critical (non-critical failures come back as 'unavailable').\nconst r = $input.first().json;\nconst flags = { ...($('Evaluate condition').first().json.flags || {}), ...(r.flags || {}) };\nconst stop = r.status === 'failed' || r.status === 'cancelled';\nreturn [{ json: { flags, stop, stage: r.stage || null, status: r.status || null, condition: r.condition || null } }];\n"
+      },
+      "id": "8d2bd2a3-683b-5bc9-a020-b445f61b2f6c",
+      "name": "Update flags",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        -80
       ]
     },
     {
@@ -272,21 +403,21 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        2640,
-        -160
+        3120,
+        -80
       ]
     },
     {
       "parameters": {
-        "jsCode": "const run_id = $('Verify signature').first().json.run_id;\nreturn [{ json: { run_id, path: `/internal/orchestrator/v1/runs/${run_id}/finish`, body: '', timeout_ms: 30000 } }];\n"
+        "jsCode": "const run_id = $('Verify signature').first().json.run_id;\nreturn [{ json: { run_id, path: `/internal/orchestrator/v1/runs/${run_id}/finish`, body: '', timeout_ms: 30000, max_tries: 3, backoff_ms: 5000 } }];\n"
       },
       "id": "c5f27a9c-41df-5467-a722-3a3e394b4f27",
       "name": "Build finish call",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2880,
-        40
+        3360,
+        100
       ]
     },
     {
@@ -307,8 +438,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.1,
       "position": [
-        3120,
-        40
+        3600,
+        100
       ]
     }
   ],
@@ -408,18 +539,54 @@
         ],
         [
           {
-            "node": "Specialist stage?",
+            "node": "Evaluate condition",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Specialist stage?": {
+    "Evaluate condition": {
       "main": [
         [
           {
-            "node": "Fan-out specialists",
+            "node": "Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Action": {
+      "main": [
+        [
+          {
+            "node": "Fan-out stage?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip stage",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Abort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fan-out stage?": {
+      "main": [
+        [
+          {
+            "node": "Run fan-out stage",
             "type": "main",
             "index": 0
           }
@@ -433,11 +600,11 @@
         ]
       ]
     },
-    "Fan-out specialists": {
+    "Run fan-out stage": {
       "main": [
         [
           {
-            "node": "Continue?",
+            "node": "Update flags",
             "type": "main",
             "index": 0
           }
@@ -448,14 +615,36 @@
       "main": [
         [
           {
-            "node": "Continue?",
+            "node": "Update flags",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Continue?": {
+    "Skip stage": {
+      "main": [
+        [
+          {
+            "node": "Update flags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Abort": {
+      "main": [
+        [
+          {
+            "node": "Update flags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update flags": {
       "main": [
         [
           {
@@ -505,7 +694,7 @@
   },
   "pinData": {},
   "meta": {
-    "description": "Entry point. Verifies the signed start request, then sequences the run's stages by calling the backend. It names no specialty and holds no case content, key or database login.",
+    "description": "Entry point. Verifies the signed start, asks the backend to begin the run (which selects the workflow definition and returns its stage descriptors), then executes each stage generically: kind decides the call pattern, `when` is evaluated against the flags seen so far, and the stage's own retry/timeout values are applied. It names no specialty, no stage and no clinical branch, and holds no case content, key or database login.",
     "templateCredsSetupCompleted": true
   },
   "tags": [

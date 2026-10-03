@@ -132,16 +132,19 @@ def create_app(
         from app.orchestration.service import OrchestrationService
         from app.orchestration.starter import AnalysisStarter
         from app.orchestration.store import PostgresOrchestrationStore
+        from app.orchestration.workflows import WorkflowRegistry
         from app.router.signals import SignalExtractor
 
         store = PostgresOrchestrationStore(database)
         registry = SpecialtyRegistry.from_file()
+        workflow_defs = WorkflowRegistry.from_file()
         orchestration = OrchestrationService(
             store,
             ai_gateway,
             registry,
             OrchestrationPolicy.from_file(),
             SignalExtractor.from_file(),
+            workflow_defs,
             storage=storage,
         )
         if settings.n8n_webhook_url is not None:
@@ -154,6 +157,7 @@ def create_app(
                     settings.n8n_hmac_secret.get_secret_value().encode(),
                     settings.n8n_request_timeout_seconds,
                 ),
+                workflow_defs,
             )
 
     @asynccontextmanager

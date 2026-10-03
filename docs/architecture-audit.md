@@ -21,3 +21,22 @@ Audited the whole repository before changing it. Findings → decision.
 17. **Frontend**: mock↔HTTP; not yet wired to artifacts/report read API (gap).
 18. **CI**: backend path trigger for `n8n/`; repo guard for n8n.
 19. **Already correct and preserved**: naming, RLS, signed URLs, synthetic-only controls, audit log, strict wire models.
+
+## Follow-up after the architecture review (PR #15)
+The review found three medium gaps against "configuration-driven and extensible", now fixed:
+1. **The 14 stages were fixed in Python** (`stages.py`, a handler table, step rows). → `registry/workflows.yaml`
+   defines workflows as stage graphs (kind, handler, critical, `when`, flags, dependencies, retry/timeout, params);
+   the backend creates steps from the selected definition; `run.v1` and the DB check accept 1..N (N <= 64).
+2. **The n8n master special-cased the fan-out stage by name.** → the master reads `kind` from the descriptors the
+   backend returns; the fan-out protocol is generic (plan items / run item). A test forbids any stage, specialty,
+   flag or handler name in the n8n JSON.
+3. **n8n did not branch on conditions.** → stages declare flags, later stages say `when`; n8n evaluates and skips
+   (reason preserved), the backend re-checks every skip. Real uses: `vision_ocr` when `needs_ocr`,
+   `cross_review` when `enough_specialists`. A second workflow (`second_opinion`, skeleton) runs on the same
+   machinery and the same n8n master.
+
+Still hard-coded, deliberately: the *handlers* (capabilities) are Python; the patient-facing progress grouping in the
+frontend maps step numbers 1..14 to five groups (steps of other workflows outside 1..14 are not grouped; groups
+with no steps are hidden); the native engine (ADR 0008) still has its own 14-step rule. Not changed: the other
+gaps from the review (reviewer-text re-verification, reading-level enforcement, structural privacy gate,
+cross-process budget reservations).
