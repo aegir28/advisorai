@@ -14,3 +14,4 @@ is the source of truth for the product. It is maintained outside this repository
 - [`adr/0004-phase-2b-supabase-foundation.md`](adr/0004-phase-2b-supabase-foundation.md): Phase 2B scope, approved decisions and corrections.
 - [`adr/0005-database-user-context.md`](adr/0005-database-user-context.md): how a verified user becomes `auth.uid()` on a direct Postgres connection (and the residual risk).
 - [`adr/0006-privacy-controls-audit-and-storage.md`](adr/0006-privacy-controls-audit-and-storage.md): identity separation, audit log, signed URLs, synthetic-only mode.
+- [`adr/0007-case-and-document-lifecycle.md`](adr/0007-case-and-document-lifecycle.md): case and document endpoints, secure upload, validation without AI, purge order.
